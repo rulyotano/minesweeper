@@ -31,3 +31,8 @@ export const buildCell = (
   Row: row,
   Column: column
 });
+
+export const changeCellStatus = (cell: Cell, newStatus: CellStatus): Cell => ({
+  ...cell,
+  Status: newStatus
+});
