@@ -11,7 +11,7 @@
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/react-scripts",
             "args": [
               "test",
-              "src/components/app/minesweeper/helpers/test/boardHelper.test.ts",
+              "src/components/app/minesweeper/_duck/_tests/actions.test.ts",
               "--runInBand",
               "--no-cache",
               "--watchAll=false"
