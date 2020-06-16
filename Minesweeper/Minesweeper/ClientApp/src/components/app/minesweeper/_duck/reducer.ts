@@ -7,7 +7,9 @@ import {
   FINISH_GAME,
   FinishGameAction,
   UPDATE_BOARD,
-  UpdateBoardAction
+  UpdateBoardAction,
+  INITIALIZE_BOARD,
+  InitializeBoardAction
 } from "./types";
 import { Cell } from "../helpers/cellHelper";
 
@@ -67,7 +69,16 @@ const reducer: Reducer<ReducerState> = (
       return {
         ...state,
         board: customAction.board,
-        discoveredCells: customAction.undiscoveredCells
+        discoveredCells: customAction.discoveredCells
+      };
+    }
+    case INITIALIZE_BOARD: {
+      const customAction = action as InitializeBoardAction;
+      return {
+        ...initialState,
+        board: customAction.board,
+        rows: customAction.rows,
+        columns: customAction.columns
       };
     }
     case RESET:

@@ -7,7 +7,9 @@ import {
   FinishGameAction,
   FINISH_GAME,
   UPDATE_BOARD,
-  UpdateBoardAction
+  UpdateBoardAction,
+  INITIALIZE_BOARD,
+  InitializeBoardAction
 } from "../types";
 import { buildBoard } from "../../helpers/boardHelper";
 
@@ -117,12 +119,48 @@ describe("components > app > minesweeper > reducer", () => {
 
     const action: UpdateBoardAction = {
       board: buildBoard(ROWS, COLS, CLICKED_R, CLICKED_C, MINES),
-      undiscoveredCells: 10,
+      discoveredCells: 10,
       type: UPDATE_BOARD
     };
     Reducer(reducer).withState(previousState).expect(action).toChangeInState({
-      discoveredCells: action.undiscoveredCells,
+      discoveredCells: action.discoveredCells,
       board: action.board
+    });
+  });
+
+  test("when INITIALIZE_BOARD should: change board and set rows, and columns, AND set gameIsStarted=false, gameStartTime=null, gameFinishTime=null, mines=0, discoverCells=0", () => {
+    const previousState = {
+      rows: 0,
+      columns: 0,
+      gameIsStarted: true,
+      gameStartTime: new Date(),
+      gameFinishTime: new Date(),
+      mines: 13,
+      discoveredCells: 12,
+      board: []
+    };
+
+    const ROWS = 14;
+    const COLS = 15;
+    const CLICKED_R = 3;
+    const CLICKED_C = 4;
+    const MINES = 20;
+
+    const action: InitializeBoardAction = {
+      board: buildBoard(ROWS, COLS, CLICKED_R, CLICKED_C, MINES),
+      columns: COLS,
+      rows: ROWS,
+      type: INITIALIZE_BOARD
+    };
+    Reducer(reducer).withState(previousState).expect(action).toChangeInState({
+      discoveredCells: 0,
+      board: action.board,
+      rows: ROWS,
+      columns: COLS,
+      gameIsStarted: false,
+      gameStartTime: null,
+      gameFinishTime: null,
+      mines: 0
     });
   });
 });
