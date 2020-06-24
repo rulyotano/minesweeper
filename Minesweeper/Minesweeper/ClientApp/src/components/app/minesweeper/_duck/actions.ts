@@ -14,8 +14,44 @@ import {
 } from "./types";
 import { AppThunkAction } from "../../../../../src/store";
 import { Cell, CellStatus } from "../helpers/cellHelper";
-import { modifyBoard, getCellsToReveal, getCellsAround } from "../helpers/boardHelper";
+import {
+  modifyBoard,
+  getCellsToReveal,
+  getCellsAround,
+  buildEmptyBoard,
+  buildBoard
+} from "../helpers/boardHelper";
 import { getBoard, getDiscovered, getFinishTime } from "./selectors";
+import { IBoardConfiguration } from "../helpers/gameHelper";
+
+export const initialize = (
+  configuration: IBoardConfiguration
+): AppThunkAction<MinesweeperAction> => dispatch => {
+  dispatch(
+    initializeBoardAction(
+      buildEmptyBoard(configuration.rows, configuration.columns),
+      configuration.rows,
+      configuration.columns
+    )
+  );
+};
+
+export const begin = (
+  configuration: IBoardConfiguration,
+  row: number,
+  column: number
+): AppThunkAction<MinesweeperAction | AppThunkAction<MinesweeperAction>> => dispatch => {
+  dispatch(
+    beginAction(
+      buildBoard(configuration.rows, configuration.columns, row, column, configuration.mines),
+      configuration.rows,
+      configuration.columns,
+      configuration.mines
+    )
+  );
+
+  dispatch(cellClick(row, column));
+};
 
 export const cellClick = (row: number, column: number): AppThunkAction<MinesweeperAction> => (
   dispatch,
