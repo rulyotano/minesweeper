@@ -54,6 +54,13 @@ const TableCell: React.FunctionComponent<TableCellProps> = props => {
   const onDoubleClick = (e: React.MouseEvent<HTMLTableDataCellElement, MouseEvent>) => {
     discoverSurrounding(cell);
   };
+
+  const onContextMenu = (e: React.MouseEvent<HTMLTableDataCellElement, MouseEvent>) => {
+    e.preventDefault();
+    if (cell.Status === CellStatus.DiscoveredAndNumber) discoverSurrounding(cell);
+    else toggleCellMark(cell);
+  };
+
   const isLeftButton = (eventButton: number) => eventButton === 0 || eventButton === 1;
   const isRightButton = (eventButton: number) => eventButton === 2;
 
@@ -63,7 +70,7 @@ const TableCell: React.FunctionComponent<TableCellProps> = props => {
       onMouseDown={onMouseDown}
       onMouseUp={onMouseUp}
       onDoubleClick={onDoubleClick}
-      onContextMenu={e => e.preventDefault()}
+      onContextMenu={onContextMenu}
     >
       {status === CellStatus.DiscoveredAndNumber ? (
         <Typography id="cell-number">{cell.MinesAround}</Typography>
