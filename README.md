@@ -4,3 +4,9 @@
 
 # minesweeper
 React Minesweeper (for academical propouse)
+
+# objetives
+The idea of this project is continuing developing a code sample project, trying to use good programming practices, good code along with latest react staff and type-script.
+
+# latest update
+Latest progress can be seen at [this free azure link](https://webminesweeper.azurewebsites.net/mines-sweeper).
