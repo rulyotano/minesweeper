@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export interface IBoardConfiguration {
   rows: number;
   columns: number;
@@ -28,3 +30,15 @@ export const gameConfigurations: IGameConfigurations = {
 
 export const isCustomConfiguration = (configuration: IBoardConfiguration): boolean =>
   configuration.rows < 0;
+
+export const calculateTimeElapsed = (
+  startTime: Date | null,
+  finishTime: Date | null,
+  isStarted: boolean
+) => {
+  if (!isStarted) return 0;
+  const lastComparingTime = finishTime ? moment(finishTime) : moment();
+  const start = moment(startTime);
+
+  return lastComparingTime.diff(start, "second");
+};

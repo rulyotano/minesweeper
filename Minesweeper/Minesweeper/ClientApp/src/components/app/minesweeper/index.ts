@@ -1,3 +1,3 @@
-import Minesweeper from "./Minesweeper";
+import MinesweeperContainer from "./MinesweeperContainer";
 
-export default Minesweeper;
+export default MinesweeperContainer;

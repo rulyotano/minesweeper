@@ -42,7 +42,7 @@ export const buildBoard = (
   clickedColumn: number,
   mines: number
 ): Cell[][] => {
-  if (mines > 0.9 * rows * columns) throw "To much mines for this board";
+  if (mines > 0.9 * rows * columns) throw Error("To much mines for this board");
 
   const board = buildEmptyBoard(rows, columns);
 

@@ -1,6 +1,18 @@
 import { Selector } from "redux-testkit";
+import moment from "moment";
 import { ApplicationState } from "../../../../../store";
-import { getBoard, getRows, getColumns, getIsGameStarted, getStartTime, getFinishTime, getMines, getDiscovered } from "../selectors";
+import {
+  getBoard,
+  getRows,
+  getColumns,
+  getIsGameStarted,
+  getStartTime,
+  getFinishTime,
+  getMines,
+  getDiscovered,
+  getElapsedTime,
+  getIsFinished
+} from "../selectors";
 import { ReducerState } from "../reducer";
 import { buildBoard } from "../../helpers/boardHelper";
 
@@ -33,7 +45,7 @@ describe("components > app > minesweeper > selectors", () => {
       )
       .toReturn(FAKE_BOARD);
   });
-  
+
   test("getRows() should return 'rows' in state", () => {
     Selector(getRows)
       .expect(
@@ -43,7 +55,7 @@ describe("components > app > minesweeper > selectors", () => {
       )
       .toReturn(fakeState.rows);
   });
-  
+
   test("getColumns() should return 'columns' in state", () => {
     Selector(getColumns)
       .expect(
@@ -53,7 +65,7 @@ describe("components > app > minesweeper > selectors", () => {
       )
       .toReturn(fakeState.columns);
   });
-  
+
   test("getIsGameStarted() should return 'gameIsStarted' in state", () => {
     Selector(getIsGameStarted)
       .expect(
@@ -63,7 +75,7 @@ describe("components > app > minesweeper > selectors", () => {
       )
       .toReturn(fakeState.gameIsStarted);
   });
-  
+
   test("getStartTime() should return 'gameStartTime' in state", () => {
     Selector(getStartTime)
       .expect(
@@ -73,7 +85,7 @@ describe("components > app > minesweeper > selectors", () => {
       )
       .toReturn(fakeState.gameStartTime);
   });
-  
+
   test("getFinishTime() should return 'gameFinishTime' in state", () => {
     Selector(getFinishTime)
       .expect(
@@ -83,7 +95,7 @@ describe("components > app > minesweeper > selectors", () => {
       )
       .toReturn(fakeState.gameFinishTime);
   });
-  
+
   test("getMines() should return 'mines' in state", () => {
     Selector(getMines)
       .expect(
@@ -93,8 +105,7 @@ describe("components > app > minesweeper > selectors", () => {
       )
       .toReturn(fakeState.mines);
   });
-  
-  
+
   test("getDiscovered() should return 'discoveredCells' in state", () => {
     Selector(getDiscovered)
       .expect(
@@ -103,5 +114,25 @@ describe("components > app > minesweeper > selectors", () => {
         })
       )
       .toReturn(fakeState.discoveredCells);
+  });
+
+  test("getIsFinished() should return 'true' when finish have finish time, 'false' otherwise", () => {
+    Selector(getIsFinished)
+      .expect(
+        getStateWith({
+          ...fakeState,
+          gameFinishTime: new Date()
+        })
+      )
+      .toReturn(true);
+
+    Selector(getIsFinished)
+      .expect(
+        getStateWith({
+          ...fakeState,
+          gameFinishTime: null
+        })
+      )
+      .toReturn(false);
   });
 });

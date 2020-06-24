@@ -1,4 +1,4 @@
-import { Action, Reducer } from "redux";
+import { Reducer } from "redux";
 import {
   RESET,
   BEGIN_GAME,

@@ -1,5 +1,5 @@
+import { createSelector } from "reselect";
 import { ApplicationState } from "../../../../../src/store";
-// import { createSelector } from "reselect";
 
 const getState = (state: ApplicationState) => state.minesweeper;
 
@@ -12,9 +12,6 @@ export const getMines = (state: ApplicationState) => getState(state).mines;
 export const getDiscovered = (state: ApplicationState) => getState(state).discoveredCells;
 export const getBoard = (state: ApplicationState) => getState(state).board;
 
-// export const createSomeReselectSelector = () =>
-//     createSelector([
-//         getA, getB
-//     ], 
-//     (a, b) => a^b
-// )
+export const getIsFinished = createSelector([ getFinishTime ], finishTime => {
+  return Boolean(finishTime);
+});
