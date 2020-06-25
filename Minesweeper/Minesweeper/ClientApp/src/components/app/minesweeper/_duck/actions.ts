@@ -62,6 +62,8 @@ export const cellClick = (row: number, column: number): AppThunkAction<Minesweep
 
   const cell = board[row][column];
 
+  if (cell.Status === CellStatus.MarkedAsMine) return;
+
   if (cell.IsMine) {
     dispatch(clickOnMine(board, cell));
   } else {

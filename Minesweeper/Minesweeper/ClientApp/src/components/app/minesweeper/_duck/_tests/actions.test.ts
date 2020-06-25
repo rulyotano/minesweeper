@@ -9,11 +9,14 @@ import {
   INITIALIZE_BOARD,
   FinishGameAction,
   UpdateBoardAction,
-  MinesweeperAction
+  MinesweeperAction,
+  BeginGameAction,
+  InitializeBoardAction
 } from "../types";
 import * as actions from "../actions";
 import * as boardHelper from "../../helpers/boardHelper";
 import { CellStatus, Cell, buildCell } from "../../helpers/cellHelper";
+import { gameConfigurations } from "../../helpers/gameHelper";
 import { ApplicationState, AppThunkAction } from "../../../../../store";
 
 const { buildBoard } = boardHelper;
@@ -26,6 +29,37 @@ describe("components > app > minesweeper > actions", () => {
   const fakeBoard = getFakeBoard();
 
   afterEach(() => {});
+
+  describe("initialize", () => {
+    test("should dispatch initialize board action", async () => {
+      const configuration = gameConfigurations.beginner;
+      const dispatches = await Thunk(actions.initialize).execute(configuration);
+
+      expect(dispatches).toHaveLength(1);
+      const buildBoardAction = dispatches[0].getAction() as InitializeBoardAction;
+      expect(buildBoardAction.board).not.toBeNull();
+      expect(buildBoardAction.rows).toBe(configuration.rows);
+      expect(buildBoardAction.columns).toBe(configuration.columns);
+    });
+  });
+
+  describe("begin", () => {
+    test("should dispatch begin action and then cellClick", async () => {
+      const configuration = gameConfigurations.beginner;
+      const TEST_ROW = 3;
+      const TEST_COLUMN = 3;
+      const dispatches = await Thunk(actions.begin).execute(configuration, TEST_ROW, TEST_COLUMN);
+
+      expect(dispatches).toHaveLength(2);
+      const buildBoardAction = dispatches[0].getAction() as BeginGameAction;
+      expect(buildBoardAction.board).not.toBeNull();
+      expect(buildBoardAction.rows).toBe(configuration.rows);
+      expect(buildBoardAction.columns).toBe(configuration.columns);
+      expect(buildBoardAction.mines).toBe(configuration.mines);
+
+      expect(dispatches[1].isFunction()).toBeTruthy();
+    });
+  });
 
   describe("cellClick", () => {
     test(`When cell is mine, should reveal it, and mark it as exploded, mark not discovered mines as mines, 
@@ -92,6 +126,24 @@ describe("components > app > minesweeper > actions", () => {
       expect(updateBoardAction.type).toBe(UPDATE_BOARD);
       expect(updateBoardAction.board[1][1].Status).toBe(CellStatus.DiscoveredAndEmpty);
       expect(updateBoardAction.board[2][2].Status).toBe(CellStatus.DiscoveredAndNumber);
+    });
+
+    test("When marked as mine, should do nothing", async () => {
+      const TEST_ROW = 3;
+      const TEST_COLUMN = 3;
+      const customFakeBoard = getFakeBoard();
+      customFakeBoard[TEST_ROW][TEST_COLUMN] = {
+        ...customFakeBoard[TEST_ROW][TEST_COLUMN],
+        IsMine: true,
+        Status: CellStatus.MarkedAsMine
+      };
+      const fakeState = getStateWithBoard(customFakeBoard);
+
+      const dispatches = await Thunk(actions.cellClick)
+        .withState(fakeState)
+        .execute(TEST_ROW, TEST_COLUMN);
+
+      expect(dispatches).toHaveLength(0);
     });
   });
 

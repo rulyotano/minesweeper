@@ -11,7 +11,14 @@ export default (theme: Theme) =>
       height: theme.spacing(5),
       width: theme.spacing(5),
       borderStyle: "solid",
-      borderWidth: theme.spacing(0.1)
+      borderWidth: theme.spacing(0.1),
+      WebkitTouchCallout: "none",
+      WebkitUserSelect: "none",
+      KhtmlUserSelect: "none",
+      MozUserSelect: "none",
+      msUserSelect: "none",
+      userSelect: "none",
+      WebkitTapHighlightColor: "rgba(0,0,0,0)"
     }
   });
 
