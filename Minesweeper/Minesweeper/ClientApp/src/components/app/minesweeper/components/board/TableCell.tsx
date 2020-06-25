@@ -1,4 +1,5 @@
 import React from "react";
+import { delay } from "lodash";
 import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import MinesIcon from "@material-ui/icons/Brightness5Outlined";
@@ -15,6 +16,7 @@ const TableCell: React.FunctionComponent<TableCellProps> = props => {
   const [ isLeftClicked, setIsLeftClicked ] = React.useState(false);
   const [ isRightClicked, setIsRightClicked ] = React.useState(false);
   const [ notUseMouseUp, setNotUseMouseUp ] = React.useState(false);
+  const currentTouchKey = React.useRef(0);
 
   const status = cell.Status;
 
@@ -57,8 +59,25 @@ const TableCell: React.FunctionComponent<TableCellProps> = props => {
 
   const onContextMenu = (e: React.MouseEvent<HTMLTableDataCellElement, MouseEvent>) => {
     e.preventDefault();
+  };
+
+  const onLongTouch = () => {
     if (cell.Status === CellStatus.DiscoveredAndNumber) discoverSurrounding(cell);
     else toggleCellMark(cell);
+  };
+
+  const onTouchStart = (e: React.TouchEvent<HTMLTableDataCellElement>) => {
+    e.preventDefault();
+    const currentTouch = currentTouchKey.current;
+    delay(() => {
+      if (currentTouch === currentTouchKey.current) {
+        onLongTouch();
+      }
+    }, TOUCH_WAIT_MS);
+  };
+
+  const onTouchEnd = (e: React.TouchEvent<HTMLTableDataCellElement>) => {
+    currentTouchKey.current += 1;
   };
 
   const isLeftButton = (eventButton: number) => eventButton === 0 || eventButton === 1;
@@ -71,6 +90,8 @@ const TableCell: React.FunctionComponent<TableCellProps> = props => {
       onMouseUp={onMouseUp}
       onDoubleClick={onDoubleClick}
       onContextMenu={onContextMenu}
+      onTouchStart={onTouchStart}
+      onTouchEnd={onTouchEnd}
     >
       {status === CellStatus.DiscoveredAndNumber ? (
         <Typography id="cell-number">{cell.MinesAround}</Typography>
@@ -93,5 +114,7 @@ export interface TableCellProps {
   toggleCellMark: (cell: Cell) => void;
   discoverSurrounding: (cell: Cell) => void;
 }
+
+const TOUCH_WAIT_MS = 500;
 
 export default TableCell;
