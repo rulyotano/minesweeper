@@ -1,5 +1,4 @@
 import { Thunk } from "redux-testkit";
-import { mocked } from "ts-jest";
 import _ from "lodash";
 import {
   RESET,
@@ -9,15 +8,15 @@ import {
   INITIALIZE_BOARD,
   FinishGameAction,
   UpdateBoardAction,
-  MinesweeperAction,
   BeginGameAction,
   InitializeBoardAction
 } from "../types";
 import * as actions from "../actions";
 import * as boardHelper from "../../helpers/boardHelper";
+import * as selectors from "../selectors";
 import { CellStatus, Cell, buildCell } from "../../helpers/cellHelper";
 import { gameConfigurations } from "../../helpers/gameHelper";
-import { ApplicationState, AppThunkAction } from "../../../../../store";
+import { ApplicationState } from "../../../../../store";
 
 const { buildBoard } = boardHelper;
 
@@ -48,7 +47,13 @@ describe("components > app > minesweeper > actions", () => {
       const configuration = gameConfigurations.beginner;
       const TEST_ROW = 3;
       const TEST_COLUMN = 3;
-      const dispatches = await Thunk(actions.begin).execute(configuration, TEST_ROW, TEST_COLUMN);
+      const customFakeBoard = getFakeBoard();
+      const fakeState = getStateWithBoard(customFakeBoard);
+      fakeState.minesweeper.gameFinishTime = null;
+
+      const dispatches = await Thunk(actions.begin)
+        .withState(fakeState)
+        .execute(configuration, TEST_ROW, TEST_COLUMN);
 
       expect(dispatches).toHaveLength(2);
       const buildBoardAction = dispatches[0].getAction() as BeginGameAction;
@@ -58,6 +63,22 @@ describe("components > app > minesweeper > actions", () => {
       expect(buildBoardAction.mines).toBe(configuration.mines);
 
       expect(dispatches[1].isFunction()).toBeTruthy();
+    });
+
+    test("when game is not initialized should do nothing", async () => {
+      const configuration = gameConfigurations.beginner;
+      const TEST_ROW = 3;
+      const TEST_COLUMN = 3;
+
+      const customFakeBoard = getFakeBoard();
+      const fakeState = getStateWithBoard(customFakeBoard);
+      fakeState.minesweeper.gameFinishTime = new Date();
+
+      const dispatches = await Thunk(actions.begin)
+        .withState(fakeState)
+        .execute(configuration, TEST_ROW, TEST_COLUMN);
+
+      expect(dispatches).toHaveLength(0);
     });
   });
 
@@ -126,6 +147,7 @@ describe("components > app > minesweeper > actions", () => {
       expect(updateBoardAction.type).toBe(UPDATE_BOARD);
       expect(updateBoardAction.board[1][1].Status).toBe(CellStatus.DiscoveredAndEmpty);
       expect(updateBoardAction.board[2][2].Status).toBe(CellStatus.DiscoveredAndNumber);
+      getCellsToRevealMocked.mockReset();
     });
 
     test("When marked as mine, should do nothing", async () => {
@@ -144,6 +166,80 @@ describe("components > app > minesweeper > actions", () => {
         .execute(TEST_ROW, TEST_COLUMN);
 
       expect(dispatches).toHaveLength(0);
+    });
+
+    test("When already discovered (number), should do nothing", async () => {
+      const TEST_ROW = 3;
+      const TEST_COLUMN = 3;
+      const customFakeBoard = getFakeBoard();
+      customFakeBoard[TEST_ROW][TEST_COLUMN] = {
+        ...customFakeBoard[TEST_ROW][TEST_COLUMN],
+        IsMine: true,
+        Status: CellStatus.DiscoveredAndNumber
+      };
+      const fakeState = getStateWithBoard(customFakeBoard);
+
+      const dispatches = await Thunk(actions.cellClick)
+        .withState(fakeState)
+        .execute(TEST_ROW, TEST_COLUMN);
+
+      expect(dispatches).toHaveLength(0);
+    });
+
+    test("When already discovered (empty), should do nothing", async () => {
+      const TEST_ROW = 3;
+      const TEST_COLUMN = 3;
+      const customFakeBoard = getFakeBoard();
+      customFakeBoard[TEST_ROW][TEST_COLUMN] = {
+        ...customFakeBoard[TEST_ROW][TEST_COLUMN],
+        IsMine: true,
+        Status: CellStatus.DiscoveredAndEmpty
+      };
+      const fakeState = getStateWithBoard(customFakeBoard);
+
+      const dispatches = await Thunk(actions.cellClick)
+        .withState(fakeState)
+        .execute(TEST_ROW, TEST_COLUMN);
+
+      expect(dispatches).toHaveLength(0);
+    });
+
+    test("When is NO mine, after reveal cells, should check if game is won, then raise a game finish", async () => {
+      const TEST_ROW = 3;
+      const TEST_COLUMN = 3;
+      const customFakeBoard = getFakeBoard();
+      customFakeBoard[TEST_ROW][TEST_COLUMN] = {
+        ...customFakeBoard[TEST_ROW][TEST_COLUMN],
+        IsMine: false
+      };
+      const fakeState = getStateWithBoard(customFakeBoard);
+
+      const getCellsToRevealMocked = jest
+        .spyOn(boardHelper, "getCellsToReveal")
+        .mockReturnValueOnce([
+          buildCell(1, 1, CellStatus.UnDiscovered, 0, false),
+          buildCell(2, 2, CellStatus.UnDiscovered, 2, false)
+        ]);
+
+      const isGameWonMocked = jest.spyOn(selectors, "getIsGameWon").mockReturnValueOnce(true);
+
+      const dispatches = await Thunk(actions.cellClick)
+        .withState(fakeState)
+        .execute(TEST_ROW, TEST_COLUMN);
+
+      expect(isGameWonMocked).toHaveBeenCalled();
+
+      expect(getCellsToRevealMocked).toBeCalledTimes(1);
+      expect(dispatches).toHaveLength(2);
+
+      const updateBoardAction = dispatches[0].getAction() as UpdateBoardAction;
+      expect(updateBoardAction.type).toBe(UPDATE_BOARD);
+
+      const finishGameAction = dispatches[1].getAction() as FinishGameAction;
+      expect(finishGameAction.type).toBe(FINISH_GAME);
+
+      getCellsToRevealMocked.mockReset();
+      isGameWonMocked.mockReset();
     });
   });
 
@@ -233,6 +329,20 @@ describe("components > app > minesweeper > actions", () => {
       fakeBoard[testRow][testColumn].Status = CellStatus.DiscoveredAndEmpty;
 
       const fakeState = getStateWithBoard(fakeBoard);
+
+      const dispatches = await Thunk(actions.switchMarkAsMine)
+        .withState(fakeState)
+        .execute(testRow, testColumn);
+
+      expect(dispatches).toHaveLength(0);
+    });
+
+    test("when game is ended should do nothing", async () => {
+      const { fakeBoard, testRow, testColumn } = getBoardConfiguration();
+      fakeBoard[testRow][testColumn].Status = CellStatus.MarkedAsMine;
+
+      const fakeState = getStateWithBoard(fakeBoard);
+      fakeState.minesweeper.gameFinishTime = new Date();
 
       const dispatches = await Thunk(actions.switchMarkAsMine)
         .withState(fakeState)

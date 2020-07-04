@@ -1,5 +1,6 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
+import { Typography } from "@material-ui/core";
 import { Cell } from "./helpers/cellHelper";
 import Board from "./components/board";
 import {
@@ -15,6 +16,8 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
     endTime,
     gameEnded,
     isStarted,
+    isWin,
+    isLost,
     initialize,
     begin,
     click,
@@ -25,8 +28,7 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
   const [ currentTime, setCurrentTime ] = React.useState(0);
   const calculateTimeParams = {
     startTime,
-    endTime,
-    isStarted
+    endTime
   };
   const calculateTimeParamsRef = React.useRef(calculateTimeParams);
   calculateTimeParamsRef.current = calculateTimeParams;
@@ -41,8 +43,8 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
       initializeWithConfiguration();
 
       const intervalId = setInterval(() => {
-        const { startTime, endTime, isStarted } = calculateTimeParamsRef.current;
-        setCurrentTime(calculateTimeElapsed(startTime, endTime, isStarted));
+        const { startTime, endTime } = calculateTimeParamsRef.current;
+        setCurrentTime(calculateTimeElapsed(startTime, endTime));
       }, ONE_SECOND_MS);
 
       return () => clearInterval(intervalId);
@@ -56,6 +58,9 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
       <p>Time: {currentTime}</p>
 
       {gameEnded ? <Button onClick={initializeWithConfiguration}>Re-start</Button> : null}
+
+      {isWin ? <Typography>Congrats!!! You Win!!!</Typography> : null}
+      {isLost ? <Typography>You Lost. Try another more time!!!</Typography> : null}
 
       <Board
         board={board}
@@ -74,6 +79,8 @@ export interface MinesweeperProps {
   isStarted: boolean;
   startTime: Date | null;
   endTime: Date | null;
+  isWin: boolean;
+  isLost: boolean;
 
   initialize: (configuration: IBoardConfiguration) => void;
   begin: (configuration: IBoardConfiguration, clickedCell: Cell) => void;

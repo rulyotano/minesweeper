@@ -249,6 +249,26 @@ describe("src > components > minesweeper > helpers > boardHelper", () => {
       expect(resultKeys).toContain("0-4");
     });
 
+    test("case click on (0,4), but exist overlap (one of the cells to reveal was already revealed) return 5 cell", () => {
+      const board = boardFromString(boardString1);
+      board[1][4].Status = CellStatus.DiscoveredAndNumber;
+
+      deepFreeze(board);
+      const result = getCellsToReveal(board, 0, 4);
+
+      expect(result).toHaveLength(5);
+
+      const resultKeys = result.map(it => it.Key);
+
+      expect(resultKeys).toContain("0-4");
+      expect(resultKeys).not.toContain("1-4");
+      expect(resultKeys).toContain("1-3");
+      expect(resultKeys).toContain("1-2");
+      expect(resultKeys).toContain("0-2");
+      expect(resultKeys).toContain("0-3");
+      expect(resultKeys).toContain("0-4");
+    });
+
     test("case click on (3,2) return 8 cell Recursion", () => {
       const board = boardFromString(boardString1);
 

@@ -47,17 +47,17 @@ describe("src > components > minesweeper > helpers > gameHelper", () => {
     });
 
     test("when running time, should return now - start time", () => {
-      const result = calculateTimeElapsed(startTime, null, true);
+      const result = calculateTimeElapsed(startTime, null);
       expect(result).toBe((nowTime.valueOf() - startTime.valueOf()) / 1000);
     });
 
     test("when already finished time, should return end time - start time", () => {
-      const result = calculateTimeElapsed(startTime, endTime, true);
+      const result = calculateTimeElapsed(startTime, endTime);
       expect(result).toBe((endTime.valueOf() - startTime.valueOf()) / 1000);
     });
 
     test("when game is no started should return 0", () => {
-      const result = calculateTimeElapsed(startTime, null, false);
+      const result = calculateTimeElapsed(null, null);
       expect(result).toBe(0);
     });
   });

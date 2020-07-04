@@ -33,10 +33,9 @@ export const isCustomConfiguration = (configuration: IBoardConfiguration): boole
 
 export const calculateTimeElapsed = (
   startTime: Date | null,
-  finishTime: Date | null,
-  isStarted: boolean
+  finishTime: Date | null
 ) => {
-  if (!isStarted) return 0;
+  if (!startTime) return 0;
   const lastComparingTime = finishTime ? moment(finishTime) : moment();
   const start = moment(startTime);
 
