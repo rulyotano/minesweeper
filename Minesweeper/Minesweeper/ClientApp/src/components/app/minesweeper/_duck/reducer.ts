@@ -16,7 +16,6 @@ import { Cell } from "../helpers/cellHelper";
 export interface ReducerState {
   rows: number;
   columns: number;
-  gameIsStarted: boolean;
   gameStartTime: Date | null;
   gameFinishTime: Date | null;
   mines: number;
@@ -27,7 +26,6 @@ export interface ReducerState {
 export const initialState: ReducerState = {
   rows: 0,
   columns: 0,
-  gameIsStarted: false,
   gameStartTime: null,
   gameFinishTime: null,
   mines: 0,

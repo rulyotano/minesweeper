@@ -1,5 +1,4 @@
 import { Selector } from "redux-testkit";
-import moment from "moment";
 import { ApplicationState } from "../../../../../store";
 import {
   getBoard,
@@ -10,8 +9,10 @@ import {
   getFinishTime,
   getMines,
   getDiscovered,
-  getElapsedTime,
-  getIsFinished
+  getIsFinished,
+  getIsGameInitialized,
+  getIsGameWon,
+  getIsGameLost
 } from "../selectors";
 import { ReducerState } from "../reducer";
 import { buildBoard } from "../../helpers/boardHelper";
@@ -25,7 +26,6 @@ describe("components > app > minesweeper > selectors", () => {
     rows: 11,
     discoveredCells: 9,
     gameFinishTime: new Date(),
-    gameIsStarted: true,
     gameStartTime: new Date(),
     mines: 2
   };
@@ -66,14 +66,96 @@ describe("components > app > minesweeper > selectors", () => {
       .toReturn(fakeState.columns);
   });
 
-  test("getIsGameStarted() should return 'gameIsStarted' in state", () => {
-    Selector(getIsGameStarted)
-      .expect(
-        getStateWith({
-          ...fakeState
-        })
-      )
-      .toReturn(fakeState.gameIsStarted);
+  describe("getIsGameStarted()", () => {
+    test("when start time AND NO finish time should return true", () => {
+      const state = { ...fakeState, gameFinishTime: null };
+      Selector(getIsGameStarted).expect(getStateWith(state)).toReturn(true);
+    });
+
+    test("when NO start time should return false", () => {
+      const state = { ...fakeState, gameStartTime: null };
+      Selector(getIsGameStarted).expect(getStateWith(state)).toReturn(false);
+    });
+
+    test("when HAVE finish time should return false", () => {
+      const state = { ...fakeState };
+      Selector(getIsGameStarted).expect(getStateWith(state)).toReturn(false);
+    });
+  });
+
+  describe("getIsGameWon()", () => {
+    test("when mines = total cells - discovered cells should return true", () => {
+      const totalCells = 12;
+      const rows = 4;
+      const cols = totalCells / rows;
+      const mines = 3;
+      const discovered = totalCells - mines;
+
+      const state = { ...fakeState, rows, columns: cols, discoveredCells: discovered, mines };
+
+      Selector(getIsGameWon).expect(getStateWith(state)).toReturn(true);
+    });
+
+    test("when mines < total cells - discovered cells should return false", () => {
+      const totalCells = 12;
+      const rows = 4;
+      const cols = totalCells / rows;
+      const mines = 3;
+      const discovered = 1;
+
+      const state = { ...fakeState, rows, columns: cols, discoveredCells: discovered, mines };
+
+      Selector(getIsGameWon).expect(getStateWith(state)).toReturn(false);
+    });
+  });
+
+  describe("getIsGameLost()", () => {
+    test("when game finished AND mines < total cells - discovered cells should return true", () => {
+      const totalCells = 12;
+      const rows = 4;
+      const cols = totalCells / rows;
+      const mines = 3;
+      const discovered = 1;
+
+      const state = { ...fakeState, rows, columns: cols, discoveredCells: discovered, mines };
+
+      Selector(getIsGameLost).expect(getStateWith(state)).toReturn(true);
+    });
+
+    test("when game finished AND mines = total cells - discovered cells should return false", () => {
+      const totalCells = 12;
+      const rows = 4;
+      const cols = totalCells / rows;
+      const mines = 3;
+      const discovered = totalCells - mines;
+
+      const state = { ...fakeState, rows, columns: cols, discoveredCells: discovered, mines };
+
+      Selector(getIsGameLost).expect(getStateWith(state)).toReturn(false);
+    });
+
+    test("when game NOT finished return false", () => {
+      const state = { ...fakeState, gameFinishTime: null };
+
+      Selector(getIsGameLost).expect(getStateWith(state)).toReturn(false);
+    });
+  });
+
+  describe("getIsGameInitialized()", () => {
+    test("when NO start time AND NO finish time should return true", () => {
+      const state = { ...fakeState, gameStartTime: null, gameFinishTime: null };
+      Selector(getIsGameInitialized).expect(getStateWith(state)).toReturn(true);
+    });
+
+    test("when HAVE start time should return false", () => {
+      const state = { ...fakeState, gameFinishTime: null };
+      Selector(getIsGameInitialized).expect(getStateWith(state)).toReturn(false);
+    });
+
+    test("when HAVE finish time should return false", () => {
+      const state = { ...fakeState, gameStartTime: null };
+      Selector(getIsGameInitialized).expect(getStateWith(state)).toReturn(false);
+    });
   });
 
   test("getStartTime() should return 'gameStartTime' in state", () => {

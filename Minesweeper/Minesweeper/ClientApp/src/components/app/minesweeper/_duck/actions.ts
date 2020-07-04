@@ -21,7 +21,14 @@ import {
   buildEmptyBoard,
   buildBoard
 } from "../helpers/boardHelper";
-import { getBoard, getDiscovered, getFinishTime } from "./selectors";
+import {
+  getBoard,
+  getDiscovered,
+  getFinishTime,
+  getIsGameInitialized,
+  getIsGameWon,
+  getIsFinished
+} from "./selectors";
 import { IBoardConfiguration } from "../helpers/gameHelper";
 
 export const initialize = (
@@ -40,7 +47,16 @@ export const begin = (
   configuration: IBoardConfiguration,
   row: number,
   column: number
-): AppThunkAction<MinesweeperAction | AppThunkAction<MinesweeperAction>> => dispatch => {
+): AppThunkAction<MinesweeperAction | AppThunkAction<MinesweeperAction>> => (
+  dispatch,
+  getState
+) => {
+  const state = getState();
+
+  const isInitialized = getIsGameInitialized(state);
+
+  if (!isInitialized) return;
+
   dispatch(
     beginAction(
       buildBoard(configuration.rows, configuration.columns, row, column, configuration.mines),
@@ -62,13 +78,23 @@ export const cellClick = (row: number, column: number): AppThunkAction<Minesweep
 
   const cell = board[row][column];
 
-  if (cell.Status === CellStatus.MarkedAsMine) return;
+  if (
+    cell.Status === CellStatus.MarkedAsMine ||
+    cell.Status === CellStatus.DiscoveredAndEmpty ||
+    cell.Status === CellStatus.DiscoveredAndNumber
+  )
+    return;
 
   if (cell.IsMine) {
     dispatch(clickOnMine(board, cell));
   } else {
     const cellsAlreadyDiscovered = getDiscovered(state);
     dispatch(clickOnNoMineSpace(board, cell, cellsAlreadyDiscovered));
+    const newState = getState();
+    const isWon = getIsGameWon(newState);
+    if (isWon) {
+      dispatch(finishAction(getBoard(newState)));
+    }
   }
 };
 
@@ -156,6 +182,8 @@ export const switchMarkAsMine = (
   column: number
 ): AppThunkAction<MinesweeperAction> => async (dispatch, getState) => {
   const state = getState();
+  const isGameOver = getIsFinished(state);
+  if (isGameOver) return;
   const board = getBoard(state);
   const discovered = getDiscovered(state);
 

@@ -1,5 +1,5 @@
 import { random, sumBy, groupBy, isEmpty, keyBy } from "lodash";
-import { Cell, buildCell } from "./cellHelper";
+import { Cell, buildCell, CellStatus } from "./cellHelper";
 
 export const buildEmptyBoard = (rows: number, columns: number): Cell[][] => {
   var result: Cell[][] = [];
@@ -61,8 +61,14 @@ export const getCellsToReveal = (
   column: number,
   useRecursion = false
 ): Cell[] => {
-  if (useRecursion) getCellsToRevealRecursion(board, row, column);
-  return getCellsToRevealIterative(board, row, column);
+  const result = useRecursion
+    ? getCellsToRevealRecursion(board, row, column)
+    : getCellsToRevealIterative(board, row, column);
+
+  return result.filter(
+    it =>
+      it.Status !== CellStatus.DiscoveredAndEmpty && it.Status !== CellStatus.DiscoveredAndNumber
+  );
 };
 
 export const boardFromString = (boardInput: string): Cell[][] => {

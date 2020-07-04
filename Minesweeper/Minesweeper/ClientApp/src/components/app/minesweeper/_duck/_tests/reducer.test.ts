@@ -132,7 +132,6 @@ describe("components > app > minesweeper > reducer", () => {
     const previousState = {
       rows: 0,
       columns: 0,
-      gameIsStarted: true,
       gameStartTime: new Date(),
       gameFinishTime: new Date(),
       mines: 13,
@@ -157,7 +156,6 @@ describe("components > app > minesweeper > reducer", () => {
       board: action.board,
       rows: ROWS,
       columns: COLS,
-      gameIsStarted: false,
       gameStartTime: null,
       gameFinishTime: null,
       mines: 0
