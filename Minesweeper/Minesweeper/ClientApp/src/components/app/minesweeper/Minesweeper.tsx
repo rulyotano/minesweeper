@@ -3,10 +3,10 @@ import Button from "@material-ui/core/Button";
 import { Typography } from "@material-ui/core";
 import { Cell } from "./helpers/cellHelper";
 import Board from "./components/board";
+import ElapsedSeconds from "./components/ElapsedSeconds";
 import {
   gameConfigurations,
-  IBoardConfiguration,
-  calculateTimeElapsed
+  IBoardConfiguration
 } from "./helpers/gameHelper";
 
 const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: MinesweeperProps) => {
@@ -25,13 +25,6 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
     surrounding
   } = props;
 
-  const [ currentTime, setCurrentTime ] = React.useState(0);
-  const calculateTimeParams = {
-    startTime,
-    endTime
-  };
-  const calculateTimeParamsRef = React.useRef(calculateTimeParams);
-  calculateTimeParamsRef.current = calculateTimeParams;
   const configuration = gameConfigurations.beginner;
 
   const initializeWithConfiguration = () => initialize(configuration);
@@ -41,13 +34,6 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
   React.useEffect(
     () => {
       initializeWithConfiguration();
-
-      const intervalId = setInterval(() => {
-        const { startTime, endTime } = calculateTimeParamsRef.current;
-        setCurrentTime(calculateTimeElapsed(startTime, endTime));
-      }, ONE_SECOND_MS);
-
-      return () => clearInterval(intervalId);
     },
     // eslint-disable-next-line
     [ initialize ]
@@ -55,7 +41,9 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
 
   return (
     <div>
-      <p>Time: {currentTime}</p>
+      <p>
+        Time: <ElapsedSeconds startTime={startTime} endTime={endTime} />
+      </p>
 
       {gameEnded ? <Button onClick={initializeWithConfiguration}>Re-start</Button> : null}
 
@@ -89,6 +77,4 @@ export interface MinesweeperProps {
   surrounding: (row: number, column: number) => void;
 }
 
-const ONE_SECOND_MS = 1000;
-
-export default Minesweeper;
+export default React.memo(Minesweeper);

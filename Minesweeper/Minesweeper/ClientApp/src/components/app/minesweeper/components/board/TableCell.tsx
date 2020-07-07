@@ -117,4 +117,4 @@ export interface TableCellProps {
 
 const TOUCH_WAIT_MS = 500;
 
-export default TableCell;
+export default React.memo(TableCell);
