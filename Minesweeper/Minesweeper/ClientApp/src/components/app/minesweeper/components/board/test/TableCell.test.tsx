@@ -1,5 +1,5 @@
 import React from "react";
-import { shallow } from "enzyme";
+import { mount } from "enzyme";
 import TableCell, { TableCellProps } from "../TableCell";
 import { buildCell, Cell, CellStatus } from "../../../helpers/cellHelper";
 
@@ -10,16 +10,16 @@ describe("components > app > minesweeper > components > board > Cell", () => {
     return <TableCell {...props} />;
   };
 
-  const shallowWrapper = (props = getPropsWithCell()) => {
-    return shallow(componentCreation(props));
-  };
+  const mountWrapper = (props = getPropsWithCell()) => {
+    return mount(componentCreation(props));
+  };  
 
   beforeEach(() => {});
 
   afterEach(() => {});
 
   test("Component is mounted", () => {
-    const wrapper = shallowWrapper();
+    const wrapper = mountWrapper();
     expect(wrapper.exists()).toBeTruthy();
   });
 
@@ -28,10 +28,10 @@ describe("components > app > minesweeper > components > board > Cell", () => {
     cell.Status = CellStatus.DiscoveredAndNumber;
     cell.MinesAround = 5;
 
-    const wrapper = shallowWrapper(getPropsWithCell(cell));
+    const wrapper = mountWrapper(getPropsWithCell(cell));
     const cellNumber = wrapper.find(`#${CELL_NUMBER_ID}`);
-    expect(cellNumber).toHaveLength(1);
-    expect(cellNumber.text()).toEqual(`${cell.MinesAround}`);
+    expect(cellNumber).not.toHaveLength(0);
+    expect(cellNumber.first().text()).toEqual(`${cell.MinesAround}`);
 
     const cellFlag = wrapper.find(`#${CELL_FLAG_ID}`);
     expect(cellFlag).toHaveLength(0);
@@ -42,10 +42,10 @@ describe("components > app > minesweeper > components > board > Cell", () => {
     cell.Status = CellStatus.MarkedAsMine;
     cell.MinesAround = 5;
 
-    const wrapper = shallowWrapper(getPropsWithCell(cell));
+    const wrapper = mountWrapper(getPropsWithCell(cell));
 
     const cellFlag = wrapper.find(`#${CELL_FLAG_ID}`);
-    expect(cellFlag).toHaveLength(1);
+    expect(cellFlag).not.toHaveLength(0);
 
     const cellNumber = wrapper.find(`#${CELL_NUMBER_ID}`);
     expect(cellNumber).toHaveLength(0);
@@ -56,10 +56,10 @@ describe("components > app > minesweeper > components > board > Cell", () => {
     cell.Status = CellStatus.MarkedAsMineButEmpty;
     cell.MinesAround = 5;
 
-    const wrapper = shallowWrapper(getPropsWithCell(cell));
+    const wrapper = mountWrapper(getPropsWithCell(cell));
 
     const cellFlag = wrapper.find(`#${CELL_WRONG_FLAG_ID}`);
-    expect(cellFlag).toHaveLength(1);
+    expect(cellFlag).not.toHaveLength(0);
 
     const cellNumber = wrapper.find(`#${CELL_NUMBER_ID}`);
     expect(cellNumber).toHaveLength(0);
@@ -70,10 +70,10 @@ describe("components > app > minesweeper > components > board > Cell", () => {
     cell.Status = CellStatus.ExploitedMine;
     cell.MinesAround = 5;
 
-    const wrapper = shallowWrapper(getPropsWithCell(cell));
+    const wrapper = mountWrapper(getPropsWithCell(cell));
 
     const cellFlag = wrapper.find(`#${CELL_EXPLOSION_FLAG_ID}`);
-    expect(cellFlag).toHaveLength(1);
+    expect(cellFlag).not.toHaveLength(0);
 
     const cellNumber = wrapper.find(`#${CELL_NUMBER_ID}`);
     expect(cellNumber).toHaveLength(0);
@@ -83,7 +83,7 @@ describe("components > app > minesweeper > components > board > Cell", () => {
     const cell = getDefaultCell();
     const props = getPropsWithCell(cell);
 
-    const wrapper = shallowWrapper(props);
+    const wrapper = mountWrapper(props);
     wrapper.simulate("mouseUp", leftButtonEvent);
 
     expect(props.discoverCell).toHaveBeenCalledWith(cell);
@@ -95,7 +95,7 @@ describe("components > app > minesweeper > components > board > Cell", () => {
     const cell = getDefaultCell();
     const props = getPropsWithCell(cell);
 
-    const wrapper = shallowWrapper(props);
+    const wrapper = mountWrapper(props);
     wrapper.simulate("mouseUp", rightButtonEvent);
 
     expect(props.discoverCell).not.toHaveBeenCalled();
@@ -107,7 +107,7 @@ describe("components > app > minesweeper > components > board > Cell", () => {
     const cell = getDefaultCell();
     const props = getPropsWithCell(cell);
 
-    const wrapper = shallowWrapper(props);
+    const wrapper = mountWrapper(props);
     wrapper.simulate("mouseDown", leftButtonEvent);
     wrapper.simulate("mouseDown", rightButtonEvent);
     wrapper.simulate("mouseUp", leftButtonEvent);
@@ -121,7 +121,7 @@ describe("components > app > minesweeper > components > board > Cell", () => {
     const cell = getDefaultCell();
     const props = getPropsWithCell(cell);
 
-    const wrapper = shallowWrapper(props);
+    const wrapper = mountWrapper(props);
     wrapper.simulate("mouseDown", rightButtonEvent);
     wrapper.simulate("mouseDown", leftButtonEvent);
     wrapper.simulate("mouseUp", leftButtonEvent);
@@ -135,7 +135,7 @@ describe("components > app > minesweeper > components > board > Cell", () => {
     const cell = getDefaultCell();
     const props = getPropsWithCell(cell);
 
-    const wrapper = shallowWrapper(props);
+    const wrapper = mountWrapper(props);
     wrapper.simulate("doubleClick", leftButtonEvent);
 
     expect(props.discoverCell).not.toHaveBeenCalled();

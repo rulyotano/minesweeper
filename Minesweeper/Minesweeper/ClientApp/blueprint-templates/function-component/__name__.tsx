@@ -10,4 +10,4 @@ interface {{pascalCase name}}Props {
   someProp?: string;
 }
 
-export default {{pascalCase name}};
+export default React.memo({{pascalCase name}});
