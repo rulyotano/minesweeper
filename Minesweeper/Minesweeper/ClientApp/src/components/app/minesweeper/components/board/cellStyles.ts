@@ -12,6 +12,7 @@ export default (theme: Theme) =>
       width: theme.spacing(5),
       borderStyle: "solid",
       borderWidth: theme.spacing(0.1),
+      borderColor: theme.palette.text.primary,
       WebkitTouchCallout: "none",
       WebkitUserSelect: "none",
       KhtmlUserSelect: "none",
