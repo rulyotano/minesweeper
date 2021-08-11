@@ -13,9 +13,9 @@ const TableCell: React.FunctionComponent<TableCellProps> = props => {
   const { cell, discoverSurrounding, discoverCell, toggleCellMark } = props;
 
   const classes = useStyles(props);
-  const [ isLeftClicked, setIsLeftClicked ] = React.useState(false);
-  const [ isRightClicked, setIsRightClicked ] = React.useState(false);
-  const [ notUseMouseUp, setNotUseMouseUp ] = React.useState(false);
+  const [isLeftClicked, setIsLeftClicked] = React.useState(false);
+  const [isRightClicked, setIsRightClicked] = React.useState(false);
+  const [notUseMouseUp, setNotUseMouseUp] = React.useState(false);
   const currentTouchKey = React.useRef(0);
 
   const status = cell.Status;
@@ -93,17 +93,19 @@ const TableCell: React.FunctionComponent<TableCellProps> = props => {
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
     >
-      {status === CellStatus.DiscoveredAndNumber ? (
-        <Typography id="cell-number">{cell.MinesAround}</Typography>
-      ) : null}
+      <div className={classes.cellContent}>
+        {status === CellStatus.DiscoveredAndNumber ? (
+          <Typography id="cell-number">{cell.MinesAround}</Typography>
+        ) : null}
 
-      {status === CellStatus.Mine ? <MinesIcon id="mine" /> : null}
+        {status === CellStatus.Mine ? <MinesIcon id="mine" /> : null}
 
-      {status === CellStatus.MarkedAsMine ? <FlagIcon id="flag" /> : null}
+        {status === CellStatus.MarkedAsMine ? <FlagIcon id="flag" /> : null}
 
-      {status === CellStatus.MarkedAsMineButEmpty ? <MinesIcon id="wrong-flag" /> : null}
+        {status === CellStatus.MarkedAsMineButEmpty ? <MinesIcon id="wrong-flag" /> : null}
 
-      {status === CellStatus.ExploitedMine ? <MinesIcon id="mine-explosion" /> : null}
+        {status === CellStatus.ExploitedMine ? <MinesIcon id="mine-explosion" /> : null}
+      </div>
     </td>
   );
 };

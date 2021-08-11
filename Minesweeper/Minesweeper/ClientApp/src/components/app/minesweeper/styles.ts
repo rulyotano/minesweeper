@@ -3,9 +3,8 @@ import createStyles from "@material-ui/core/styles/createStyles";
 
 export default (theme: Theme) =>
   createStyles({
-    table: {
-      borderStyle: "solid",
-      borderWidth: theme.spacing(0.1),
-      borderCollapse: "collapse"
+    centeredContainer: {
+      display: "flex",
+      justifyContent: "center"
     }
   });

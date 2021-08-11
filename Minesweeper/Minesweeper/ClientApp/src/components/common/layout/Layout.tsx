@@ -14,7 +14,7 @@ const Layout: React.FunctionComponent<LayoutProps> = props => {
       <div className={classes.root}>
         <Header />
         <Container>
-          <div>{props.children}</div>
+          <>{props.children}</>
         </Container>
       </div>
     </React.Fragment>

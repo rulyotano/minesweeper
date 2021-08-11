@@ -21,7 +21,7 @@ const ElapsedSeconds: React.FunctionComponent<ElapsedSecondsProps> = (
       const intervalId = setInterval(() => {
         const { startTime, endTime } = calculateTimeParamsRef.current;
         setCurrentTime(calculateTimeElapsed(startTime, endTime));
-      }, ONE_SECOND_MS);
+      }, UPDATE_TIME_PERIOD_MS);
 
       return () => clearInterval(intervalId);
     },
@@ -37,6 +37,6 @@ interface ElapsedSecondsProps {
   endTime: Date | null;
 }
 
-const ONE_SECOND_MS = 1000;
+const UPDATE_TIME_PERIOD_MS = 500;
 
 export default React.memo(ElapsedSeconds);

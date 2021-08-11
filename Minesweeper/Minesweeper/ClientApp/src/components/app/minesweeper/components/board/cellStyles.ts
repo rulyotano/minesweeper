@@ -1,5 +1,5 @@
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
-import createStyles from "@material-ui/core/styles/createStyles";
+import { darken, createStyles } from "@material-ui/core/styles";
 import { TableCellProps } from "./TableCell";
 import { CellStatus } from "../../helpers/cellHelper";
 
@@ -19,6 +19,11 @@ export default (theme: Theme) =>
       msUserSelect: "none",
       userSelect: "none",
       WebkitTapHighlightColor: "rgba(0,0,0,0)"
+    },
+    cellContent: {      
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center"
     }
   });
 
@@ -51,17 +56,18 @@ const getTextColorFromCell = (theme: Theme, props: TableCellProps) => {
 };
 
 const getBackgroundColorFromCell = (theme: Theme, props: TableCellProps) => {
+  const discoveredBackgroundColor = darken(theme.palette.background.default, 0.2);
   if (
     props.cell.Status === CellStatus.DiscoveredAndEmpty ||
     props.cell.Status === CellStatus.DiscoveredAndNumber
   )
-    return theme.palette.grey[300];
+    return discoveredBackgroundColor;
 
   if (
     props.cell.Status === CellStatus.ExploitedMine ||
     props.cell.Status === CellStatus.MarkedAsMineButEmpty
   )
-    return theme.palette.error.light;
+    return discoveredBackgroundColor;
 
-  return theme.palette.grey[100];
+  return theme.palette.background.default;
 };

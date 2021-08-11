@@ -1,6 +1,7 @@
 import React from "react";
 import Button from "@material-ui/core/Button";
 import { Typography } from "@material-ui/core";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 import { Cell } from "./helpers/cellHelper";
 import Board from "./components/board";
 import ElapsedSeconds from "./components/ElapsedSeconds";
@@ -8,6 +9,9 @@ import {
   gameConfigurations,
   IBoardConfiguration
 } from "./helpers/gameHelper";
+import styles from "./styles";
+
+const useStyles = makeStyles(styles);
 
 const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: MinesweeperProps) => {
   const {
@@ -25,6 +29,8 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
     surrounding
   } = props;
 
+  const classes = useStyles(props);
+
   const configuration = gameConfigurations.beginner;
 
   const initializeWithConfiguration = () => initialize(configuration);
@@ -40,23 +46,25 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
   );
 
   return (
-    <div>
-      <p>
-        Time: <ElapsedSeconds startTime={startTime} endTime={endTime} />
-      </p>
+    <div className={classes.centeredContainer}>
+      <div>
+        <p>
+          Time: <ElapsedSeconds startTime={startTime} endTime={endTime} />
+        </p>
 
-      {gameEnded ? <Button onClick={initializeWithConfiguration}>Re-start</Button> : null}
+        {gameEnded ? <Button onClick={initializeWithConfiguration}>Re-start</Button> : null}
 
-      {isWin ? <Typography>Congrats!!! You Win!!!</Typography> : null}
-      {isLost ? <Typography>You Lost. Try another more time!!!</Typography> : null}
+        {isWin ? <Typography>Congrats!!! You Win!!!</Typography> : null}
+        {isLost ? <Typography>You Lost. Try another more time!!!</Typography> : null}
 
-      <Board
-        board={board}
-        discoverCell={cell =>
-          isStarted ? click(cell.Row, cell.Column) : beginWithConfiguration(cell)}
-        toggleCellMark={cell => switchCell(cell.Row, cell.Column)}
-        discoverSurrounding={cell => surrounding(cell.Row, cell.Column)}
-      />
+        <Board
+          board={board}
+          discoverCell={cell =>
+            isStarted ? click(cell.Row, cell.Column) : beginWithConfiguration(cell)}
+          toggleCellMark={cell => switchCell(cell.Row, cell.Column)}
+          discoverSurrounding={cell => surrounding(cell.Row, cell.Column)}
+        />
+      </div>
     </div>
   );
 };
