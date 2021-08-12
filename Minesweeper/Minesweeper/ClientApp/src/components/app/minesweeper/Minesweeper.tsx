@@ -1,15 +1,13 @@
 import React from "react";
-import Button from "@material-ui/core/Button";
-import { Typography } from "@material-ui/core";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { Cell } from "./helpers/cellHelper";
 import Board from "./components/board";
-import ElapsedSeconds from "./components/ElapsedSeconds";
 import {
   gameConfigurations,
   IBoardConfiguration
 } from "./helpers/gameHelper";
 import styles from "./styles";
+import InfoBar from "./components/infoBar";
 
 const useStyles = makeStyles(styles);
 
@@ -18,7 +16,7 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
     board,
     startTime,
     endTime,
-    gameEnded,
+    // gameEnded,
     isStarted,
     isWin,
     isLost,
@@ -42,21 +40,14 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
       initializeWithConfiguration();
     },
     // eslint-disable-next-line
-    [ initialize ]
+    [initialize]
   );
 
   return (
     <div className={classes.centeredContainer}>
       <div>
-        <p>
-          Time: <ElapsedSeconds startTime={startTime} endTime={endTime} />
-        </p>
-
-        {gameEnded ? <Button onClick={initializeWithConfiguration}>Re-start</Button> : null}
-
-        {isWin ? <Typography>Congrats!!! You Win!!!</Typography> : null}
-        {isLost ? <Typography>You Lost. Try another more time!!!</Typography> : null}
-
+        <InfoBar time={{ startTime, endTime }} onReset={initializeWithConfiguration} gameState={{ isWin, isLost }} />
+        
         <Board
           board={board}
           discoverCell={cell =>
