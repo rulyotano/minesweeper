@@ -1,0 +1,10 @@
+version: "3.9"
+services:
+  minesweeper-client:
+    image: ${DOCKER_REGISTRY-}minesweeper-client
+    build:
+      context: presentation/web
+
+volumes: 
+  minesweeper-front-app:
+  minesweeper-front-app-packages:
