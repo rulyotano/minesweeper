@@ -1,5 +1,4 @@
 import { Thunk } from "redux-testkit";
-import _ from "lodash";
 import {
   RESET,
   BEGIN_GAME,

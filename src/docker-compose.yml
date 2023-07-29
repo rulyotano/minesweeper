@@ -4,7 +4,4 @@ services:
     image: ${DOCKER_REGISTRY-}minesweeper-client
     build:
       context: presentation/web
-
-volumes: 
-  minesweeper-front-app:
-  minesweeper-front-app-packages:
+      target: prod

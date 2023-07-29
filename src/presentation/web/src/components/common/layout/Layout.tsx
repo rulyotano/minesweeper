@@ -1,5 +1,5 @@
 import * as React from "react";
-import { makeStyles } from "@material-ui/core/styles";
+import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
 import Header from "../header";
 import styles from "./styles";

@@ -2,7 +2,6 @@ import React from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Button from "@material-ui/core/Button";
 import HourglassEmptyIcon from "@material-ui/icons/HourglassEmpty";
-// import Brightness5OutlinedIcon from "@material-ui/icons/Brightness5Outlined";
 import styles from "./styles";
 import ElapsedSeconds from "../../components/ElapsedSeconds";
 

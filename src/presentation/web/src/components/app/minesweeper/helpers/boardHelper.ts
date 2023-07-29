@@ -1,4 +1,8 @@
-import { random, sumBy, groupBy, isEmpty, keyBy } from "lodash";
+import random from "lodash/random";
+import sumBy from "lodash/sumBy";
+import groupBy from "lodash/groupBy";
+import isEmpty from "lodash/isEmpty";
+import keyBy from "lodash/keyBy";
 import { Cell, buildCell, CellStatus } from "./cellHelper";
 
 export const buildEmptyBoard = (rows: number, columns: number): Cell[][] => {

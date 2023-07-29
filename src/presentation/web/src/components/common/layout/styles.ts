@@ -1,6 +1,6 @@
-import { Theme, createStyles } from "@material-ui/core/styles";
+import createStyles from "@material-ui/core/styles/createStyles";
 
-export default (theme: Theme) =>
+export default () =>
   createStyles({
     root: {
       flexGrow: 1,

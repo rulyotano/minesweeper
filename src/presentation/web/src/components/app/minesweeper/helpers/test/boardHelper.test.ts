@@ -1,4 +1,5 @@
-import { sumBy, orderBy } from "lodash";
+import sumBy from "lodash/sumBy";
+import orderBy from "lodash/orderBy";
 import deepFreeze from "deep-freeze";
 import {
   buildEmptyBoard,

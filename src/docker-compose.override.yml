@@ -4,10 +4,4 @@ services:
     container_name: minesweeper-client
     restart: always
     ports:
-      - "3001:3000"
-    volumes:
-      - minesweeper-front-app:/app
-      - minesweeper-front-app-packages:/app/node_modules
-    environment:
-      - CHOKIDAR_USEPOLLING=true
-    tty: true
+      - "3001:80"

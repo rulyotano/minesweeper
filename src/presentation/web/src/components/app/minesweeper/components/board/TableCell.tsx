@@ -1,5 +1,5 @@
 import React from "react";
-import { delay } from "lodash";
+import delay from "lodash/delay";
 import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import MinesIcon from "@material-ui/icons/Brightness5Outlined";

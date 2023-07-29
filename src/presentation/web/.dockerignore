@@ -2,4 +2,8 @@ node_modules
 build
 .dockerignore
 Dockerfile
-Dockerfile.prod
+blueprint-templates
+.vscode
+.gitignore
+README.md
+yarn-error.log

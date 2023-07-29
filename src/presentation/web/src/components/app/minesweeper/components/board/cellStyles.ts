@@ -1,5 +1,6 @@
 import { Theme } from "@material-ui/core/styles/createMuiTheme";
-import { darken, createStyles } from "@material-ui/core/styles";
+import { darken } from "@material-ui/core/styles/colorManipulator";
+import createStyles from "@material-ui/core/styles/createStyles";
 import { TableCellProps } from "./TableCell";
 import { CellStatus } from "../../helpers/cellHelper";
 
