@@ -78,7 +78,8 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           push: true
-          tags: ${{ github.run_id }}
+          tags: ${{ steps.docker_meta.outputs.tags }}
+          labels: ${{ steps.docker_meta.outputs.labels }}
           target: prod
           cache-from: type=gha
           cache-to: type=gha,mode=max
