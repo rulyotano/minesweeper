@@ -70,6 +70,8 @@ jobs:
           images: rulyotano/minesweeper-presentation-web
           flavor: |
             latest=true
+          tags: |
+            type=raw,value=04
             type=ref,event=pr
             type=ref,event=branch
             type=semver,pattern={{version}}
