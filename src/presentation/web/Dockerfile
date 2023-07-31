@@ -26,3 +26,4 @@ RUN apk add libcap && chown -hR www-data:www-data /usr/local/apache2/ && \
   setcap 'cap_net_bind_service=+ep' /usr/local/apache2/bin/httpd
 USER "www-data"
 COPY --from=build --chown=www-data:www-data /app/build /usr/local/apache2/htdocs/
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD wget -O - http://localhost || exit 1s
