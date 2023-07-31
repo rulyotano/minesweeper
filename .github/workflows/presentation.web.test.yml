@@ -5,11 +5,10 @@ name: Presentation Web Test
 
 on:
   pull_request:
-    branches: [ master ]
-    paths: ../src/presentation/web
+    paths: src/presentation/web
   push:
     branches: [ master ]
-    paths: ../src/presentation/web
+    paths: src/presentation/web
 
 jobs:
   build-test-image:    
