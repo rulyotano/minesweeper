@@ -70,7 +70,6 @@ jobs:
           images: rulyotano/minesweeper-presentation-web
           flavor: |
             latest=true
-            type=raw,value=latest,enable=${{ endsWith(github.ref, github.event.repository.default_branch) }}
             type=ref,event=pr
             type=ref,event=branch
             type=semver,pattern={{version}}
