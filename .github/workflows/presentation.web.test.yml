@@ -42,4 +42,45 @@ jobs:
       - name: Unit Testing in Docker
         run: |
           docker run --rm ${{ github.run_id }}
-      
+
+  build-push-image:
+    name: Build and push image
+    runs-on: ubuntu-latest
+
+    # if: ${{ github.event_name != 'pull_request' }}
+
+    needs:
+      - build-test-image
+    permissions:
+      pull-requests: write # needed to create and update comments in PRs
+    steps:
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Docker Metadata for Final Image Build
+        id: docker_meta
+        uses: docker/metadata-action@v4
+        with:
+          images: rulyotano/minesweeper-presentation-web
+          flavor: |
+            latest=true
+            type=raw,value=latest,enable=${{ endsWith(github.ref, github.event.repository.default_branch) }}
+            type=ref,event=pr
+            type=ref,event=branch
+            type=semver,pattern={{version}}
+      - name: Docker build and Push
+        uses: docker/build-push-action@v4
+        with:
+          push: true
+          tags: ${{ github.run_id }}
+          target: prod
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          context: src/presentation/web/
