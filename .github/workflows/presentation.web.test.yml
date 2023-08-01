@@ -100,5 +100,5 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           context: src/presentation/web/
-          file: src/presentation/web/Dockerfile.prod
+          file: '{context}/Dockerfile.prod'
           platforms: linux/amd64,linux/arm64,linux/arm/v7
