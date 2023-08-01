@@ -19,7 +19,6 @@ jobs:
   build-test-image:    
     name: Build and test image
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v3
       - name: Set up Docker Buildx
@@ -46,9 +45,9 @@ jobs:
   build-push-image:
     name: Build and push image
     runs-on: ubuntu-latest
-    # if: ${{ github.event_name != 'pull_request' }}
-    #needs:
-    #  - build-test-image
+    if: ${{ github.event_name != 'pull_request' }}
+    needs:
+      - build-test-image
     permissions:
       pull-requests: write # needed to create and update comments in PRs
     steps:
