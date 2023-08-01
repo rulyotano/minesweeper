@@ -19,6 +19,7 @@ jobs:
   build-test-image:    
     name: Build and test image
     runs-on: ubuntu-latest
+    if: ${{ github.event_name != 'pull_request' }}
     steps:
       - uses: actions/checkout@v3
       - name: Set up Docker Buildx
@@ -40,15 +41,14 @@ jobs:
           platforms: linux/amd64
           context: src/presentation/web/
       - name: Unit Testing in Docker
-        run: |
-          docker run --rm ${{ github.run_id }}
+        run: docker run --rm ${{ github.run_id }}
 
   build-push-image:
     name: Build and push image
     runs-on: ubuntu-latest
-    if: ${{ github.event_name != 'pull_request' }}
-    needs:
-      - build-test-image
+    # if: ${{ github.event_name != 'pull_request' }}
+    #needs:
+    #  - build-test-image
     permissions:
       pull-requests: write # needed to create and update comments in PRs
     steps:
@@ -60,6 +60,24 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Compile
+        uses: docker/build-push-action@v4
+        with:
+          push: false
+          load: true
+          tags: ${{ github.run_id }}
+          target: build
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          platforms: linux/amd64
+          context: src/presentation/web/
+      - name: Copy build directory
+        run: |
+          docker run -d --name mineswipper-build ${{ github.run_id }} ping localhost
+          docker cp mineswipper-build:/app/build ./src/presentation/web/
+          docker rm -f mineswipper-build
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
       - name: Docker Metadata for Final Image Build
         id: docker_meta
         uses: docker/metadata-action@v4
@@ -81,3 +99,5 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           context: src/presentation/web/
+          file: Dockerfile.prod
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
