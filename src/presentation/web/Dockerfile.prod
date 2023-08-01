@@ -3,5 +3,5 @@ EXPOSE 80
 RUN apk add libcap && chown -hR www-data:www-data /usr/local/apache2/ && \
   setcap 'cap_net_bind_service=+ep' /usr/local/apache2/bin/httpd
 USER "www-data"
-COPY --chown=www-data:www-data /src/presentation/web/build/ /usr/local/apache2/htdocs/
+COPY --chown=www-data:www-data build /usr/local/apache2/htdocs/
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD wget -O - http://localhost || exit 1s
