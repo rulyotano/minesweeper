@@ -77,6 +77,10 @@ jobs:
           docker cp mineswipper-build:/app/build ./src/presentation/web/
           docker rm -f mineswipper-build
           ls ./src/presentation/web/build
+      - name: Check build dir
+        run: |
+          echo ====Listing build directory====
+          ls ./src/presentation/web/build
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
       - name: Docker Metadata for Final Image Build
@@ -100,5 +104,5 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
           context: src/presentation/web/
-          file: '{context}/Dockerfile.prod'
+          file: src/presentation/web/Dockerfile.prod
           platforms: linux/amd64,linux/arm64,linux/arm/v7
