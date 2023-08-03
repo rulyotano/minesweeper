@@ -43,8 +43,19 @@ jobs:
           context: src/presentation/web/
       - name: Unit Testing in Docker
         run: docker run --rm ${{ github.run_id }}
+      - name: Docker Metadata for Final Image Build
+        id: docker_meta
+        uses: docker/metadata-action@v4
+        with:
+          images: rulyotano/minesweeper-presentation-web
+          flavor: |
+            latest=true
+          tags: |
+            type=ref,event=pr
+            type=ref,event=branch
+            type=semver,pattern={{version}}      
       - name: Find comment for image tags
-        uses: peter-evans/find-comment@v1
+        uses: peter-evans/find-comment@v2
         if: github.event_name == 'pull_request'
         id: fc
         with:
@@ -52,7 +63,7 @@ jobs:
           comment-author: 'github-actions[bot]'
           body-includes: Docker image tag(s) pushed
       - name: Create or update comment for image tags
-        uses: peter-evans/create-or-update-comment@v1
+        uses: peter-evans/create-or-update-comment@v3
         if: github.event_name == 'pull_request'
         with:
           comment-id: ${{ steps.fc.outputs.comment-id }}
