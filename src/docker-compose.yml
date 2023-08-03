@@ -1,7 +1,23 @@
 version: "3.9"
 services:
+  reverse-proxy:
+    image: traefik:v2.10
+    # Enables the web UI and tells Traefik to listen to docker
+    command: --api.insecure=true --providers.docker
+    ports:
+      # The HTTP port
+      - "80:80"
+      # The Web UI (enabled by --api.insecure=true)
+      - "8080:8080"
+    volumes:
+      # So that Traefik can listen to the Docker events
+      - /var/run/docker.sock:/var/run/docker.sock
+
   minesweeper-client:
     image: ${DOCKER_REGISTRY-}minesweeper-client
+    restart: always
     build:
       context: presentation/web
-      target: prod
+      target: dev
+    labels:
+      - "traefik.http.routers.minesweeper.rule=Host(`web.minesweeper.localhost`)"
