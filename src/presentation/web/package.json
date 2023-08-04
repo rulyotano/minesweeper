@@ -50,7 +50,7 @@
     "typescript": "3.6.4"
   },
   "scripts": {
-    "start": "react-scripts start && ping -i 100 localhost",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "cross-env CI=true react-scripts test --env=jsdom",
     "test-w": "cross-env CI=true react-scripts test --env=jsdom --watch",

@@ -21,3 +21,6 @@ services:
       target: dev
     labels:
       - "traefik.http.routers.minesweeper.rule=Host(`web.minesweeper.localhost`)"
+      - "traefik.http.services.minesweeper.loadbalancer.server.port=3000"
+    environment:
+      - CI=true
