@@ -24,7 +24,7 @@ services:
         - "traefik.http.middlewares.auth.basicauth.users=rulyotano:$$2y$$05$$X8IeCe9aTKfQUFR6EMujqeASB22nQg1Ho.naDVh31yuz9xY2z4ux2"
 
   minesweeper-client:
-    image: rulyotano/minesweeper-presentation-web:pr-27
+    image: rulyotano/minesweeper-presentation-web:0.0.1
     deploy:
       replicas: 1
       restart_policy:
