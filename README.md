@@ -1,7 +1,3 @@
-
-
-[![Build status](https://dev.azure.com/rulyotano/minesweeper/_apis/build/status/WebMinesweeper%20-%201%20-%20CI)](https://dev.azure.com/rulyotano/minesweeper/_build/latest?definitionId=3)
-
 # minesweeper
 React Minesweeper (for academical propose)
 
@@ -12,4 +8,4 @@ The idea of this project is continuing developing a code sample project, trying 
 ![Alt text](/images/mineminesweeper-redux.gif?raw=true "My Minesweeper Redux")
 
 # latest update
-Latest progress can be seen at [this free azure link](https://webminesweeper.azurewebsites.net/mines-sweeper).
+Latest progress can be seen [here](https://minesweeper.rulyotano.com/mines-sweeper)!.
