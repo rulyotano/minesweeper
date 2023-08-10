@@ -17,7 +17,7 @@ services:
         constraints:
           - node.role==manager
       labels:
-        - "traefik.http.routers.dashboard.rule=Host(`traefik.localhost.com`)"
+        - "traefik.http.routers.dashboard.rule=Host(`traefik.localhost.com`, `traefik.minesweeper.rulyotano.com`)"
         - "traefik.http.services.minesweeper.loadbalancer.server.port=8080"
         - "traefik.http.routers.dashboard.service=api@internal"
         - "traefik.http.routers.dashboard.middlewares=auth"
@@ -30,5 +30,5 @@ services:
       restart_policy:
         condition: on-failure
       labels:
-        - "traefik.http.routers.minesweeper.rule=Host(`minesweeper.localhost.com`)"
+        - "traefik.http.routers.minesweeper.rule=Host(`minesweeper.localhost.com`, `minesweeper.rulyotano.com`)"
         - "traefik.http.services.minesweeper.loadbalancer.server.port=80"
