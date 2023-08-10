@@ -56,7 +56,7 @@ jobs:
           tags: |
             type=ref,event=pr
             type=ref,event=branch
-            type=raw,value=$VERSION
+            type=raw,value=${{ env.VERSION }}
       - name: Find comment for image tags
         uses: peter-evans/find-comment@v2
         if: github.event_name == 'pull_request'
@@ -126,7 +126,7 @@ jobs:
           tags: |
             type=ref,event=pr
             type=ref,event=branch
-            type=raw,value=$VERSION
+            type=raw,value=${{ env.VERSION }}
       - name: Docker build and Push
         uses: docker/build-push-action@v4
         with:
