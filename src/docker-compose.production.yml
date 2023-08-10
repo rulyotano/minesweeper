@@ -1,0 +1,34 @@
+version: "3.9"
+services:
+  reverse-proxy:
+    image: traefik:v2.10
+    environment:
+      - TRAEFIK_API=true
+      - TRAEFIK_API_DASHBOARD=true
+      - TRAEFIK_PROVIDERS_DOCKER=true
+      - TRAEFIK_PROVIDERS_DOCKER_SWARMMODE=true
+    ports:
+      - "80:80"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role==manager
+      labels:
+        - "traefik.http.routers.dashboard.rule=Host(`traefik.localhost.com`, `traefik.minesweeper.rulyotano.com`)"
+        - "traefik.http.services.minesweeper.loadbalancer.server.port=8080"
+        - "traefik.http.routers.dashboard.service=api@internal"
+        - "traefik.http.routers.dashboard.middlewares=auth"
+        - "traefik.http.middlewares.auth.basicauth.users=rulyotano:$$2y$$05$$X8IeCe9aTKfQUFR6EMujqeASB22nQg1Ho.naDVh31yuz9xY2z4ux2"
+
+  minesweeper-client:
+    image: rulyotano/minesweeper-presentation-web:pr-27
+    deploy:
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+      labels:
+        - "traefik.http.routers.minesweeper.rule=Host(`minesweeper.localhost.com`, `minesweeper.rulyotano.com`)"
+        - "traefik.http.services.minesweeper.loadbalancer.server.port=80"

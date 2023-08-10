@@ -1,7 +1,0 @@
-version: "3.9"
-services:
-  minesweeper-client:
-    container_name: minesweeper-client
-    restart: always
-    ports:
-      - "3001:80"
