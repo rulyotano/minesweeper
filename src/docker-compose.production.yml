@@ -7,17 +7,21 @@ services:
       - TRAEFIK_API_DASHBOARD=true
       - TRAEFIK_PROVIDERS_DOCKER=true
       - TRAEFIK_PROVIDERS_DOCKER_SWARMMODE=true
+      - TRAEFIK_CERTIFICATESRESOLVERS_MYCERTRESOLVER_ACME_EMAIL=contact@rulyotano.com
+      - TRAEFIK_CERTIFICATESRESOLVERS_MYCERTRESOLVER_ACME_STORAGE=acme.json
+      - TRAEFIK_CERTIFICATESRESOLVERS_MYCERTRESOLVER_ACME_HTTPCHALLENGE_ENTRYPOINT=web
     ports:
       - "80:80"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
+      - ~/minesweeper/acme.json:/acme.json
     deploy:
       replicas: 1
       placement:
         constraints:
           - node.role==manager
       labels:
-        - "traefik.http.routers.dashboard.rule=Host(`traefik.localhost.com`, `traefik.minesweeper.rulyotano.com`)"
+        - "traefik.http.routers.dashboard.rule=Host(`traefik.minesweeper.rulyotano.com`, `traefik.localhost.com`)"
         - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
         - "traefik.http.routers.dashboard.service=api@internal"
         - "traefik.http.routers.dashboard.middlewares=auth"
@@ -30,5 +34,7 @@ services:
       restart_policy:
         condition: on-failure
       labels:
-        - "traefik.http.routers.minesweeper.rule=Host(`minesweeper.localhost.com`, `minesweeper.rulyotano.com`)"
+        - "traefik.http.routers.minesweeper.rule=Host(`minesweeper.rulyotano.com`, `minesweeper.localhost.com`)"
         - "traefik.http.services.minesweeper.loadbalancer.server.port=80"
+        - "traefik.http.routers.minesweeper.tls=true"
+        - "traefik.http.routers.minesweeper.tls.certresolver=mycertresolver"
