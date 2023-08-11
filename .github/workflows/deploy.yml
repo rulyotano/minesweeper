@@ -12,7 +12,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Get swarm file from repo
-        run: wget $SWARM_FILE_ADDRESS -o docker-compose.yml
+        run: |
+          wget $SWARM_FILE_ADDRESS -o docker-compose.yml
+          ssh-keyscan minesweeper.rulyotano.com
       - name: Deploy to swarm
         uses: sagebind/docker-swarm-deploy-action@v2
         with:
