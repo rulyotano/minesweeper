@@ -18,7 +18,7 @@ jobs:
           username: ${{ secrets.REMOTE_USER }}
           key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
           script: |
-            wget ${{ env.SWARM_FILE_ADDRESS }} -o docker-compose.yml
+            wget ${{ env.SWARM_FILE_ADDRESS }} -O docker-compose.yml
             docker stack deploy -c docker-compose.yml minesweeper
-            rm docker-compose.yml
+            rm docker-compose.*
   
