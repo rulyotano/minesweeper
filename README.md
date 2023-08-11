@@ -8,4 +8,4 @@ The idea of this project is continuing developing a code sample project, trying 
 ![Alt text](/images/mineminesweeper-redux.gif?raw=true "My Minesweeper Redux")
 
 # latest update
-Latest progress can be seen [here](http://minesweeper.rulyotano.com/mines-sweeper)!.
+Latest progress can be seen [here](https://minesweeper.rulyotano.com/mines-sweeper)!.
