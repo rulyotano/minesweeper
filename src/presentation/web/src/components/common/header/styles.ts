@@ -9,4 +9,10 @@ export default (theme: Theme) =>
     title: {
       flexGrow: 1,
     },
+    noHeader: {
+      height: theme.spacing(11),
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+    }
   });
