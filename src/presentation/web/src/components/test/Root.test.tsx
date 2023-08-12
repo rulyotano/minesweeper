@@ -4,6 +4,8 @@ import { Provider } from "react-redux";
 import { MemoryRouter } from "react-router-dom";
 import App from "../Root";
 
+jest.mock("../app/minesweeper", () => () => null);
+
 it("renders without crashing", () => {
   const storeFake = (state: any) => ({
     default: () => {},
@@ -11,7 +13,7 @@ it("renders without crashing", () => {
     dispatch: () => {},
     getState: () => ({ ...state })
   });
-  const store = storeFake({}) as any;
+  const store = storeFake({ board: {} }) as any;
 
   ReactDOM.render(
     <Provider store={store}>
