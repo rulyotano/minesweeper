@@ -6,7 +6,9 @@ export default (theme: Theme) =>
     infoBarContainer: {
       display: "flex",
       justifyContent: "space-between",
-      margin: theme.spacing(1)
+      alignItems: "center",
+      margin: theme.spacing(1),
+      height: "64px"
     },
     lineCentered: {
       display: "flex",
@@ -18,6 +20,6 @@ export default (theme: Theme) =>
       textAlign: "right"
     },
     minesLeftContainer: {
-      width: theme.spacing(6)
+      width: theme.spacing(16),
     }
   });

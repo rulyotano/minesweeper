@@ -1,14 +1,15 @@
 import * as React from "react";
-import { Route, Switch } from "react-router";
+import { Route, Switch, Redirect } from "react-router";
 import Layout from "./common/layout/Layout";
-import Landing from "./app/landing";
 import Minesweeper from "./app/minesweeper";
 
 export default () => (
   <Layout>
     <Switch>
-      <Route exact path="/" component={Landing} />
-      <Route path="/mines-sweeper" component={Minesweeper} />
+      <Route exact path="/" component={Minesweeper} />
+      <Route>
+        <Redirect to="/"/>
+      </Route>
     </Switch>
   </Layout>
 );

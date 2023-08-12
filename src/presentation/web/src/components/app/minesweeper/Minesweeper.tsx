@@ -3,7 +3,6 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import { Cell } from "./helpers/cellHelper";
 import Board from "./components/board";
 import {
-  gameConfigurations,
   IBoardConfiguration
 } from "./helpers/gameHelper";
 import styles from "./styles";
@@ -24,12 +23,11 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
     begin,
     click,
     switchCell,
-    surrounding
+    surrounding,
+    configuration
   } = props;
 
   const classes = useStyles(props);
-
-  const configuration = gameConfigurations.beginner;
 
   const initializeWithConfiguration = () => initialize(configuration);
 
@@ -68,6 +66,7 @@ export interface MinesweeperProps {
   endTime: Date | null;
   isWin: boolean;
   isLost: boolean;
+  configuration: IBoardConfiguration;
 
   initialize: (configuration: IBoardConfiguration) => void;
   begin: (configuration: IBoardConfiguration, clickedCell: Cell) => void;
