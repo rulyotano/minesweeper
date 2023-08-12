@@ -23,8 +23,8 @@ services:
         constraints:
           - node.role==manager
       labels:
-        - "traefik.http.routers.dashboard.rule=Host(`traefik.minesweeper.rulyotano.com`)"
         - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
+        - "traefik.http.routers.dashboard.rule=Host(`traefik.minesweeper.rulyotano.com`)"
         - "traefik.http.routers.dashboard.service=api@internal"
         - "traefik.http.routers.dashboard.middlewares=auth"
         - "traefik.http.middlewares.auth.basicauth.users=rulyotano:$$2y$$05$$X8IeCe9aTKfQUFR6EMujqeASB22nQg1Ho.naDVh31yuz9xY2z4ux2"
@@ -36,10 +36,11 @@ services:
       restart_policy:
         condition: on-failure
       labels:
-        - "traefik.http.routers.minesweeper.rule=Host(`minesweeper.rulyotano.com`)"
         - "traefik.http.services.minesweeper.loadbalancer.server.port=80"
+        - "traefik.http.routers.minesweeper.rule=Host(`minesweeper.rulyotano.com`)"
         - "traefik.http.routers.minesweeper.tls=true"
         - "traefik.http.routers.minesweeper.tls.certresolver=mycertresolver"
-        - "traefik.http.middlewares.minesweeper.redirectscheme.scheme=https"
-        - "traefik.http.middlewares.minesweeper.redirectscheme.permanent=true"
-        - "traefik.http.routers.minesweeper.middlewares=minesweeper"
+        - "traefik.http.routers.minesweeperhttp.rule=Host(`minesweeper.rulyotano.com`)"
+        - "traefik.http.routers.minesweeperhttp.middlewares=redirecthttps"
+        - "traefik.http.middlewares.redirecthttps.redirectscheme.scheme=https"
+        - "traefik.http.middlewares.redirecthttps.redirectscheme.permanent=true"
