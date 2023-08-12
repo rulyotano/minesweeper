@@ -2,7 +2,7 @@ import React from "react";
 import { mount } from "enzyme";
 import InfoBar, { InfoBarProps } from "../InfoBar";
 
-// jest.mock("../defaultMenuItems");
+jest.mock("../../SizeSelector", () => () => null);
 
 describe("components > infoBar > InfoBar", () => {
   const componentCreation = (props: InfoBarProps) => {
