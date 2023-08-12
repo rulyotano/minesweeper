@@ -4,6 +4,7 @@ import Button from "@material-ui/core/Button";
 import HourglassEmptyIcon from "@material-ui/icons/HourglassEmpty";
 import styles from "./styles";
 import ElapsedSeconds from "../../components/ElapsedSeconds";
+import SizeSelector from "../SizeSelector";
 
 const useStyles = makeStyles(styles);
 const InfoBar: React.FunctionComponent<InfoBarProps> = (props: InfoBarProps) => {
@@ -24,7 +25,7 @@ const InfoBar: React.FunctionComponent<InfoBarProps> = (props: InfoBarProps) => 
         </Button>
       </div>
       <div className={classes.minesLeftContainer}>
-        {/* <Brightness5OutlinedIcon /> {minesLeft} */}
+        <SizeSelector />
       </div>
     </div>
   );

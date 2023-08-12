@@ -8,7 +8,9 @@ import {
   getStartTime,
   getFinishTime,
   getIsGameWon,
-  getIsGameLost
+  getIsGameLost,
+  getRows,
+  getColumns
 } from "./_duck/selectors";
 import {
   initialize,
@@ -18,7 +20,7 @@ import {
   revealSurroundingNoMarkedMines
 } from "./_duck/actions";
 import { Cell } from "./helpers/cellHelper";
-import { IBoardConfiguration } from "./helpers/gameHelper";
+import { IBoardConfiguration, gameConfigurationsCollection } from "./helpers/gameHelper";
 
 const MinesweeperContainer: React.FunctionComponent = () => {
   const board = useSelector(getBoard);
@@ -28,6 +30,9 @@ const MinesweeperContainer: React.FunctionComponent = () => {
   const endTime = useSelector(getFinishTime);
   const isWin = useSelector(getIsGameWon);
   const isLost = useSelector(getIsGameLost);
+  const rows = useSelector(getRows);
+  const columns = useSelector(getColumns);
+  const currentConfig = gameConfigurationsCollection.getConfiguration(rows, columns);
 
   const dispatch = useDispatch();
 
@@ -67,6 +72,7 @@ const MinesweeperContainer: React.FunctionComponent = () => {
       surrounding={surrounding}
       isWin={isWin}
       isLost={isLost}
+      configuration={currentConfig}
     />
   );
 };
