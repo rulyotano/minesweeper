@@ -43,7 +43,7 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
 
   return (
     <div className={classes.centeredContainer}>
-      <div>
+      <div className={classes.container}>
         <InfoBar time={{ startTime, endTime }} onReset={initializeWithConfiguration} gameState={{ isWin, isLost }} />
         
         <Board

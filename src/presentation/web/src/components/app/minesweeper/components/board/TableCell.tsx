@@ -67,7 +67,6 @@ const TableCell: React.FunctionComponent<TableCellProps> = props => {
   };
 
   const onTouchStart = (e: React.TouchEvent<HTMLTableDataCellElement>) => {
-    e.preventDefault();
     const currentTouch = currentTouchKey.current;
     delay(() => {
       if (currentTouch === currentTouchKey.current) {
@@ -117,6 +116,6 @@ export interface TableCellProps {
   discoverSurrounding: (cell: Cell) => void;
 }
 
-const TOUCH_WAIT_MS = 500;
+const TOUCH_WAIT_MS = 300;
 
 export default React.memo(TableCell);

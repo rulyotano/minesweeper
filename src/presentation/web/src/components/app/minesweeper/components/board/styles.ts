@@ -6,6 +6,13 @@ export default (theme: Theme) =>
     table: {
       borderStyle: "solid",
       borderWidth: theme.spacing(0.1),
-      borderCollapse: "collapse"
+      borderCollapse: "collapse",
+      tableLayout: "fixed",
+      maxWidth: "max-content",
+      minWidth: "max-content",
+    },
+    tableContainer: {
+      width: "100%",
+      overflow: "auto"
     }
   });

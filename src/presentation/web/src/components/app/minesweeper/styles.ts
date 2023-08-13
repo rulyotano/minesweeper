@@ -5,5 +5,8 @@ export default () =>
     centeredContainer: {
       display: "flex",
       justifyContent: "center"
+    },
+    container: {
+      maxWidth: "100%"
     }
   });

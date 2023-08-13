@@ -12,7 +12,8 @@ export default (theme: Theme) =>
     },
     lineCentered: {
       display: "flex",
-      alignItems: "center"
+      alignItems: "center",
+      width: theme.spacing(16)
     },
     timeTextContainer: {
       width: theme.spacing(3),

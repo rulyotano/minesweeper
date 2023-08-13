@@ -15,23 +15,25 @@ const Board: React.FunctionComponent<BoardProps> = (props: BoardProps) => {
   if (rows === 0 || columns === 0) return <table />;
 
   return (
-    <table className={classes.table}>
-      <tbody>
-        {board.map(row => (
-          <tr key={row[0].Key}>
-            {row.map(cell => (
-              <TableCell
-                key={cell.Key}
-                cell={cell}
-                discoverCell={discoverCell}
-                toggleCellMark={toggleCellMark}
-                discoverSurrounding={discoverSurrounding}
-              />
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className={classes.tableContainer}>
+      <table className={classes.table}>
+        <tbody>
+          {board.map(row => (
+            <tr key={row[0].Key}>
+              {row.map(cell => (
+                <TableCell
+                  key={cell.Key}
+                  cell={cell}
+                  discoverCell={discoverCell}
+                  toggleCellMark={toggleCellMark}
+                  discoverSurrounding={discoverSurrounding}
+                />
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 };
 
