@@ -7,6 +7,7 @@ import {
 } from "./helpers/gameHelper";
 import styles from "./styles";
 import InfoBar from "./components/infoBar";
+import ViewRanking from "./components/ranking/ViewRanking";
 
 const useStyles = makeStyles(styles);
 
@@ -54,6 +55,7 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
           discoverSurrounding={cell => surrounding(cell.Row, cell.Column)}
         />
       </div>
+      <ViewRanking />
     </div>
   );
 };

@@ -5,6 +5,7 @@
   "dependencies": {
     "@material-ui/core": "^4.9.14",
     "@material-ui/icons": "^4.9.1",
+    "axios": "^1.4.0",
     "connected-react-router": "6.5.2",
     "history": "4.10.1",
     "lodash": "^4.17.15",
@@ -47,7 +48,7 @@
     "eslint-plugin-react": "7.16.0",
     "redux-testkit": "^1.0.6",
     "ts-jest": "^26.1.0",
-    "typescript": "3.6.4"
+    "typescript": "^4.8.4"
   },
   "scripts": {
     "start": "react-scripts start",
