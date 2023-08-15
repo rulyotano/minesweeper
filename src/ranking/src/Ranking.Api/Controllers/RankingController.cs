@@ -1,5 +1,6 @@
 using System.Net;
 using Microsoft.AspNetCore.Mvc;
+using Ranking.Api.Domain;
 using Ranking.Api.Dtos;
 using Ranking.Api.Services.Ranking;
 
@@ -20,11 +21,14 @@ public class RankingController : ControllerBase
 
   [HttpGet]
   [ProducesResponseType(typeof(IEnumerable<RankingItemDto>), (int)HttpStatusCode.OK)]
-  public async Task<ActionResult> Get([FromQuery] int limit = 15)
+  public async Task<ActionResult> Get([FromQuery] int limit = 15, [FromQuery] string gameSize = null)
   {
-    return Ok((await _ranking.GetRanking(limit)).Select(it => new RankingItemDto { UserName = it.UserName, TimeInMs = it.TimeInMs }));
+    var gameSizeParsed = GameSize.Beginner;
+    Enum.TryParse(gameSize, ignoreCase: true, out gameSizeParsed);
+    return Ok((await _ranking.GetRanking(gameSizeParsed, limit))
+                             .Select(it => new RankingItemDto { UserName = it.UserName, TimeInMs = it.TimeInMs }));
   }
-  
+
   [HttpPut]
   [ProducesResponseType(typeof(IEnumerable<RankingItemDto>), (int)HttpStatusCode.OK)]
   public async Task<ActionResult> AddNewGameResult([FromBody] GameResultDto gameResult)

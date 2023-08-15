@@ -11,14 +11,17 @@ public class RankingInMemory : IRanking
     return Task.CompletedTask;
   }
 
-  public Task<IEnumerable<GameResult>> GetRanking(int size = 15)
+  public Task<IEnumerable<GameResult>> GetRanking(GameSize gameSize, int size = 15)
   {
-    return Task.FromResult(_ranking.Take(size).Select(it => it.Value));
+    return Task.FromResult(_ranking
+                            .Where(it => it.Value.GameSize == gameSize)
+                            .Take(size)
+                            .Select(it => it.Value));
   }
 }
 
 public interface IRanking
 {
-  Task<IEnumerable<GameResult>> GetRanking(int size = 15);
+  Task<IEnumerable<GameResult>> GetRanking(GameSize gameSize, int size = 15);
   Task AddGameResult(GameResult gameResult);
 }
