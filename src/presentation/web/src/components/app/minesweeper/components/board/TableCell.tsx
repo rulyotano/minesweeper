@@ -3,11 +3,13 @@ import delay from "lodash/delay";
 import Typography from "@material-ui/core/Typography";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import MinesIcon from "@material-ui/icons/Brightness5Outlined";
+import WrongMinesIcon from "@material-ui/icons/Close";
 import FlagIcon from "@material-ui/icons/FlagOutlined";
 import { Cell, CellStatus } from "../../helpers/cellHelper";
-import styles from "./cellStyles";
+import styles, {wrongFlagIconStyles} from "./cellStyles";
 
 const useStyles = makeStyles(styles);
+const useWrongFlagStyles = makeStyles(wrongFlagIconStyles);
 
 const TableCell: React.FunctionComponent<TableCellProps> = props => {
   const { cell, discoverSurrounding, discoverCell, toggleCellMark } = props;
@@ -64,6 +66,7 @@ const TableCell: React.FunctionComponent<TableCellProps> = props => {
   const onLongTouch = () => {
     if (cell.Status === CellStatus.DiscoveredAndNumber) discoverSurrounding(cell);
     else toggleCellMark(cell);
+    setNotUseMouseUp(true);
   };
 
   const onTouchStart = (e: React.TouchEvent<HTMLTableDataCellElement>) => {
@@ -101,13 +104,22 @@ const TableCell: React.FunctionComponent<TableCellProps> = props => {
 
         {status === CellStatus.MarkedAsMine ? <FlagIcon id="flag" /> : null}
 
-        {status === CellStatus.MarkedAsMineButEmpty ? <MinesIcon id="wrong-flag" /> : null}
+        {status === CellStatus.MarkedAsMineButEmpty ? <WrongFlagIcon /> : null}
 
         {status === CellStatus.ExploitedMine ? <MinesIcon id="mine-explosion" /> : null}
       </div>
     </td>
   );
 };
+
+
+const WrongFlagIcon: React.FunctionComponent = () => {
+  const classes = useWrongFlagStyles();
+  return (<div className={classes.wrongFlag} id="wrong-flag">
+    <MinesIcon />
+    <WrongMinesIcon id="cross"/>
+  </div>)
+}
 
 export interface TableCellProps {
   cell: Cell;

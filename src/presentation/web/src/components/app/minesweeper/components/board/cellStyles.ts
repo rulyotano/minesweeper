@@ -73,3 +73,20 @@ const getBackgroundColorFromCell = (theme: Theme, props: TableCellProps) => {
 
   return theme.palette.background.default;
 };
+
+export const wrongFlagIconStyles = (theme: Theme) =>
+  createStyles({
+    wrongFlag: {
+      position: "relative",
+      height: "24px",
+      width: "24px",
+      "& > svg": {
+        position: "absolute",
+        top: "0",
+        left: "0"
+      },
+      "& > #cross": {
+        color: theme.palette.error.dark
+      }
+    }
+  });
