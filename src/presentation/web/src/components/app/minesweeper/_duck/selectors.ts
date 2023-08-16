@@ -1,5 +1,6 @@
 import { createSelector } from "reselect";
 import { ApplicationState } from "../../../../../src/store";
+import { gameConfigurationsCollection } from "../helpers/gameHelper";
 
 const getState = (state: ApplicationState) => state.minesweeper;
 
@@ -33,4 +34,9 @@ export const getIsGameWon = createSelector(
 export const getIsGameLost = createSelector(
   [ getIsGameWon, getIsFinished ],
   (isGameWon, isGameFinished) => isGameFinished && !isGameWon
+);
+
+export const getGameLevel = createSelector(
+  [ getRows, getColumns ],
+  (rows, columns) => gameConfigurationsCollection.getConfiguration(rows, columns)
 );

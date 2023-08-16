@@ -10,7 +10,7 @@ builder.Services.AddCors(options =>
                           options.AddPolicy(name: FromAllowedDomains,
                                             policy =>
                                             {
-                                              policy.WithOrigins("http://web.minesweeper.localhost:3000")
+                                              policy.WithOrigins("http://localhost:3000", "https://minesweeper.rulyotano.com")
                                                     .AllowAnyHeader()
                                                     .AllowAnyMethod();
                                             }));

@@ -11,24 +11,55 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
 import { apiClient } from "../../../../../common";
+import { useSelector } from "react-redux";
+import { getGameLevel } from "../../_duck/selectors";
+import Table from "@material-ui/core/Table";
+import TableHead from "@material-ui/core/TableHead";
+import TableRow from "@material-ui/core/TableRow";
+import TableCell from "@material-ui/core/TableCell";
+import TableBody from "@material-ui/core/TableBody";
+
+interface RankingResult {
+  timeInMs: number,
+  userName: string
+}
 
 export default function () {
-  const [ranking, setRanking] = React.useState([]);
+  const [ranking, setRanking] = React.useState<Array<RankingResult>>([]);
+
+  var gameLevel = useSelector(getGameLevel);
   React.useEffect(() => {
-    apiClient.get("ranking").then(result => {
-      console.log(result.data);
+    apiClient.get(`ranking?gameSize=${gameLevel}`).then(result => {
+      setRanking(result.data as Array<RankingResult>);
     });
-  }, [])
+  }, [gameLevel])
 
   return (<Dialog onClose={() => { alert("closed") }} aria-labelledby="Ranking" open={true}>
     <DialogTitle id="customized-dialog-title" onClose={() => alert("close")}>
       Ranking
     </DialogTitle>
     <DialogContent dividers>
-
+      <Table aria-label="ranking">
+        <TableHead>
+          <TableRow>
+            <TableCell>No.</TableCell>
+            <TableCell>Name</TableCell>
+            <TableCell align="right">Time</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {ranking.map((row, index) => (
+            <TableRow key={row.userName + row.timeInMs + index}>
+              <TableCell component="th" scope="row">{index + 1}</TableCell>
+              <TableCell>{row.userName}</TableCell>
+              <TableCell align="right">{row.timeInMs}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
     </DialogContent>
     <DialogActions>
-      <Button autoFocus onClick={() => {}} color="primary">
+      <Button autoFocus onClick={() => { }} color="primary">
         Close
       </Button>
     </DialogActions>

@@ -12,10 +12,12 @@ import {
   getIsFinished,
   getIsGameInitialized,
   getIsGameWon,
-  getIsGameLost
+  getIsGameLost,
+  getGameLevel
 } from "../selectors";
 import { ReducerState } from "../reducer";
 import { buildBoard } from "../../helpers/boardHelper";
+import { gameConfigurations } from "../../helpers/gameHelper";
 
 describe("components > app > minesweeper > selectors", () => {
   const FAKE_BOARD = buildBoard(3, 3, 0, 0, 3);
@@ -216,5 +218,45 @@ describe("components > app > minesweeper > selectors", () => {
         })
       )
       .toReturn(false);
+  });
+
+  describe("getGameLevel()", () => { 
+    test("when no matching rows & columns should return beginner", () => { 
+      Selector(getGameLevel)
+        .expect(getStateWith({
+          ...fakeState
+        }))
+        .toReturn(gameConfigurations.beginner)
+    });
+
+    test("when rows match beginner should return it", () => { 
+      Selector(getGameLevel)
+        .expect(getStateWith({
+          ...fakeState,
+          rows: gameConfigurations.beginner.rows,
+          columns: gameConfigurations.beginner.columns,
+        }))
+        .toReturn(gameConfigurations.beginner)
+    });
+
+    test("when rows match intermediate should return it", () => { 
+      Selector(getGameLevel)
+        .expect(getStateWith({
+          ...fakeState,
+          rows: gameConfigurations.intermediate.rows,
+          columns: gameConfigurations.intermediate.columns,
+        }))
+        .toReturn(gameConfigurations.intermediate)
+    });
+
+    test("when rows match expert should return it", () => { 
+      Selector(getGameLevel)
+        .expect(getStateWith({
+          ...fakeState,
+          rows: gameConfigurations.expert.rows,
+          columns: gameConfigurations.expert.columns,
+        }))
+        .toReturn(gameConfigurations.expert)
+    });
   });
 });

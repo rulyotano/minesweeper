@@ -1,12 +1,7 @@
-import random from "lodash/random";
-import sumBy from "lodash/sumBy";
-import groupBy from "lodash/groupBy";
-import isEmpty from "lodash/isEmpty";
-import keyBy from "lodash/keyBy";
 import { Cell, buildCell, CellStatus } from "./cellHelper";
 
-export const buildEmptyBoard = (rows: number, columns: number): Cell[][] => {
-  var result: Cell[][] = [];
+export const buildEmptyBoard = (rows: number, columns: number): Array<Cell[]> => {
+  var result: Array<Cell[]> = [];
 
   for (let i = 0; i < rows; i++) {
     result[i] = [];
@@ -19,10 +14,10 @@ export const buildEmptyBoard = (rows: number, columns: number): Cell[][] => {
   return result;
 };
 
-export const getCellsAround = (board: Cell[][], row: number, column: number): Cell[] => {
+export const getCellsAround = (board: Array<Cell[]>, row: number, column: number): Cell[] => {
   const result: Cell[] = [];
 
-  directions.forEach(([ vertical, horizontal ]) => {
+  directions.forEach(([vertical, horizontal]: Direction) => {
     const verticalMove = row + vertical;
     const horizontalMove = column + horizontal;
 
@@ -45,7 +40,7 @@ export const buildBoard = (
   clickedRow: number,
   clickedColumn: number,
   mines: number
-): Cell[][] => {
+): Array<Cell[]> => {
   if (mines > 0.9 * rows * columns) throw Error("To much mines for this board");
 
   const board = buildEmptyBoard(rows, columns);
@@ -60,7 +55,7 @@ export const buildBoard = (
 };
 
 export const getCellsToReveal = (
-  board: Cell[][],
+  board: Array<Cell[]>,
   row: number,
   column: number,
   useRecursion = false
@@ -75,7 +70,7 @@ export const getCellsToReveal = (
   );
 };
 
-export const boardFromString = (boardInput: string): Cell[][] => {
+export const boardFromString = (boardInput: string): Array<Cell[]> => {
   const MINES_CHAR = "*";
   const ROW_DIVIDER_CHAR = "|";
   const NORMAL_CHAR = ".";
@@ -119,29 +114,29 @@ export const boardFromString = (boardInput: string): Cell[][] => {
   return board;
 };
 
-export const modifyBoard = (board: Cell[][], cellsToUpdate: Cell[]): Cell[][] => {
-  if (isEmpty(cellsToUpdate)) return board;
+export const modifyBoard = (board: Array<Cell[]>, cellsToUpdate: Cell[]): Array<Cell[]> => {
+  if (!cellsToUpdate || cellsToUpdate.length === 0) return board;
 
-  const result: Cell[][] = [];
+  const result: Array<Cell[]> = [];
 
   const grouped = groupBy(cellsToUpdate, it => it.Row);
 
   for (let r = 0; r < board.length; r++) {
     const row = board[r];
 
-    if (!grouped[r]) {
+    if (!grouped.has(r)) {
       result.push(row);
     } else {
-      const updateCellsByColumn = keyBy(grouped[r], it => it.Column);
+      const updateCellsByColumn = keyBy(grouped.get(r)!, it => it.Column);
 
       const newRow = [];
       for (let c = 0; c < row.length; c++) {
         const cell = row[c];
 
-        if (!updateCellsByColumn[c]) {
+        if (!updateCellsByColumn.has(c)) {
           newRow.push(cell);
         } else {
-          newRow.push(updateCellsByColumn[c]);
+          newRow.push(updateCellsByColumn.get(c)!);
         }
       }
 
@@ -152,6 +147,31 @@ export const modifyBoard = (board: Cell[][], cellsToUpdate: Cell[]): Cell[][] =>
   return result;
 };
 
+function groupBy<T, V>(collection: Array<T>, selector: (item: T) => V)
+{
+  return collection.reduce((grouped: Map<V, Array<T>>, current: T) => { 
+    const key = selector(current);
+    if (grouped.has(key)) 
+    {
+      grouped.get(key)?.push(current);
+    } 
+    else 
+    {
+      grouped.set(key, [current]);
+    }
+    return grouped;
+  }, new Map<V, Array<T>>())
+}
+
+function keyBy<T, V>(collection: Array<T>, selector: (item: T) => V)
+{
+  return collection.reduce((grouped: Map<V, T>, current: T) => { 
+    const key = selector(current);
+    grouped.set(key, current);
+    return grouped;
+  }, new Map<V, T>())
+}
+
 const getMinesCells = (
   rows: number,
   columns: number,
@@ -160,10 +180,10 @@ const getMinesCells = (
   columnAvoid: number
 ) => {
   const cellsToPick = getPickCellList(rows, columns);
-  const wherePutMines: [number, number][] = [];
+  const wherePutMines: Array<[row: number, column: number]> = [];
 
   for (let i = 0; i < mines; i++) {
-    const randomIndex = random(cellsToPick.length - 1);
+    const randomIndex = Math.floor(Math.random() * (cellsToPick.length - 1));
     const cellTuple = cellsToPick[randomIndex];
 
     if (cellTuple[0] === rowAvoid && cellTuple[1] === columnAvoid) {
@@ -180,7 +200,7 @@ const getMinesCells = (
 };
 
 const getPickCellList = (rows: number, columns: number) => {
-  const result: [number, number][] = [];
+  const result: Array<[row: number, column: number]> = [];
 
   for (let i = 0; i < rows; i++) {
     for (let j = 0; j < columns; j++) {
@@ -191,13 +211,13 @@ const getPickCellList = (rows: number, columns: number) => {
   return result;
 };
 
-const putMines = (board: Cell[][], wherePutMines: [number, number][]) => {
+const putMines = (board: Array<Cell[]>, wherePutMines: Array<[row: number, column: number]>) => {
   wherePutMines.forEach(([ row, column ]) => {
     board[row][column].IsMine = true;
   });
 };
 
-const putNumbers = (board: Cell[][]) => {
+const putNumbers = (board: Array<Cell[]>) => {
   const rows = board.length;
   const columns = board.length > 0 ? board[0].length : 0;
 
@@ -208,7 +228,10 @@ const putNumbers = (board: Cell[][]) => {
       const cell = row[c];
 
       if (!cell.IsMine) {
-        const minesAround = sumBy(getCellsAround(board, r, c), it => (it.IsMine ? 1 : 0));
+        const minesAround = getCellsAround(board, r, c)
+          .reduce(
+            (currentSum: number, cell: Cell) => currentSum + (cell.IsMine ? 1 : 0), 0
+          );
 
         cell.MinesAround = minesAround;
       }
@@ -217,7 +240,7 @@ const putNumbers = (board: Cell[][]) => {
 };
 
 const getCellsToRevealRecursion = (
-  board: Cell[][],
+  board: Array<Cell[]>,
   row: number,
   column: number,
   marks: Map<string, boolean> = new Map<string, boolean>()
@@ -240,7 +263,7 @@ const getCellsToRevealRecursion = (
   return result;
 };
 
-const getCellsToRevealIterative = (board: Cell[][], row: number, column: number): Cell[] => {
+const getCellsToRevealIterative = (board: Array<Cell[]>, row: number, column: number): Cell[] => {
   const marks: Map<string, boolean> = new Map<string, boolean>();
   const initialCell = board[row][column];
 
@@ -279,13 +302,14 @@ enum DirectionColumns {
   Right = 1
 }
 
-const directions: [DirectionRows, DirectionColumns][] = [
-  [ DirectionRows.Up, DirectionColumns.Stay ],
-  [ DirectionRows.Up, DirectionColumns.Right ],
-  [ DirectionRows.Stay, DirectionColumns.Right ],
-  [ DirectionRows.Down, DirectionColumns.Right ],
-  [ DirectionRows.Down, DirectionColumns.Stay ],
-  [ DirectionRows.Down, DirectionColumns.Left ],
-  [ DirectionRows.Stay, DirectionColumns.Left ],
-  [ DirectionRows.Up, DirectionColumns.Left ]
+type Direction = [vertical: DirectionRows, horizontal: DirectionColumns];
+const directions: Array<Direction> = [
+  [ DirectionRows.Up, DirectionColumns.Stay ] as Direction,
+  [ DirectionRows.Up, DirectionColumns.Right ] as Direction,
+  [ DirectionRows.Stay, DirectionColumns.Right ] as Direction,
+  [ DirectionRows.Down, DirectionColumns.Right ] as Direction,
+  [ DirectionRows.Down, DirectionColumns.Stay ] as Direction,
+  [ DirectionRows.Down, DirectionColumns.Left ] as Direction,
+  [ DirectionRows.Stay, DirectionColumns.Left ] as Direction,
+  [ DirectionRows.Up, DirectionColumns.Left ] as Direction
 ];
