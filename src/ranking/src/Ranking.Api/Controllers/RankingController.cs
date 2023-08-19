@@ -23,6 +23,7 @@ public class RankingController : ControllerBase
   [ProducesResponseType(typeof(IEnumerable<RankingItemDto>), (int)HttpStatusCode.OK)]
   public async Task<ActionResult> Get([FromQuery] int limit = 15, [FromQuery] string gameSize = null)
   {
+    await Task.Delay(5000);
     var gameSizeParsed = GameSize.Beginner;
     Enum.TryParse(gameSize, ignoreCase: true, out gameSizeParsed);
     return Ok((await _ranking.GetRanking(gameSizeParsed, limit))

@@ -1,6 +1,6 @@
 import React from "react";
 import Dialog from "@material-ui/core/Dialog";
-import { Theme } from "@material-ui/core/styles/createMuiTheme";
+import { Theme } from "@material-ui/core/styles/createTheme";
 import createStyles from "@material-ui/core/styles/createStyles";
 import withStyles, { WithStyles } from "@material-ui/core/styles/withStyles";
 import MuiDialogTitle from "@material-ui/core/DialogTitle";
@@ -18,6 +18,8 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import TableCell from "@material-ui/core/TableCell";
 import TableBody from "@material-ui/core/TableBody";
+import Skeleton from "@material-ui/lab/Skeleton";
+import moment from "moment";
 
 interface RankingResult {
   timeInMs: number,
@@ -26,15 +28,17 @@ interface RankingResult {
 
 export default function () {
   const [ranking, setRanking] = React.useState<Array<RankingResult>>([]);
+  const [loading, setLoading] = React.useState(true);
 
   var gameLevel = useSelector(getGameLevel);
   React.useEffect(() => {
     apiClient.get(`ranking?gameSize=${gameLevel}`).then(result => {
       setRanking(result.data as Array<RankingResult>);
+      setLoading(false);
     });
   }, [gameLevel])
 
-  return (<Dialog onClose={() => { alert("closed") }} aria-labelledby="Ranking" open={true}>
+  return (<Dialog fullWidth={true} maxWidth="sm" onClose={() => { alert("closed") }} aria-labelledby="Ranking" open={true}>
     <DialogTitle id="customized-dialog-title" onClose={() => alert("close")}>
       Ranking
     </DialogTitle>
@@ -48,13 +52,14 @@ export default function () {
           </TableRow>
         </TableHead>
         <TableBody>
-          {ranking.map((row, index) => (
-            <TableRow key={row.userName + row.timeInMs + index}>
-              <TableCell component="th" scope="row">{index + 1}</TableCell>
-              <TableCell>{row.userName}</TableCell>
-              <TableCell align="right">{row.timeInMs}</TableCell>
-            </TableRow>
-          ))}
+          {loading ? <Loading /> :
+            ranking.map((row, index) => (
+              <TableRow key={row.userName + row.timeInMs + index}>
+                <TableCell component="th" scope="row">{index + 1}</TableCell>
+                <TableCell>{row.userName}</TableCell>
+                <TableCell align="right">{moment.duration(row.timeInMs).asSeconds()}</TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
     </DialogContent>
@@ -99,3 +104,34 @@ const DialogTitle = withStyles(styles)((props: DialogTitleProps) => {
     </MuiDialogTitle>
   );
 });
+
+const Loading = () => {
+  return (
+    <>
+      <TableRow>
+        <TableCell component="th" scope="row"><Skeleton /></TableCell>
+        <TableCell><Skeleton /></TableCell>
+        <TableCell align="right"><Skeleton /></TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell component="th" scope="row"><Skeleton /></TableCell>
+        <TableCell><Skeleton /></TableCell>
+        <TableCell align="right"><Skeleton /></TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell component="th" scope="row"><Skeleton /></TableCell>
+        <TableCell><Skeleton /></TableCell>
+        <TableCell align="right"><Skeleton /></TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell component="th" scope="row"><Skeleton /></TableCell>
+        <TableCell><Skeleton /></TableCell>
+        <TableCell align="right"><Skeleton /></TableCell>
+      </TableRow>
+      <TableRow>
+        <TableCell component="th" scope="row"><Skeleton /></TableCell>
+        <TableCell><Skeleton /></TableCell>
+        <TableCell align="right"><Skeleton /></TableCell>
+      </TableRow>
+    </>)
+}
