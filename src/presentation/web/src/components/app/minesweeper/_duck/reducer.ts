@@ -21,6 +21,7 @@ export interface ReducerState {
   mines: number;
   discoveredCells: number;
   board: Cell[][];
+  username: string | null
 }
 
 export const initialState: ReducerState = {
@@ -30,7 +31,8 @@ export const initialState: ReducerState = {
   gameFinishTime: null,
   mines: 0,
   discoveredCells: 0,
-  board: []
+  board: [],
+  username: null
 };
 
 const reducer: Reducer<ReducerState> = (

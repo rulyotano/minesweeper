@@ -11,6 +11,7 @@ export const getFinishTime = (state: ApplicationState) => getState(state).gameFi
 export const getMines = (state: ApplicationState) => getState(state).mines;
 export const getDiscovered = (state: ApplicationState) => getState(state).discoveredCells;
 export const getBoard = (state: ApplicationState) => getState(state).board;
+export const getUsername = (state: ApplicationState) => getState(state).username;
 
 export const getIsGameStarted = createSelector(
   [ getStartTime, getFinishTime ],

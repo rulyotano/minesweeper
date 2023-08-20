@@ -158,7 +158,8 @@ describe("components > app > minesweeper > reducer", () => {
       columns: COLS,
       gameStartTime: null,
       gameFinishTime: null,
-      mines: 0
+      mines: 0,
+      username: null
     });
   });
 });

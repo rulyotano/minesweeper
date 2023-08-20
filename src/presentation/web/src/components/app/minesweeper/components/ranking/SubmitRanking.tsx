@@ -18,7 +18,7 @@ export default () => {
   const onClose = () => setIsOpen(false);
 
   React.useEffect(() => {
-    if (isGameWon) setIsOpen(true);
+    setIsOpen(isGameWon);
   }, [isGameWon])
 
   return (<Dialog fullWidth={true} maxWidth="sm" onClose={onClose} aria-labelledby="Ranking" open={isOpen}>
