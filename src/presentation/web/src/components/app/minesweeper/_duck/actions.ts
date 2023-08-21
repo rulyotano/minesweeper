@@ -10,7 +10,9 @@ import {
   FinishGameAction,
   UpdateBoardAction,
   INITIALIZE_BOARD,
-  InitializeBoardAction
+  InitializeBoardAction,
+  SetUsername,
+  SET_USERNAME
 } from "./types";
 import { AppThunkAction } from "../../../../../src/store";
 import { Cell, CellStatus } from "../helpers/cellHelper";
@@ -234,3 +236,6 @@ export const updateBoardAction = (board: Cell[][], discoveredCells: number): Upd
 });
 
 export const resetAction = (): ResetAction => ({ type: RESET });
+
+export const setUsername =
+  (username: string): SetUsername => ({ type: SET_USERNAME, username: username });

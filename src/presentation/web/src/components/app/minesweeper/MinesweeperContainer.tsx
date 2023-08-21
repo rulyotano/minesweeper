@@ -17,10 +17,12 @@ import {
   begin,
   cellClick,
   switchMarkAsMine,
-  revealSurroundingNoMarkedMines
+  revealSurroundingNoMarkedMines,
+  setUsername
 } from "./_duck/actions";
 import { Cell } from "./helpers/cellHelper";
 import { IBoardConfiguration, gameConfigurationsCollection } from "./helpers/gameHelper";
+import { USERNAME_STORAGE_KEY } from "./_duck/types";
 
 const MinesweeperContainer: React.FunctionComponent = () => {
   const board = useSelector(getBoard);
@@ -35,6 +37,14 @@ const MinesweeperContainer: React.FunctionComponent = () => {
   const currentConfig = gameConfigurationsCollection.getConfiguration(rows, columns);
 
   const dispatch = useDispatch();
+
+  React.useEffect(() => {
+    const usernameFromLocalStorage = localStorage.getItem(USERNAME_STORAGE_KEY);
+    if (usernameFromLocalStorage)
+    {
+      dispatch(setUsername(usernameFromLocalStorage));
+    }
+  }, [dispatch]);
 
   const onInitialize = React.useCallback(
     (configuration: IBoardConfiguration) => dispatch(initialize(configuration)),

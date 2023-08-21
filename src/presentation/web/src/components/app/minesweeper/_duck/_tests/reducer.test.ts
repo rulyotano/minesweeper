@@ -9,7 +9,9 @@ import {
   UPDATE_BOARD,
   UpdateBoardAction,
   INITIALIZE_BOARD,
-  InitializeBoardAction
+  InitializeBoardAction,
+  SetUsername,
+  SET_USERNAME
 } from "../types";
 import { buildBoard } from "../../helpers/boardHelper";
 
@@ -160,6 +162,20 @@ describe("components > app > minesweeper > reducer", () => {
       gameFinishTime: null,
       mines: 0,
       username: null
+    });
+  });
+
+  test("when SET_USERNAME should: change board the username", () => {
+    const previousState = {
+      username: null
+    };
+
+    const action: SetUsername = {
+      username: "new-username",
+      type: SET_USERNAME
+    };
+    Reducer(reducer).withState(previousState).expect(action).toChangeInState({
+      username: action.username
     });
   });
 });

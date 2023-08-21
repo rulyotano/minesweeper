@@ -9,7 +9,9 @@ import {
   UPDATE_BOARD,
   UpdateBoardAction,
   INITIALIZE_BOARD,
-  InitializeBoardAction
+  InitializeBoardAction,
+  SET_USERNAME,
+  SetUsername
 } from "./types";
 import { Cell } from "../helpers/cellHelper";
 
@@ -83,6 +85,13 @@ const reducer: Reducer<ReducerState> = (
     }
     case RESET:
       return initialState;
+    case SET_USERNAME: {
+      const customAction = action as SetUsername;
+      return {
+        ...state,
+        username: customAction.username
+      }
+    }
     default:
       return state;
   }
