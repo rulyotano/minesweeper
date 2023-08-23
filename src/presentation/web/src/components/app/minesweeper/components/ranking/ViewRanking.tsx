@@ -34,7 +34,7 @@ export default function (props: ViewRankingProps) {
   React.useEffect(() => {
     if (!isOpen) return;
     setLoading(true);
-    apiClient.get(`ranking?gameSize=${gameLevel.name}`).then(result => {
+    apiClient.get(`ranking?gameSize=${gameLevel.name}&limit=20`).then(result => {
       setRanking(result.data as Array<RankingResult>);
       setLoading(false);
     }, () => {
@@ -44,7 +44,7 @@ export default function (props: ViewRankingProps) {
 
   return (<Dialog fullWidth={true} maxWidth="sm" onClose={onClose} aria-labelledby="Ranking" open={isOpen}>
     <DialogTitle id="view-ranking-dialog-title" onClose={onClose}>
-      Ranking {gameLevel.name}
+      Top 20 - Ranking {gameLevel.name}
     </DialogTitle>
     <DialogContent dividers>
       <Table aria-label="ranking">

@@ -6,6 +6,7 @@ namespace Ranking.Api.Dtos;
 public class GameResultDto
 {
   [Required]
+  [Range(1000, int.MaxValue)]
   public int TimeInMs { get; set; }
 
   [Required]
