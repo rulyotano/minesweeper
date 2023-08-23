@@ -7,6 +7,10 @@ import {
 } from "./helpers/gameHelper";
 import styles from "./styles";
 import InfoBar from "./components/infoBar";
+import ViewRanking from "./components/ranking/ViewRanking";
+import Button from "@material-ui/core/Button";
+import RankingIcon from "@material-ui/icons/Stars";
+import SubmitRanking from "./components/ranking/SubmitRanking";
 
 const useStyles = makeStyles(styles);
 
@@ -27,6 +31,8 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
     configuration
   } = props;
 
+  const [isViewRankingOpen, setIsViewRankingOpen] = React.useState(false);
+
   const classes = useStyles(props);
 
   const initializeWithConfiguration = () => initialize(configuration);
@@ -44,6 +50,7 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
   return (
     <div className={classes.centeredContainer}>
       <div className={classes.container}>
+        <Button onClick={() => setIsViewRankingOpen(true)}>Ranking <RankingIcon /></Button>
         <InfoBar time={{ startTime, endTime }} onReset={initializeWithConfiguration} gameState={{ isWin, isLost }} />
         
         <Board
@@ -54,6 +61,8 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
           discoverSurrounding={cell => surrounding(cell.Row, cell.Column)}
         />
       </div>
+      <ViewRanking isOpen={isViewRankingOpen} onClose={() => setIsViewRankingOpen(false)}/>
+      <SubmitRanking />
     </div>
   );
 };

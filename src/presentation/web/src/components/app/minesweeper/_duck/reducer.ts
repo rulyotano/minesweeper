@@ -9,7 +9,9 @@ import {
   UPDATE_BOARD,
   UpdateBoardAction,
   INITIALIZE_BOARD,
-  InitializeBoardAction
+  InitializeBoardAction,
+  SET_USERNAME,
+  SetUsername
 } from "./types";
 import { Cell } from "../helpers/cellHelper";
 
@@ -21,6 +23,7 @@ export interface ReducerState {
   mines: number;
   discoveredCells: number;
   board: Cell[][];
+  username: string | null
 }
 
 export const initialState: ReducerState = {
@@ -30,7 +33,8 @@ export const initialState: ReducerState = {
   gameFinishTime: null,
   mines: 0,
   discoveredCells: 0,
-  board: []
+  board: [],
+  username: null
 };
 
 const reducer: Reducer<ReducerState> = (
@@ -81,6 +85,13 @@ const reducer: Reducer<ReducerState> = (
     }
     case RESET:
       return initialState;
+    case SET_USERNAME: {
+      const customAction = action as SetUsername;
+      return {
+        ...state,
+        username: customAction.username
+      }
+    }
     default:
       return state;
   }

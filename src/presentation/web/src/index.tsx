@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
 import { ConnectedRouter } from "connected-react-router";
 import { createBrowserHistory } from "history";
-import createMuiTheme from "@material-ui/core/styles/createMuiTheme";
+import createTheme from "@material-ui/core/styles/createTheme";
 import ThemeProvider from "@material-ui/styles/ThemeProvider";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import configureStore from "./store/configureStore";
@@ -19,7 +19,7 @@ const history = createBrowserHistory({ basename: baseUrl });
 // Get the application-wide store instance, prepopulating with state from the server where available.
 const store = configureStore(history);
 
-const baseTheme = createMuiTheme(dark);
+const baseTheme = createTheme(dark);
 
 ReactDOM.render(
   <Provider store={store}>

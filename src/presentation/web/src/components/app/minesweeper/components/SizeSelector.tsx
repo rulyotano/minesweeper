@@ -7,18 +7,16 @@ import InputLabel from "@material-ui/core/InputLabel";
 import Select from "@material-ui/core/Select";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import createStyles from "@material-ui/core/styles/createStyles";
-import { Theme } from "@material-ui/core/styles/createMuiTheme";
+import { Theme } from "@material-ui/core/styles/createTheme";
 import { useDispatch, useSelector } from "react-redux";
-import { getColumns, getIsGameStarted, getRows } from "../_duck/selectors";
+import { getGameLevel, getIsGameStarted } from "../_duck/selectors";
 import { initialize } from "../_duck/actions";
 
 const SizeSelector: React.FunctionComponent<{}> = () => {
   const classes = useStyles();
 
   const isStarted = useSelector(getIsGameStarted);
-  const rows = useSelector(getRows);
-  const columns = useSelector(getColumns);
-  const currentConfig = gameConfigurationsCollection.getConfiguration(rows, columns);
+  const currentConfig = useSelector(getGameLevel);
   const dispatch = useDispatch();
   const onChangeSelected = React.useCallback(
     (configName: string) =>

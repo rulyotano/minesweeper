@@ -1,4 +1,5 @@
 FROM rulyotano/httpd-spa:v0.0.3 as prod
+ENV REACT_APP_API_URL=https://api.minesweeper.rulyotano.com
 EXPOSE 80
 USER "www-data"
 COPY --from=build --chown=www-data:www-data . /usr/local/apache2/htdocs/
