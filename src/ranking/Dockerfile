@@ -9,7 +9,7 @@ COPY /src/Ranking.Api/ .
 FROM code as build
 RUN dotnet publish -c Release -o /publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:7.0.10-alpine3.18 as runtime
+FROM mcr.microsoft.com/dotnet/aspnet:7.0.10-alpine3.18 as prod
 COPY --from=build /publish .
 EXPOSE 80
 ENTRYPOINT ["dotnet", "Ranking.Api.dll"]
