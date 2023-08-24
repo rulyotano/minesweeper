@@ -52,7 +52,7 @@ export default () => {
       .finally(() => setIsSubmitting(false));
   }, [duration, localUsername, gameLevel.name, device, dispatch])
 
-  return (<Dialog fullWidth={true} maxWidth="sm" onClose={onClose} aria-labelledby="Ranking" open={isOpen}>
+  return (<Dialog fullWidth={true} maxWidth="sm" onClose={onClose} aria-labelledby="Ranking" open={isOpen} onMouseUp={e => {e.preventDefault()}}>
     <DialogTitle id="submit-ranking-dialog-title" onClose={onClose}>
       You beat Minesweeper at level "{gameLevel.name}" on a "{device}" device
     </DialogTitle>
@@ -65,12 +65,12 @@ export default () => {
       <TextField
         autoFocus
         margin="dense"
-        id="username"
         label="Your username"
         type="text"
         fullWidth
-        defaultValue={localUsername}
+        value={localUsername}
         onChange={e => onTextChange(e.target.value)}
+        autoComplete="off"
       />
     </DialogContent>
 

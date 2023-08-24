@@ -78,13 +78,17 @@ const reducer: Reducer<ReducerState> = (
       const customAction = action as InitializeBoardAction;
       return {
         ...initialState,
+        username: state.username,
         board: customAction.board,
         rows: customAction.rows,
         columns: customAction.columns
       };
     }
     case RESET:
-      return initialState;
+      return {
+        ...initialState,
+        username: state.username
+      };
     case SET_USERNAME: {
       const customAction = action as SetUsername;
       return {

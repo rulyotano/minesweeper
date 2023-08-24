@@ -153,7 +153,7 @@ function groupBy<T, V>(collection: Array<T>, selector: (item: T) => V)
     const key = selector(current);
     if (grouped.has(key)) 
     {
-      grouped.get(key)?.push(current);
+      grouped.get(key)!.push(current);
     } 
     else 
     {

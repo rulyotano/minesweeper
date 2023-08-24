@@ -17,4 +17,6 @@ COMING SOON: More description...
 # Deployment Flow
 ![Deployment Flow](/images/minesweeper-deployment-flow-01.png?raw=true "Deployment Flow")
 
+[Deployment FLow](https://www.figma.com/file/V7yEaOJgky1BMXSKgTkUkp/Welcome-to-FigJam?type=whiteboard&node-id=0%3A1&t=bBxxsbG32YUhfXEe-1)
+
 COMING SOON: More description...

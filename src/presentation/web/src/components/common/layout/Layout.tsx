@@ -3,6 +3,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
 import styles from "./styles";
 import NoHeader from "../header/NoHeader";
+import Footer from "../footer";
 
 const useStyles = makeStyles(styles);
 
@@ -16,6 +17,7 @@ const Layout: React.FunctionComponent<LayoutProps> = props => {
         <Container>
           <>{props.children}</>
         </Container>
+        <Footer />
       </div>
     </React.Fragment>
   );

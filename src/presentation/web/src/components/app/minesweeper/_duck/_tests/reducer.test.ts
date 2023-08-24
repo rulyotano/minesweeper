@@ -42,7 +42,7 @@ describe("components > app > minesweeper > reducer", () => {
   });
 
   test("when RESET should return initial state", () => {
-    const previousState = { anyStateField: true };
+    const previousState = { anyStateField: true, username: initialState.username };
     Reducer(reducer).withState(previousState).expect({ type: RESET }).toReturnState(initialState);
   });
 
@@ -138,7 +138,8 @@ describe("components > app > minesweeper > reducer", () => {
       gameFinishTime: new Date(),
       mines: 13,
       discoveredCells: 12,
-      board: []
+      board: [],
+      username: "username"
     };
 
     const ROWS = 14;
@@ -160,8 +161,7 @@ describe("components > app > minesweeper > reducer", () => {
       columns: COLS,
       gameStartTime: null,
       gameFinishTime: null,
-      mines: 0,
-      username: null
+      mines: 0
     });
   });
 
