@@ -40,7 +40,7 @@ services:
         - "traefik.http.routers.minesweeper.rule=Host(`minesweeper.rulyotano.com`)"
         - "traefik.http.routers.minesweeper.tls=true"
         - "traefik.http.routers.minesweeper.tls.certresolver=mycertresolver"
-        - "traefik.http.routers.minesweeperhttp.rule=Host(`minesweeper.rulyotano.com`)"
+        - "traefik.http.routers.minesweeperhttp.rule=Host(`minesweeper.rulyotano.com`) || (Host(`api.minesweeper.rulyotano.com`) && Path(`/`))"
         - "traefik.http.routers.minesweeperhttp.middlewares=redirecthttps"
         - "traefik.http.middlewares.redirecthttps.redirectscheme.scheme=https"
         - "traefik.http.middlewares.redirecthttps.redirectscheme.permanent=true"
