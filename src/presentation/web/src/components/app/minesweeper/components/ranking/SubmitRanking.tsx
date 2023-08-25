@@ -52,7 +52,7 @@ export default () => {
       .finally(() => setIsSubmitting(false));
   }, [duration, localUsername, gameLevel.name, device, dispatch])
 
-  return (<Dialog fullWidth={true} maxWidth="sm" onClose={onClose} aria-labelledby="Ranking" open={isOpen} onMouseUp={e => {e.preventDefault()}}>
+  return (<Dialog fullWidth={true} maxWidth="sm" onClose={onClose} aria-labelledby="Ranking Submit" open={isOpen}>
     <DialogTitle id="submit-ranking-dialog-title" onClose={onClose}>
       You beat Minesweeper at level "{gameLevel.name}" on a "{device}" device
     </DialogTitle>

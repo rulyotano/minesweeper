@@ -17,5 +17,11 @@ export default (theme: Theme) =>
     },
     icon: {
       fontSize: theme.spacing(1.4)
+    },
+    tech: {
+      marginTop: theme.spacing(1),
+      "& > img": {
+        marginLeft: theme.spacing(1)
+      }
     }
   });

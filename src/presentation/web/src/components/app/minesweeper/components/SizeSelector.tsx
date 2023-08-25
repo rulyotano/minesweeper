@@ -27,7 +27,7 @@ const SizeSelector: React.FunctionComponent<{}> = () => {
 
   if (isStarted) return null;
   return <FormControl className={classes.formControl}>
-    <InputLabel htmlFor="outlined-age-native-simple">Board Size</InputLabel>
+    <InputLabel>Board Size</InputLabel>
     <Select
       native
       value={currentConfig.name}

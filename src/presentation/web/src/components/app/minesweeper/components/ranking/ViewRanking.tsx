@@ -42,7 +42,11 @@ export default function (props: ViewRankingProps) {
     });
   }, [gameLevel, isOpen])
 
-  return (<Dialog fullWidth={true} maxWidth="sm" onClose={onClose} aria-labelledby="Ranking" open={isOpen}>
+  React.useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "unset";
+  }, [isOpen]);
+
+  return (<Dialog fullWidth={true} maxWidth="sm" onClose={onClose} aria-labelledby="Ranking View" open={isOpen}>
     <DialogTitle id="view-ranking-dialog-title" onClose={onClose}>
       Top 20 - Ranking {gameLevel.name}
     </DialogTitle>
