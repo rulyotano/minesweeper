@@ -56,7 +56,7 @@ export default function (props: ViewRankingProps) {
           <TableRow>
             <TableCell>No.</TableCell>
             <TableCell>Name</TableCell>
-            <TableCell align="right">Time</TableCell>
+            <TableCell align="right">Time (seconds)</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
