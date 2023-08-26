@@ -19,4 +19,9 @@ COMING SOON: More description...
 
 [Deployment FLow](https://www.figma.com/file/V7yEaOJgky1BMXSKgTkUkp/Welcome-to-FigJam?type=whiteboard&node-id=0%3A1&t=bBxxsbG32YUhfXEe-1)
 
-COMING SOON: More description...
+# Instruction to run in local with docker compose
+- Install docker, it can be dockerd and docker cli (docker deamon) or with docker desktop.
+- Create the redis volume: `redis_storage`. Command: `docker volume create redis_storage`
+- Go to the `/src` directory and run `docker compose up`. That will build and run the project.
+- Now you should be able to access to `http://web.minesweeper.localhost`
+**NOTE** Port 80 and 8080 should be free. If you want to use other ones you will need to update the `docker-compose.yml` file.
