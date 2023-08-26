@@ -3,4 +3,4 @@ ENV REACT_APP_API_URL=https://api.minesweeper.rulyotano.com
 EXPOSE 80
 USER "www-data"
 COPY --from=build --chown=www-data:www-data . /usr/local/apache2/htdocs/
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD wget -O - http://localhost || exit 1s
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD wget -O - http://localhost || exit 1

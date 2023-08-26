@@ -5,10 +5,10 @@ on:
     branches: 
       - master
     paths:
-      - .github/workflows/presentation.ranking.api.yml
+      - .github/workflows/ranking.api.yml
 
 env:
-  VERSION: 0.0.1
+  VERSION: 0.0.2
 
 jobs:
   build-push-image:

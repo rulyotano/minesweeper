@@ -30,7 +30,7 @@ services:
         - "traefik.http.middlewares.auth.basicauth.users=rulyotano:$$2y$$05$$X8IeCe9aTKfQUFR6EMujqeASB22nQg1Ho.naDVh31yuz9xY2z4ux2"
 
   minesweeper-client:
-    image: rulyotano/minesweeper-presentation-web:0.0.8
+    image: rulyotano/minesweeper-presentation-web:0.0.9
     deploy:
       replicas: 1
       restart_policy:
@@ -46,7 +46,7 @@ services:
         - "traefik.http.middlewares.redirecthttps.redirectscheme.permanent=true"
 
   minesweeper-ranking-api:
-    image: rulyotano/minesweeper-ranking-api:0.0.1
+    image: rulyotano/minesweeper-ranking-api:0.0.2
     deploy:
       replicas: 1
       restart_policy:
@@ -63,4 +63,14 @@ services:
         - "traefik.http.middlewares.rankingapiratelimit.ratelimit.burst=50"
     environment:
       - CONNECTIONSTRINGS__REDIS=redis
-      - ALLOWEDHOSTS=minesweeper.rulyotano.com
+      - ALLOWEDHOSTS=minesweeper.rulyotano.com;localhost
+
+  redis:
+    image: redis:alpine3.18
+    command: --save 60 1 --loglevel warning
+    volumes:
+      - redis_storage:/data
+
+volumes:
+  redis_storage:
+    external: true

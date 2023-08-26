@@ -36,7 +36,7 @@ services:
       - "traefik.http.middlewares.rankingapiratelimit.ratelimit.burst=50"
     environment:
       - CONNECTIONSTRINGS__REDIS=redis
-      - ALLOWEDHOSTS=api.minesweeper.localhost
+      - ALLOWEDHOSTS=api.minesweeper.localhost;localhost
 
   redis:
     image: redis:alpine3.18
