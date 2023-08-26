@@ -34,6 +34,9 @@ services:
       - "traefik.http.services.rankingapi.loadbalancer.server.port=80"      
       - "traefik.http.middlewares.rankingapiratelimit.ratelimit.average=100"
       - "traefik.http.middlewares.rankingapiratelimit.ratelimit.burst=50"
+    environment:
+      - CONNECTIONSTRINGS__REDIS=redis
+      - ALLOWEDHOSTS=api.minesweeper.localhost
 
   redis:
     image: redis:alpine3.18

@@ -20,14 +20,14 @@ public class RankingRedis : IRanking
       new[]
       {
         new SortedSetEntry(new RedisValue(gameResult.UserName), gameResult.TimeInMs)
-      });
+      }, SortedSetWhen.LessThan);
   }
 
   public async Task<IEnumerable<RankingListItem>> GetRanking(GameSize gameSize, int size = 15)
   {
     var database = redisProvider.Redis.GetDatabase();
 
-    var dbResult = await database.SortedSetRangeByRankWithScoresAsync(GetKey(gameSize), 0, -1);
+    var dbResult = await database.SortedSetRangeByRankWithScoresAsync(GetKey(gameSize), 0, size - 1);
     return dbResult.Select((it, i) => new RankingListItem(i + 1, (int)it.Score, it.Element));
   }
 

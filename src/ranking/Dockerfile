@@ -12,5 +12,5 @@ RUN dotnet publish -c Release -o /publish
 FROM mcr.microsoft.com/dotnet/aspnet:7.0.10-alpine3.18 as prod
 COPY --from=build /publish .
 EXPOSE 80
-HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 CMD curl -f http://localhost/ready || exit 1
+#HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 CMD curl -f http://localhost/ready || exit 1
 ENTRYPOINT ["dotnet", "Ranking.Api.dll"]

@@ -10,11 +10,12 @@ import moment from "moment";
 import TextField from "@material-ui/core/TextField";
 import { setUsername } from "../../_duck/actions";
 import { apiClient, getDeviceType } from "../../../../../common";
+import { setTimeout } from "timers";
 
 export default () => {
   const [isOpen, setIsOpen] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [localUsername, setLocalUsername] = React.useState<string|null>(null);
+  const [localUsername, setLocalUsername] = React.useState<string>("");
   const gameLevel = useSelector(getGameLevel);
   const startTime = useSelector(getStartTime) || new Date();
   const finishTime = useSelector(getFinishTime) || new Date();
@@ -30,7 +31,7 @@ export default () => {
 
   React.useEffect(() => {
     setIsOpen(isGameWon);
-    setLocalUsername(username);
+    setLocalUsername(username || "");
   }, [isGameWon, username])
 
   const onTextChange = React.useCallback((newUsername: string) => {
@@ -51,6 +52,10 @@ export default () => {
       })
       .finally(() => setIsSubmitting(false));
   }, [duration, localUsername, gameLevel.name, device, dispatch])
+
+  React.useEffect(() => {
+    setTimeout(() => document.body.style.overflow = isOpen ? "hidden" : "unset", 1);
+  }, [isOpen]);
 
   return (<Dialog fullWidth={true} maxWidth="sm" onClose={onClose} aria-labelledby="Ranking Submit" open={isOpen}>
     <DialogTitle id="submit-ranking-dialog-title" onClose={onClose}>

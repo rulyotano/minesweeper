@@ -43,7 +43,7 @@ export default function (props: ViewRankingProps) {
   }, [gameLevel, isOpen])
 
   React.useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "unset";
+    setTimeout(() => document.body.style.overflow = isOpen ? "hidden" : "unset", 1);
   }, [isOpen]);
 
   return (<Dialog fullWidth={true} maxWidth="sm" onClose={onClose} aria-labelledby="Ranking View" open={isOpen}>
