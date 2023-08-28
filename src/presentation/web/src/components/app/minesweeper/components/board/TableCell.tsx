@@ -8,7 +8,7 @@ import FlagIcon from "@material-ui/icons/FlagOutlined";
 import { Cell, CellStatus } from "../../helpers/cellHelper";
 import styles, {wrongFlagIconStyles} from "./cellStyles";
 import { useSelector } from "react-redux";
-import { getBoardCells } from "../../_duck/selectors";
+import { createGetCellSelector } from "../../_duck/selectors";
 
 const useStyles = makeStyles(styles);
 const useWrongFlagStyles = makeStyles(wrongFlagIconStyles);
@@ -16,9 +16,8 @@ const useWrongFlagStyles = makeStyles(wrongFlagIconStyles);
 const TableCell: React.FunctionComponent<TableCellProps> = props => {
   const { cellKey, discoverSurrounding, discoverCell, toggleCellMark } = props;
 
-  const boardCells = useSelector(getBoardCells);
+  const cell = useSelector(createGetCellSelector(cellKey));
 
-  const cell = boardCells.get(cellKey)!;
   const classes = useStyles(cell);
   const [isLeftClicked, setIsLeftClicked] = React.useState(false);
   const [isRightClicked, setIsRightClicked] = React.useState(false);

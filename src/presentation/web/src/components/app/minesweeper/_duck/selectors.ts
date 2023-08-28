@@ -42,3 +42,8 @@ export const getGameLevel = createSelector(
   [ getRows, getColumns ],
   (rows, columns) => gameConfigurationsCollection.getConfiguration(rows, columns)
 );
+
+export const createGetCellSelector = (cellKey: string) => createSelector(
+  [getBoardCells], 
+  (boardCells) => boardCells.get(cellKey)!
+);
