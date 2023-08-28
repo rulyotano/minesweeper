@@ -25,23 +25,25 @@ export interface BeginGameAction {
   rows: number;
   columns: number;
   mines: number;
-  board: Cell[][];
+  board: string[][];
+  boardCells: Map<string, Cell>;
 }
 
 export interface FinishGameAction {
   type: "MINESWEEPER_FINISH_GAME";
-  board: Cell[][];
+  boardCells: Map<string, Cell>;
 }
 
 export interface UpdateBoardAction {
   type: "MINESWEEPER_UPDATE_BOARD";
-  board: Cell[][];
+  boardCells: Map<string, Cell>;
   discoveredCells: number;
 }
 
 export interface InitializeBoardAction {
   type: "MINESWEEPER_INITIALIZE";
-  board: Cell[][];
+  board: string[][];
+  boardCells: Map<string, Cell>;
   rows: number;
   columns: number;
 }

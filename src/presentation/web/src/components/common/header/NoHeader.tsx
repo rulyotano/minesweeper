@@ -11,7 +11,7 @@ export default () => {
 
   return (
     <Container className={classes.noHeader}>
-      <Typography variant="h4">Minesweeper++</Typography>
+      <Typography variant="h4"></Typography>
     </Container>
   );
 };

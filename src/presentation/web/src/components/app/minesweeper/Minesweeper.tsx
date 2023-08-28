@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Profiler } from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import { Cell } from "./helpers/cellHelper";
 import Board from "./components/board";
@@ -48,27 +48,29 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
   );
 
   return (
-    <div className={classes.centeredContainer}>
-      <div className={classes.container}>
-        <Button onClick={() => setIsViewRankingOpen(true)}>Ranking <RankingIcon /></Button>
-        <InfoBar time={{ startTime, endTime }} onReset={initializeWithConfiguration} gameState={{ isWin, isLost }} />
-        
-        <Board
-          board={board}
-          discoverCell={cell =>
-            isStarted ? click(cell.Row, cell.Column) : beginWithConfiguration(cell)}
-          toggleCellMark={cell => switchCell(cell.Row, cell.Column)}
-          discoverSurrounding={cell => surrounding(cell.Row, cell.Column)}
-        />
+    <Profiler id="Minesweeper" onRender={(id, _, actualDuration) => console.log(`render ${id} duration ${actualDuration}`)}>
+      <div className={classes.centeredContainer}>
+        <div className={classes.container}>
+          <Button onClick={() => setIsViewRankingOpen(true)}>Ranking <RankingIcon /></Button>
+          <InfoBar time={{ startTime, endTime }} onReset={initializeWithConfiguration} gameState={{ isWin, isLost }} />
+
+          <Board
+            board={board}
+            discoverCell={cell =>
+              isStarted ? click(cell.Row, cell.Column) : beginWithConfiguration(cell)}
+            toggleCellMark={cell => switchCell(cell.Row, cell.Column)}
+            discoverSurrounding={cell => surrounding(cell.Row, cell.Column)}
+          />
+        </div>
+        <ViewRanking isOpen={isViewRankingOpen} onClose={() => setIsViewRankingOpen(false)} />
+        <SubmitRanking />
       </div>
-      <ViewRanking isOpen={isViewRankingOpen} onClose={() => setIsViewRankingOpen(false)}/>
-      <SubmitRanking />
-    </div>
+    </Profiler>
   );
 };
 
 export interface MinesweeperProps {
-  board: Cell[][];
+  board: Array<string[]>;
   gameEnded: boolean;
   isStarted: boolean;
   startTime: Date | null;

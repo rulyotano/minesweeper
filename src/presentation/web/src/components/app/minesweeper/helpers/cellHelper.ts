@@ -17,6 +17,8 @@ export enum CellStatus {
   MarkedAsMineButEmpty
 }
 
+export const getCellKey = (row: number, column: number) => `${row}-${column}`;
+
 export const buildCell = (
   row: number,
   column: number,
@@ -27,7 +29,7 @@ export const buildCell = (
   Status: status,
   MinesAround: minesAround,
   IsMine: isMine,
-  Key: `${row}-${column}`,
+  Key: getCellKey(row, column),
   Row: row,
   Column: column
 });
