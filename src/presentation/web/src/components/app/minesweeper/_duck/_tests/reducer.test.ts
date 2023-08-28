@@ -64,8 +64,10 @@ describe("components > app > minesweeper > reducer", () => {
     const CLICKED_C = 4;
     const MINES = 20;
 
+    const [board, boardCells] = buildBoard(ROWS, COLS, CLICKED_R, CLICKED_C, MINES)
     const action: BeginGameAction = {
-      board: buildBoard(ROWS, COLS, CLICKED_R, CLICKED_C, MINES),
+      board,
+      boardCells,
       columns: COLS,
       mines: MINES,
       rows: ROWS,
@@ -79,6 +81,7 @@ describe("components > app > minesweeper > reducer", () => {
       mines: MINES,
       discoveredCells: 0,
       board: action.board,
+      boardCells: action.boardCells,
       gameStartTime: new Date(FAKE_NOW_DATE)
     });
   });
@@ -96,14 +99,15 @@ describe("components > app > minesweeper > reducer", () => {
     const CLICKED_C = 4;
     const MINES = 20;
 
+    const [_, boardCells] = buildBoard(ROWS, COLS, CLICKED_R, CLICKED_C, MINES)
     const action: FinishGameAction = {
-      board: buildBoard(ROWS, COLS, CLICKED_R, CLICKED_C, MINES),
+      boardCells,
       type: FINISH_GAME
     };
     Reducer(reducer).withState(previousState).expect(action).toChangeInState({
       gameIsStarted: false,
       gameFinishTime: FAKE_NOW_DATE,
-      board: action.board
+      boardCells: action.boardCells
     });
   });
 
@@ -119,14 +123,15 @@ describe("components > app > minesweeper > reducer", () => {
     const CLICKED_C = 4;
     const MINES = 20;
 
+    const [_, boardCells] = buildBoard(ROWS, COLS, CLICKED_R, CLICKED_C, MINES)
     const action: UpdateBoardAction = {
-      board: buildBoard(ROWS, COLS, CLICKED_R, CLICKED_C, MINES),
+      boardCells,
       discoveredCells: 10,
       type: UPDATE_BOARD
     };
     Reducer(reducer).withState(previousState).expect(action).toChangeInState({
       discoveredCells: action.discoveredCells,
-      board: action.board
+      boardCells: action.boardCells
     });
   });
 
@@ -148,8 +153,10 @@ describe("components > app > minesweeper > reducer", () => {
     const CLICKED_C = 4;
     const MINES = 20;
 
+    const [board, boardCells] = buildBoard(ROWS, COLS, CLICKED_R, CLICKED_C, MINES)
     const action: InitializeBoardAction = {
-      board: buildBoard(ROWS, COLS, CLICKED_R, CLICKED_C, MINES),
+      board,
+      boardCells,
       columns: COLS,
       rows: ROWS,
       type: INITIALIZE_BOARD
@@ -157,6 +164,7 @@ describe("components > app > minesweeper > reducer", () => {
     Reducer(reducer).withState(previousState).expect(action).toChangeInState({
       discoveredCells: 0,
       board: action.board,
+      boardCells: action.boardCells,
       rows: ROWS,
       columns: COLS,
       gameStartTime: null,

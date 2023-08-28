@@ -1,14 +1,13 @@
 import { Theme } from "@material-ui/core/styles/createTheme";
 import { darken } from "@material-ui/core/styles/colorManipulator";
 import createStyles from "@material-ui/core/styles/createStyles";
-import { TableCellProps } from "./TableCell";
-import { CellStatus } from "../../helpers/cellHelper";
+import { Cell, CellStatus } from "../../helpers/cellHelper";
 
 export default (theme: Theme) =>
   createStyles({
     cell: {
-      color: (props: TableCellProps) => getTextColorFromCell(theme, props),
-      backgroundColor: (props: TableCellProps) => getBackgroundColorFromCell(theme, props),
+      color: (cell: Cell) => getTextColorFromCell(theme, cell),
+      backgroundColor: (cell: Cell) => getBackgroundColorFromCell(theme, cell),
       height: theme.spacing(5),
       width: theme.spacing(5),
       borderStyle: "solid",
@@ -29,9 +28,9 @@ export default (theme: Theme) =>
     }
   });
 
-const getTextColorFromCell = (theme: Theme, props: TableCellProps) => {
-  if (props.cell.Status === CellStatus.DiscoveredAndNumber) {
-    switch (props.cell.MinesAround) {
+const getTextColorFromCell = (theme: Theme, cell: Cell) => {
+  if (cell.Status === CellStatus.DiscoveredAndNumber) {
+    switch (cell.MinesAround) {
       case 1:
         return theme.palette.primary.main;
       case 2:
@@ -51,23 +50,23 @@ const getTextColorFromCell = (theme: Theme, props: TableCellProps) => {
       default:
         break;
     }
-  } else if (props.cell.Status === CellStatus.ExploitedMine) {
+  } else if (cell.Status === CellStatus.ExploitedMine) {
     return theme.palette.error.dark;
   }
   return theme.palette.text.primary;
 };
 
-const getBackgroundColorFromCell = (theme: Theme, props: TableCellProps) => {
+const getBackgroundColorFromCell = (theme: Theme, cell: Cell) => {
   const discoveredBackgroundColor = darken(theme.palette.background.default, 0.2);
   if (
-    props.cell.Status === CellStatus.DiscoveredAndEmpty ||
-    props.cell.Status === CellStatus.DiscoveredAndNumber
+    cell.Status === CellStatus.DiscoveredAndEmpty ||
+    cell.Status === CellStatus.DiscoveredAndNumber
   )
     return discoveredBackgroundColor;
 
   if (
-    props.cell.Status === CellStatus.ExploitedMine ||
-    props.cell.Status === CellStatus.MarkedAsMineButEmpty
+    cell.Status === CellStatus.ExploitedMine ||
+    cell.Status === CellStatus.MarkedAsMineButEmpty
   )
     return discoveredBackgroundColor;
 

@@ -52,7 +52,7 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
       <div className={classes.container}>
         <Button onClick={() => setIsViewRankingOpen(true)}>Ranking <RankingIcon /></Button>
         <InfoBar time={{ startTime, endTime }} onReset={initializeWithConfiguration} gameState={{ isWin, isLost }} />
-        
+
         <Board
           board={board}
           discoverCell={cell =>
@@ -61,14 +61,14 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
           discoverSurrounding={cell => surrounding(cell.Row, cell.Column)}
         />
       </div>
-      <ViewRanking isOpen={isViewRankingOpen} onClose={() => setIsViewRankingOpen(false)}/>
+      <ViewRanking isOpen={isViewRankingOpen} onClose={() => setIsViewRankingOpen(false)} />
       <SubmitRanking />
     </div>
   );
 };
 
 export interface MinesweeperProps {
-  board: Cell[][];
+  board: Array<string[]>;
   gameEnded: boolean;
   isStarted: boolean;
   startTime: Date | null;

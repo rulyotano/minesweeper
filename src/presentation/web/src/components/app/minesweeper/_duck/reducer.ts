@@ -11,9 +11,9 @@ import {
   INITIALIZE_BOARD,
   InitializeBoardAction,
   SET_USERNAME,
-  SetUsername
+  SetUsername,
+  BoardCellsType
 } from "./types";
-import { Cell } from "../helpers/cellHelper";
 
 export interface ReducerState {
   rows: number;
@@ -22,7 +22,8 @@ export interface ReducerState {
   gameFinishTime: Date | null;
   mines: number;
   discoveredCells: number;
-  board: Cell[][];
+  board: string[][];
+  boardCells: BoardCellsType
   username: string | null
 }
 
@@ -34,6 +35,7 @@ export const initialState: ReducerState = {
   mines: 0,
   discoveredCells: 0,
   board: [],
+  boardCells: {},
   username: null
 };
 
@@ -49,6 +51,7 @@ const reducer: Reducer<ReducerState> = (
         rows: customAction.rows,
         columns: customAction.columns,
         board: customAction.board,
+        boardCells: customAction.boardCells,
         mines: action.mines,
         discoveredCells: 0,
         gameFinishTime: null,
@@ -60,7 +63,7 @@ const reducer: Reducer<ReducerState> = (
       const customAction = action as FinishGameAction;
       return {
         ...state,
-        board: customAction.board,
+        boardCells: customAction.boardCells,
         gameFinishTime: new Date(),
         gameIsStarted: false
       };
@@ -70,7 +73,7 @@ const reducer: Reducer<ReducerState> = (
       const customAction = action as UpdateBoardAction;
       return {
         ...state,
-        board: customAction.board,
+        boardCells: customAction.boardCells,
         discoveredCells: customAction.discoveredCells
       };
     }
@@ -80,6 +83,7 @@ const reducer: Reducer<ReducerState> = (
         ...initialState,
         username: state.username,
         board: customAction.board,
+        boardCells: customAction.boardCells,
         rows: customAction.rows,
         columns: customAction.columns
       };

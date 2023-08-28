@@ -19,11 +19,11 @@ const Board: React.FunctionComponent<BoardProps> = (props: BoardProps) => {
       <table className={classes.table}>
         <tbody>
           {board.map(row => (
-            <tr key={row[0].Key}>
+            <tr key={row[0]}>
               {row.map(cell => (
                 <TableCell
-                  key={cell.Key}
-                  cell={cell}
+                  key={cell}
+                  cellKey={cell}
                   discoverCell={discoverCell}
                   toggleCellMark={toggleCellMark}
                   discoverSurrounding={discoverSurrounding}
@@ -38,7 +38,7 @@ const Board: React.FunctionComponent<BoardProps> = (props: BoardProps) => {
 };
 
 export interface BoardProps {
-  board: Cell[][];
+  board: Array<string[]>;
   discoverCell: (cell: Cell) => void;
   toggleCellMark: (cell: Cell) => void;
   discoverSurrounding: (cell: Cell) => void;
