@@ -1,8 +1,9 @@
+import { BoardCellsType } from "../_duck/types";
 import { Cell, buildCell, CellStatus, getCellKey } from "./cellHelper";
 
-export const buildEmptyBoard = (rows: number, columns: number): [Array<string[]>, Map<string, Cell>] => {
-  var board: Array<string[]> = [];
-  var boardCells = new Map<string, Cell>();
+export const buildEmptyBoard = (rows: number, columns: number): [Array<string[]>, BoardCellsType] => {
+  const board: Array<string[]> = [];
+  const boardCells: BoardCellsType = {};
 
   for (let i = 0; i < rows; i++) {
     board[i] = [];
@@ -10,14 +11,14 @@ export const buildEmptyBoard = (rows: number, columns: number): [Array<string[]>
     for (let j = 0; j < columns; j++) {
       const cell = buildCell(i, j);
       board[i][j] = cell.Key;
-      boardCells.set(cell.Key, cell);
+      boardCells[cell.Key] = cell;
     }
   }
 
   return [board, boardCells];
 };
 
-export const getCellsAround = (board: Array<string[]>, boardCells: Map<string, Cell>, row: number, column: number): Cell[] => {
+export const getCellsAround = (board: Array<string[]>, boardCells: BoardCellsType, row: number, column: number): Cell[] => {
   const result: Cell[] = [];
 
   directions.forEach(([vertical, horizontal]: Direction) => {
@@ -30,7 +31,7 @@ export const getCellsAround = (board: Array<string[]>, boardCells: Map<string, C
       verticalMove < board.length &&
       horizontalMove < board[0].length
     ) {
-      result.push(boardCells.get(getCellKey(verticalMove, horizontalMove))!);
+      result.push(boardCells[getCellKey(verticalMove, horizontalMove)]);
     }
   });
 
@@ -43,7 +44,7 @@ export const buildBoard = (
   clickedRow: number,
   clickedColumn: number,
   mines: number
-): [Array<string[]>, Map<string, Cell>] => {
+): [Array<string[]>, BoardCellsType] => {
   if (mines > 0.9 * rows * columns) throw Error("To much mines for this board");
 
   const [board, boardCells] = buildEmptyBoard(rows, columns);
@@ -59,7 +60,7 @@ export const buildBoard = (
 
 export const getCellsToReveal = (
   board: Array<string[]>,
-  boardCells: Map<string, Cell>,
+  boardCells: BoardCellsType,
   row: number,
   column: number
 ): Cell[] => {
@@ -71,7 +72,7 @@ export const getCellsToReveal = (
   );
 };
 
-export const boardFromString = (boardInput: string): [Array<string[]>, Map<string, Cell>] => {
+export const boardFromString = (boardInput: string): [Array<string[]>, BoardCellsType] => {
   const MINES_CHAR = "*";
   const ROW_DIVIDER_CHAR = "|";
   const NORMAL_CHAR = ".";
@@ -80,11 +81,11 @@ export const boardFromString = (boardInput: string): [Array<string[]>, Map<strin
 
   const rows = stringRows.length;
 
-  if (rows === 0) return [[], new Map<string, Cell>()];
+  if (rows === 0) return [[], {}];
 
   const columns = stringRows[0].length;
 
-  if (columns === 0) return [[], new Map<string, Cell>()];
+  if (columns === 0) return [[], {}];
 
   const [board, boardCells] = buildEmptyBoard(rows, columns);
 
@@ -98,7 +99,7 @@ export const boardFromString = (boardInput: string): [Array<string[]>, Map<strin
 
       switch (charCell) {
         case MINES_CHAR:
-          boardCells.get(board[r][c])!.IsMine = true;
+          boardCells[board[r][c]].IsMine = true;
           break;
         case NORMAL_CHAR:
           break;
@@ -154,13 +155,13 @@ const getPickCellList = (rows: number, columns: number) => {
   return result;
 };
 
-const putMines = (boardCells: Map<string, Cell>, wherePutMines: Array<[row: number, column: number]>) => {
+const putMines = (boardCells: BoardCellsType, wherePutMines: Array<[row: number, column: number]>) => {
   wherePutMines.forEach(([ row, column ]) => {
-    boardCells.get(getCellKey(row, column))!.IsMine = true;
+    boardCells[getCellKey(row, column)].IsMine = true;
   });
 };
 
-const putNumbers = (board: Array<string[]>, boardCells: Map<string, Cell>) => {
+const putNumbers = (board: Array<string[]>, boardCells: BoardCellsType) => {
   const rows = board.length;
   const columns = board.length > 0 ? board[0].length : 0;
 
@@ -168,7 +169,7 @@ const putNumbers = (board: Array<string[]>, boardCells: Map<string, Cell>) => {
     const row = board[r];
 
     for (let c = 0; c < columns; c++) {
-      const cell = boardCells.get(row[c])!;
+      const cell = boardCells[row[c]];
 
       if (!cell.IsMine) {
         const minesAround = getCellsAround(board, boardCells, r, c)
@@ -182,9 +183,9 @@ const putNumbers = (board: Array<string[]>, boardCells: Map<string, Cell>) => {
   }
 };
 
-const getCellsToRevealIterative = (board: Array<string[]>, boardCells: Map<string, Cell>, row: number, column: number): Cell[] => {
+const getCellsToRevealIterative = (board: Array<string[]>, boardCells: BoardCellsType, row: number, column: number): Cell[] => {
   const marks: Map<string, boolean> = new Map<string, boolean>();
-  const initialCell = boardCells.get(board[row][column])!;
+  const initialCell = boardCells[board[row][column]];
 
   if (initialCell.IsMine) throw Error("Can't revel mine cell");
 

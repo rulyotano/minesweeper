@@ -1,7 +1,6 @@
 import React from "react";
 import { shallow } from "enzyme";
 import Board, { BoardProps } from "../Board";
-import { Cell } from "../../../helpers/cellHelper";
 import { boardFromString } from "../../../helpers/boardHelper";
 import TableCell from "../TableCell";
 
@@ -36,8 +35,8 @@ describe("components > app > minesweeper > components > board > Board", () => {
     boardFromString(`...|
                      .*.|
                      ..*`);
-  const getPropsWithBoard = (board: Cell[][] = getDefaultBoard()): BoardProps => ({
-    board,
+  const getPropsWithBoard = (board: Array<string[]>|null = null): BoardProps => ({
+    board: board || getDefaultBoard()[0],
     discoverCell: jest.fn(),
     toggleCellMark: jest.fn(),
     discoverSurrounding: jest.fn()

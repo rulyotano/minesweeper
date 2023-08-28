@@ -8,12 +8,13 @@ import {
   FinishGameAction,
   UpdateBoardAction,
   BeginGameAction,
-  InitializeBoardAction
+  InitializeBoardAction,
+  BoardCellsType
 } from "../types";
 import * as actions from "../actions";
 import * as boardHelper from "../../helpers/boardHelper";
 import * as selectors from "../selectors";
-import { CellStatus, Cell, buildCell } from "../../helpers/cellHelper";
+import { CellStatus, Cell, buildCell, getCellKey } from "../../helpers/cellHelper";
 import { gameConfigurations } from "../../helpers/gameHelper";
 import { ApplicationState } from "../../../../../store";
 
@@ -24,7 +25,7 @@ describe("components > app > minesweeper > actions", () => {
   const COLUMNS = 12;
   const MINES = 30;
   const getFakeBoard = () => buildBoard(ROWS, COLUMNS, 3, 3, 30);
-  const fakeBoard = getFakeBoard();
+  const [board, boardCells] = getFakeBoard();
 
   afterEach(() => {});
 
@@ -46,8 +47,8 @@ describe("components > app > minesweeper > actions", () => {
       const configuration = gameConfigurations.beginner;
       const TEST_ROW = 3;
       const TEST_COLUMN = 3;
-      const customFakeBoard = getFakeBoard();
-      const fakeState = getStateWithBoard(customFakeBoard);
+      const [customFakeBoard, customFakeBoardCells] = getFakeBoard();
+      const fakeState = getStateWithBoard(customFakeBoard, customFakeBoardCells);
       fakeState.minesweeper.gameFinishTime = null;
 
       const dispatches = await Thunk(actions.begin)
@@ -69,8 +70,8 @@ describe("components > app > minesweeper > actions", () => {
       const TEST_ROW = 3;
       const TEST_COLUMN = 3;
 
-      const customFakeBoard = getFakeBoard();
-      const fakeState = getStateWithBoard(customFakeBoard);
+      const [customFakeBoard, customFakeBoardCells] = getFakeBoard();
+      const fakeState = getStateWithBoard(customFakeBoard, customFakeBoardCells);
       fakeState.minesweeper.gameFinishTime = new Date();
 
       const dispatches = await Thunk(actions.begin)
@@ -90,18 +91,18 @@ describe("components > app > minesweeper > actions", () => {
       const MARKED_NOT_MINE_COLUMN = 1;
       const MINE_NO_DISCOVERED_ROW = 0;
       const MINE_NO_DISCOVERED_COLUMN = 0;
-      const customFakeBoard = getFakeBoard();
-      customFakeBoard[MARKED_NOT_MINE_ROW][MARKED_NOT_MINE_COLUMN].IsMine = false;
-      customFakeBoard[MARKED_NOT_MINE_ROW][MARKED_NOT_MINE_COLUMN].Status = CellStatus.MarkedAsMine;
-      customFakeBoard[MINE_NO_DISCOVERED_ROW][MINE_NO_DISCOVERED_COLUMN].IsMine = true;
-      customFakeBoard[MINE_NO_DISCOVERED_ROW][MINE_NO_DISCOVERED_COLUMN].Status =
+      const [customFakeBoard, customFakeBoardCells] = getFakeBoard();
+      customFakeBoardCells[customFakeBoard[MARKED_NOT_MINE_ROW][MARKED_NOT_MINE_COLUMN]].IsMine = false;
+      customFakeBoardCells[customFakeBoard[MARKED_NOT_MINE_ROW][MARKED_NOT_MINE_COLUMN]].Status = CellStatus.MarkedAsMine;
+      customFakeBoardCells[customFakeBoard[MINE_NO_DISCOVERED_ROW][MINE_NO_DISCOVERED_COLUMN]].IsMine = true;
+      customFakeBoardCells[customFakeBoard[MINE_NO_DISCOVERED_ROW][MINE_NO_DISCOVERED_COLUMN]].Status =
         CellStatus.UnDiscovered;
 
-      customFakeBoard[TEST_ROW][TEST_COLUMN] = {
-        ...customFakeBoard[TEST_ROW][TEST_COLUMN],
+      customFakeBoardCells[customFakeBoard[TEST_ROW][TEST_COLUMN]] = {
+        ...customFakeBoardCells[customFakeBoard[TEST_ROW][TEST_COLUMN]],
         IsMine: true
       };
-      const fakeState = getStateWithBoard(customFakeBoard);
+      const fakeState = getStateWithBoard(customFakeBoard, customFakeBoardCells);
 
       const dispatches = await Thunk(actions.cellClick)
         .withState(fakeState)
@@ -109,11 +110,11 @@ describe("components > app > minesweeper > actions", () => {
       expect(dispatches).toHaveLength(1);
       const finishGameAction = dispatches[0].getAction() as FinishGameAction;
       expect(finishGameAction.type).toBe(FINISH_GAME);
-      expect(finishGameAction.board[TEST_ROW][TEST_COLUMN].Status).toBe(CellStatus.ExploitedMine);
-      expect(finishGameAction.board[MARKED_NOT_MINE_ROW][MARKED_NOT_MINE_COLUMN].Status).toBe(
+      expect(finishGameAction.boardCells[getCellKey(TEST_ROW, TEST_COLUMN)].Status).toBe(CellStatus.ExploitedMine);
+      expect(finishGameAction.boardCells[getCellKey(MARKED_NOT_MINE_ROW, MARKED_NOT_MINE_COLUMN)].Status).toBe(
         CellStatus.MarkedAsMineButEmpty
       );
-      expect(finishGameAction.board[MINE_NO_DISCOVERED_ROW][MINE_NO_DISCOVERED_COLUMN].Status).toBe(
+      expect(finishGameAction.boardCells[getCellKey(MINE_NO_DISCOVERED_ROW, MINE_NO_DISCOVERED_COLUMN)].Status).toBe(
         CellStatus.Mine
       );
     });
@@ -121,12 +122,12 @@ describe("components > app > minesweeper > actions", () => {
     test("When is NO mine, should reveal all cells that should be revealed", async () => {
       const TEST_ROW = 3;
       const TEST_COLUMN = 3;
-      const customFakeBoard = getFakeBoard();
-      customFakeBoard[TEST_ROW][TEST_COLUMN] = {
-        ...customFakeBoard[TEST_ROW][TEST_COLUMN],
+      const [customFakeBoard, customFakeBoardCells] = getFakeBoard();
+      customFakeBoardCells[customFakeBoard[TEST_ROW][TEST_COLUMN]] = {
+        ...customFakeBoardCells[customFakeBoard[TEST_ROW][TEST_COLUMN]],
         IsMine: false
       };
-      const fakeState = getStateWithBoard(customFakeBoard);
+      const fakeState = getStateWithBoard(customFakeBoard, customFakeBoardCells);
 
       const getCellsToRevealMocked = jest
         .spyOn(boardHelper, "getCellsToReveal")
@@ -144,21 +145,21 @@ describe("components > app > minesweeper > actions", () => {
 
       const updateBoardAction = dispatches[0].getAction() as UpdateBoardAction;
       expect(updateBoardAction.type).toBe(UPDATE_BOARD);
-      expect(updateBoardAction.board[1][1].Status).toBe(CellStatus.DiscoveredAndEmpty);
-      expect(updateBoardAction.board[2][2].Status).toBe(CellStatus.DiscoveredAndNumber);
+      expect(updateBoardAction.boardCells[getCellKey(1, 1)].Status).toBe(CellStatus.DiscoveredAndEmpty);
+      expect(updateBoardAction.boardCells[getCellKey(2, 2)].Status).toBe(CellStatus.DiscoveredAndNumber);
       getCellsToRevealMocked.mockReset();
     });
 
     test("When marked as mine, should do nothing", async () => {
       const TEST_ROW = 3;
       const TEST_COLUMN = 3;
-      const customFakeBoard = getFakeBoard();
-      customFakeBoard[TEST_ROW][TEST_COLUMN] = {
-        ...customFakeBoard[TEST_ROW][TEST_COLUMN],
+      const [customFakeBoard, customFakeBoardCells] = getFakeBoard();
+      customFakeBoardCells[customFakeBoard[TEST_ROW][TEST_COLUMN]] = {
+        ...customFakeBoardCells[customFakeBoard[TEST_ROW][TEST_COLUMN]],
         IsMine: true,
         Status: CellStatus.MarkedAsMine
       };
-      const fakeState = getStateWithBoard(customFakeBoard);
+      const fakeState = getStateWithBoard(customFakeBoard, customFakeBoardCells);
 
       const dispatches = await Thunk(actions.cellClick)
         .withState(fakeState)
@@ -170,13 +171,13 @@ describe("components > app > minesweeper > actions", () => {
     test("When already discovered (number), should do nothing", async () => {
       const TEST_ROW = 3;
       const TEST_COLUMN = 3;
-      const customFakeBoard = getFakeBoard();
-      customFakeBoard[TEST_ROW][TEST_COLUMN] = {
-        ...customFakeBoard[TEST_ROW][TEST_COLUMN],
+      const [customFakeBoard, customFakeBoardCells] = getFakeBoard();
+      customFakeBoardCells[customFakeBoard[TEST_ROW][TEST_COLUMN]] = {
+        ...customFakeBoardCells[customFakeBoard[TEST_ROW][TEST_COLUMN]],
         IsMine: true,
         Status: CellStatus.DiscoveredAndNumber
       };
-      const fakeState = getStateWithBoard(customFakeBoard);
+      const fakeState = getStateWithBoard(customFakeBoard, customFakeBoardCells);
 
       const dispatches = await Thunk(actions.cellClick)
         .withState(fakeState)
@@ -188,13 +189,13 @@ describe("components > app > minesweeper > actions", () => {
     test("When already discovered (empty), should do nothing", async () => {
       const TEST_ROW = 3;
       const TEST_COLUMN = 3;
-      const customFakeBoard = getFakeBoard();
-      customFakeBoard[TEST_ROW][TEST_COLUMN] = {
-        ...customFakeBoard[TEST_ROW][TEST_COLUMN],
+      const [customFakeBoard, customFakeBoardCells] = getFakeBoard();
+      customFakeBoardCells[customFakeBoard[TEST_ROW][TEST_COLUMN]] = {
+        ...customFakeBoardCells[customFakeBoard[TEST_ROW][TEST_COLUMN]],
         IsMine: true,
         Status: CellStatus.DiscoveredAndEmpty
       };
-      const fakeState = getStateWithBoard(customFakeBoard);
+      const fakeState = getStateWithBoard(customFakeBoard, customFakeBoardCells);
 
       const dispatches = await Thunk(actions.cellClick)
         .withState(fakeState)
@@ -206,12 +207,12 @@ describe("components > app > minesweeper > actions", () => {
     test("When is NO mine, after reveal cells, should check if game is won, then raise a game finish", async () => {
       const TEST_ROW = 3;
       const TEST_COLUMN = 3;
-      const customFakeBoard = getFakeBoard();
-      customFakeBoard[TEST_ROW][TEST_COLUMN] = {
-        ...customFakeBoard[TEST_ROW][TEST_COLUMN],
+      const [customFakeBoard, customFakeBoardCells] = getFakeBoard();
+      customFakeBoardCells[customFakeBoard[TEST_ROW][TEST_COLUMN]] = {
+        ...customFakeBoardCells[customFakeBoard[TEST_ROW][TEST_COLUMN]],
         IsMine: false
       };
-      const fakeState = getStateWithBoard(customFakeBoard);
+      const fakeState = getStateWithBoard(customFakeBoard, customFakeBoardCells);
 
       const getCellsToRevealMocked = jest
         .spyOn(boardHelper, "getCellsToReveal")
@@ -244,8 +245,8 @@ describe("components > app > minesweeper > actions", () => {
 
   describe("revealSurroundingNoMarkedMines", () => {
     test("when cells mines are equal to surrounding marked mines, should click on all surrounding (no mines) cells", async () => {
-      const { fakeBoard, testRow, testColumn } = getBoardConfiguration();
-      const fakeState = getStateWithBoard(fakeBoard);
+      const { fakeBoard, fakeBoardCells, testRow, testColumn } = getBoardConfiguration();
+      const fakeState = getStateWithBoard(fakeBoard, fakeBoardCells);
 
       const dispatches = await Thunk(actions.revealSurroundingNoMarkedMines)
         .withState(fakeState)
@@ -255,9 +256,9 @@ describe("components > app > minesweeper > actions", () => {
     });
 
     test("when main cell is not number revealed, do nothing", async () => {
-      const { fakeBoard, testRow, testColumn } = getBoardConfiguration();
-      fakeBoard[1][1].Status = CellStatus.UnDiscovered;
-      const fakeState = getStateWithBoard(fakeBoard);
+      const { fakeBoard, fakeBoardCells, testRow, testColumn } = getBoardConfiguration();
+      fakeBoardCells[fakeBoard[1][1]].Status = CellStatus.UnDiscovered;
+      const fakeState = getStateWithBoard(fakeBoard, fakeBoardCells);
 
       const dispatches = await Thunk(actions.revealSurroundingNoMarkedMines)
         .withState(fakeState)
@@ -267,9 +268,9 @@ describe("components > app > minesweeper > actions", () => {
     });
 
     test("when have more cells marked as mines that current number, do nothing", async () => {
-      const { fakeBoard, testRow, testColumn } = getBoardConfiguration();
-      fakeBoard[0][0].Status = CellStatus.MarkedAsMine;
-      const fakeState = getStateWithBoard(fakeBoard);
+      const { fakeBoard, fakeBoardCells, testRow, testColumn } = getBoardConfiguration();
+      fakeBoardCells[fakeBoard[0][0]].Status = CellStatus.MarkedAsMine;
+      const fakeState = getStateWithBoard(fakeBoard, fakeBoardCells);
 
       const dispatches = await Thunk(actions.revealSurroundingNoMarkedMines)
         .withState(fakeState)
@@ -279,9 +280,9 @@ describe("components > app > minesweeper > actions", () => {
     });
 
     test("when have less cells marked as mines that current number, do nothing", async () => {
-      const { fakeBoard, testRow, testColumn } = getBoardConfiguration();
-      fakeBoard[1][1].Status = CellStatus.UnDiscovered;
-      const fakeState = getStateWithBoard(fakeBoard);
+      const { fakeBoard, fakeBoardCells, testRow, testColumn } = getBoardConfiguration();
+      fakeBoardCells[fakeBoard[1][1]].Status = CellStatus.UnDiscovered;
+      const fakeState = getStateWithBoard(fakeBoard, fakeBoardCells);
 
       const dispatches = await Thunk(actions.revealSurroundingNoMarkedMines)
         .withState(fakeState)
@@ -291,9 +292,9 @@ describe("components > app > minesweeper > actions", () => {
     });
 
     test("when finished game, do nothing", async () => {
-      const { fakeBoard, testRow, testColumn } = getBoardConfiguration();
-      fakeBoard[1][1].Status = CellStatus.UnDiscovered;
-      const fakeState = getStateWithBoard(fakeBoard);
+      const { fakeBoard, fakeBoardCells, testRow, testColumn } = getBoardConfiguration();
+      fakeBoardCells[fakeBoard[1][1]].Status = CellStatus.UnDiscovered;
+      const fakeState = getStateWithBoard(fakeBoard, fakeBoardCells);
       fakeState.minesweeper.gameFinishTime = new Date();
 
       const dispatches = await Thunk(actions.revealSurroundingNoMarkedMines)
@@ -306,28 +307,29 @@ describe("components > app > minesweeper > actions", () => {
     const getBoardConfiguration = () => {
       const TEST_ROW = 1;
       const TEST_COLUMN = 1;
-      const customFakeBoard = boardHelper.boardFromString(`..*|
+      const [customFakeBoard, customFakeBoardCells] = boardHelper.boardFromString(`..*|
                                                            *..|
                                                            .*.`);
-      customFakeBoard[1][1].Status = CellStatus.DiscoveredAndNumber;
-      customFakeBoard[0][2].Status = CellStatus.MarkedAsMine;
-      customFakeBoard[1][0].Status = CellStatus.MarkedAsMine;
-      customFakeBoard[2][1].Status = CellStatus.MarkedAsMine;
+      customFakeBoardCells[getCellKey(1, 1)].Status = CellStatus.DiscoveredAndNumber;
+      customFakeBoardCells[getCellKey(0, 2)].Status = CellStatus.MarkedAsMine;
+      customFakeBoardCells[getCellKey(1, 0)].Status = CellStatus.MarkedAsMine;
+      customFakeBoardCells[getCellKey(2, 1)].Status = CellStatus.MarkedAsMine;
 
       return {
         testRow: TEST_ROW,
         testColumn: TEST_COLUMN,
-        fakeBoard: customFakeBoard
+        fakeBoard: customFakeBoard,
+        fakeBoardCells: customFakeBoardCells
       };
     };
   });
 
   describe("switchMarkAsMine", () => {
     test("when cell is not marked as mine or empty should do nothing", async () => {
-      const { fakeBoard, testRow, testColumn } = getBoardConfiguration();
-      fakeBoard[testRow][testColumn].Status = CellStatus.DiscoveredAndEmpty;
+      const { fakeBoard, fakeBoardCells, testRow, testColumn } = getBoardConfiguration();
+      fakeBoardCells[fakeBoard[testRow][testColumn]].Status = CellStatus.DiscoveredAndEmpty;
 
-      const fakeState = getStateWithBoard(fakeBoard);
+      const fakeState = getStateWithBoard(fakeBoard, fakeBoardCells);
 
       const dispatches = await Thunk(actions.switchMarkAsMine)
         .withState(fakeState)
@@ -337,10 +339,10 @@ describe("components > app > minesweeper > actions", () => {
     });
 
     test("when game is ended should do nothing", async () => {
-      const { fakeBoard, testRow, testColumn } = getBoardConfiguration();
-      fakeBoard[testRow][testColumn].Status = CellStatus.MarkedAsMine;
+      const { fakeBoard, fakeBoardCells, testRow, testColumn } = getBoardConfiguration();
+      fakeBoardCells[fakeBoard[testRow][testColumn]].Status = CellStatus.MarkedAsMine;
 
-      const fakeState = getStateWithBoard(fakeBoard);
+      const fakeState = getStateWithBoard(fakeBoard, fakeBoardCells);
       fakeState.minesweeper.gameFinishTime = new Date();
 
       const dispatches = await Thunk(actions.switchMarkAsMine)
@@ -351,41 +353,41 @@ describe("components > app > minesweeper > actions", () => {
     });
 
     test("when cell is marked as mine should switch it to empty", async () => {
-      const { fakeBoard, testRow, testColumn } = getBoardConfiguration();
-      fakeBoard[testRow][testColumn].Status = CellStatus.MarkedAsMine;
+      const { fakeBoard, fakeBoardCells, testRow, testColumn } = getBoardConfiguration();
+      fakeBoardCells[fakeBoard[testRow][testColumn]].Status = CellStatus.MarkedAsMine;
 
-      const fakeState = getStateWithBoard(fakeBoard);
+      const fakeState = getStateWithBoard(fakeBoard, fakeBoardCells);
 
       const dispatches = await Thunk(actions.switchMarkAsMine)
         .withState(fakeState)
         .execute(testRow, testColumn);
 
       expect(dispatches).toHaveLength(1);
-      const newBoard = (dispatches[0].getAction() as UpdateBoardAction).board;
-      expect(newBoard[testRow][testColumn].Status).toBe(CellStatus.UnDiscovered);
+      const newBoard = (dispatches[0].getAction() as UpdateBoardAction).boardCells;
+      expect(newBoard[getCellKey(testRow, testColumn)].Status).toBe(CellStatus.UnDiscovered);
     });
 
     test("when cell is empty should switch it to marked as mine", async () => {
-      const { fakeBoard, testRow, testColumn } = getBoardConfiguration();
-      fakeBoard[testRow][testColumn].Status = CellStatus.UnDiscovered;
+      const { fakeBoard, fakeBoardCells, testRow, testColumn } = getBoardConfiguration();
+      fakeBoardCells[fakeBoard[testRow][testColumn]].Status = CellStatus.UnDiscovered;
 
-      const fakeState = getStateWithBoard(fakeBoard);
+      const fakeState = getStateWithBoard(fakeBoard, fakeBoardCells);
 
       const dispatches = await Thunk(actions.switchMarkAsMine)
         .withState(fakeState)
         .execute(testRow, testColumn);
 
       expect(dispatches).toHaveLength(1);
-      const newBoard = (dispatches[0].getAction() as UpdateBoardAction).board;
-      expect(newBoard[testRow][testColumn].Status).toBe(CellStatus.MarkedAsMine);
+      const newBoard = (dispatches[0].getAction() as UpdateBoardAction).boardCells;
+      expect(newBoard[getCellKey(testRow, testColumn)].Status).toBe(CellStatus.MarkedAsMine);
     });
 
     test("discovered cells should be the same than before", async () => {
-      const { fakeBoard, testRow, testColumn } = getBoardConfiguration();
-      fakeBoard[testRow][testColumn].Status = CellStatus.UnDiscovered;
+      const { fakeBoard, fakeBoardCells, testRow, testColumn } = getBoardConfiguration();
+      fakeBoardCells[fakeBoard[testRow][testColumn]].Status = CellStatus.UnDiscovered;
       const FAKE_DISCOVERED_CELLS = 5;
 
-      const fakeState = getStateWithBoard(fakeBoard);
+      const fakeState = getStateWithBoard(fakeBoard, fakeBoardCells);
       fakeState.minesweeper.discoveredCells = FAKE_DISCOVERED_CELLS;
 
       const dispatches = await Thunk(actions.switchMarkAsMine)
@@ -400,12 +402,13 @@ describe("components > app > minesweeper > actions", () => {
     const getBoardConfiguration = () => {
       const TEST_ROW = 1;
       const TEST_COLUMN = 0;
-      const customFakeBoard = boardHelper.boardFromString(`..|
+      const [customFakeBoard, customFakeBoardCells] = boardHelper.boardFromString(`..|
                                                            *.`);
       return {
         testRow: TEST_ROW,
         testColumn: TEST_COLUMN,
-        fakeBoard: customFakeBoard
+        fakeBoard: customFakeBoard,
+        fakeBoardCells: customFakeBoardCells
       };
     };
   });
@@ -417,44 +420,47 @@ describe("components > app > minesweeper > actions", () => {
   });
 
   test("beginAction() should return action with type BEGIN_GAME", () => {
-    const action = actions.beginAction(fakeBoard, ROWS, COLUMNS, MINES);
+    const action = actions.beginAction(board, boardCells, ROWS, COLUMNS, MINES);
 
     expect(action.type).toBe(BEGIN_GAME);
-    expect(action.board).toBe(fakeBoard);
+    expect(action.board).toBe(board);
+    expect(action.boardCells).toBe(boardCells);
     expect(action.rows).toBe(ROWS);
     expect(action.columns).toBe(COLUMNS);
     expect(action.mines).toBe(MINES);
   });
 
   test("finishAction() should return action with type FINISH_GAME", () => {
-    const action = actions.finishAction(fakeBoard);
+    const action = actions.finishAction(boardCells);
 
     expect(action.type).toBe(FINISH_GAME);
-    expect(action.board).toBe(fakeBoard);
+    expect(action.boardCells).toBe(boardCells);
   });
 
   test("updateBoardAction() should return action with type UPDATE_BOARD", () => {
     const fakeDiscovered = 9;
-    const action = actions.updateBoardAction(fakeBoard, fakeDiscovered);
+    const action = actions.updateBoardAction(boardCells, fakeDiscovered);
 
     expect(action.type).toBe(UPDATE_BOARD);
-    expect(action.board).toBe(fakeBoard);
+    expect(action.boardCells).toBe(boardCells);
     expect(action.discoveredCells).toBe(fakeDiscovered);
   });
 
   test("initializeBoardAction() should return action with type INITIALIZE_BOARD", () => {
-    const action = actions.initializeBoardAction(fakeBoard, ROWS, COLUMNS);
+    const action = actions.initializeBoardAction(board, boardCells, ROWS, COLUMNS);
 
     expect(action.type).toBe(INITIALIZE_BOARD);
-    expect(action.board).toBe(fakeBoard);
+    expect(action.board).toBe(board);
+    expect(action.boardCells).toBe(boardCells);
     expect(action.rows).toBe(ROWS);
     expect(action.columns).toBe(COLUMNS);
   });
 
-  const getStateWithBoard = (board: Cell[][]): ApplicationState =>
+  const getStateWithBoard = (board: Array<string[]>, boardCells: BoardCellsType): ApplicationState =>
     (({
       minesweeper: {
-        board: board
+        board: board,
+        boardCells
       }
     } as unknown) as ApplicationState);
 });

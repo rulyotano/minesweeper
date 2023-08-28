@@ -11,9 +11,9 @@ import {
   INITIALIZE_BOARD,
   InitializeBoardAction,
   SET_USERNAME,
-  SetUsername
+  SetUsername,
+  BoardCellsType
 } from "./types";
-import { Cell } from "../helpers/cellHelper";
 
 export interface ReducerState {
   rows: number;
@@ -23,7 +23,7 @@ export interface ReducerState {
   mines: number;
   discoveredCells: number;
   board: string[][];
-  boardCells: Map<string, Cell>
+  boardCells: BoardCellsType
   username: string | null
 }
 
@@ -35,7 +35,7 @@ export const initialState: ReducerState = {
   mines: 0,
   discoveredCells: 0,
   board: [],
-  boardCells: new Map<string, Cell>(),
+  boardCells: {},
   username: null
 };
 

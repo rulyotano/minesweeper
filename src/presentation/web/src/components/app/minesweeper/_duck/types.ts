@@ -26,24 +26,24 @@ export interface BeginGameAction {
   columns: number;
   mines: number;
   board: string[][];
-  boardCells: Map<string, Cell>;
+  boardCells: BoardCellsType;
 }
 
 export interface FinishGameAction {
   type: "MINESWEEPER_FINISH_GAME";
-  boardCells: Map<string, Cell>;
+  boardCells: BoardCellsType;
 }
 
 export interface UpdateBoardAction {
   type: "MINESWEEPER_UPDATE_BOARD";
-  boardCells: Map<string, Cell>;
+  boardCells: BoardCellsType;
   discoveredCells: number;
 }
 
 export interface InitializeBoardAction {
   type: "MINESWEEPER_INITIALIZE";
   board: string[][];
-  boardCells: Map<string, Cell>;
+  boardCells: BoardCellsType;
   rows: number;
   columns: number;
 }
@@ -51,6 +51,10 @@ export interface InitializeBoardAction {
 export interface SetUsername {
   type: "MINESWEEPER_SET_USERNAME";
   username: string | null;
+}
+
+export interface BoardCellsType {
+  [key:string]: Cell;
 }
 
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the

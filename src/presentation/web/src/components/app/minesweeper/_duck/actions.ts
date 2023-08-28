@@ -13,7 +13,8 @@ import {
   InitializeBoardAction,
   SetUsername,
   SET_USERNAME,
-  USERNAME_STORAGE_KEY
+  USERNAME_STORAGE_KEY,
+  BoardCellsType
 } from "./types";
 import { AppThunkAction } from "../../../../../src/store";
 import { Cell, CellStatus, getCellKey } from "../helpers/cellHelper";
@@ -85,7 +86,7 @@ export const cellClick = (row: number, column: number): AppThunkAction<Minesweep
   const boardCells = getBoardCells(state);
 
   const cellKey = board[row][column];
-  const cell = boardCells.get(cellKey)!;
+  const cell = boardCells[cellKey];
 
   if (
     cell.Status === CellStatus.MarkedAsMine ||
@@ -107,7 +108,7 @@ export const cellClick = (row: number, column: number): AppThunkAction<Minesweep
   }
 };
 
-const clickOnMine = (board: Array<string[]>, boardCells: Map<string, Cell>, cell: Cell) => {
+const clickOnMine = (board: Array<string[]>, boardCells: BoardCellsType, cell: Cell) => {
   const { pendingMines, badMarked } = getPendingMinesAndBadMarked(board, boardCells, cell);
 
   const cellsToUpdate: Cell[] = [
@@ -116,23 +117,23 @@ const clickOnMine = (board: Array<string[]>, boardCells: Map<string, Cell>, cell
     { ...cell, Status: CellStatus.ExploitedMine }
   ];
 
-  const newBoardCells: Map<string, Cell> = new Map<string, Cell>(boardCells);
-  cellsToUpdate.forEach(cell => newBoardCells.set(cell.Key, cell));
+  const newBoardCells: BoardCellsType = {...boardCells };
+  cellsToUpdate.forEach(cell => newBoardCells[cell.Key] = cell);
 
   return finishAction(newBoardCells);
 };
 
-const clickOnNoMineSpace = (board: Array<string[]>, boardCells: Map<string, Cell>, cell: Cell, cellsAlreadyDiscovered: number) => {
+const clickOnNoMineSpace = (board: Array<string[]>, boardCells: BoardCellsType, cell: Cell, cellsAlreadyDiscovered: number) => {
   const cellsToReveal = getCellsToReveal(board, boardCells, cell.Row, cell.Column).map(it => ({
     ...it,
     Status: it.MinesAround > 0 ? CellStatus.DiscoveredAndNumber : CellStatus.DiscoveredAndEmpty
   }));
-  const newBoardCells: Map<string, Cell> = new Map<string, Cell>(boardCells);
-  cellsToReveal.forEach(cell => newBoardCells.set(cell.Key, cell));
+  const newBoardCells: BoardCellsType = {...boardCells};
+  cellsToReveal.forEach(cell => newBoardCells[cell.Key] = cell);
   return updateBoardAction(newBoardCells, cellsAlreadyDiscovered + cellsToReveal.length);
 };
 
-const getPendingMinesAndBadMarked = (board: Array<string[]>, boardCells: Map<string, Cell>, cell: Cell) => {
+const getPendingMinesAndBadMarked = (board: Array<string[]>, boardCells: BoardCellsType, cell: Cell) => {
   const boardLength = board.length;
   if (boardLength === 0) return { pendingMines: [], badMarked: [] };
   const boardColumnsLength = board[0].length;
@@ -143,7 +144,7 @@ const getPendingMinesAndBadMarked = (board: Array<string[]>, boardCells: Map<str
     const row = board[rowIndex];
 
     for (let columIndex = 0; columIndex < boardColumnsLength; columIndex++) {
-      const currentCell = boardCells.get(row[columIndex])!;
+      const currentCell = boardCells[row[columIndex]];
 
       if (currentCell.Key === cell.Key) continue;
 
@@ -168,7 +169,7 @@ export const revealSurroundingNoMarkedMines = (
   const board = getBoard(state);
   const boardCells = getBoardCells(state);
   const surroundingCells = getCellsAround(board, boardCells, row, column);
-  const currentCell = boardCells.get(board[row][column])!;
+  const currentCell = boardCells[board[row][column]];
 
   if (currentCell.Status !== CellStatus.DiscoveredAndNumber) return;
 
@@ -200,21 +201,20 @@ export const switchMarkAsMine = (
   const discovered = getDiscovered(state);
 
   const cellKey = getCellKey(row, column)
-  const cell = boardCells.get(cellKey)!;
+  const cell = boardCells[cellKey];
 
   if (cell.Status !== CellStatus.MarkedAsMine && cell.Status !== CellStatus.UnDiscovered) return;
 
   const newStatus =
     cell.Status === CellStatus.MarkedAsMine ? CellStatus.UnDiscovered : CellStatus.MarkedAsMine;
 
-  const updatedBoardCells = new Map<string, Cell>(boardCells);
-  updatedBoardCells.set(cellKey, {...cell, Status: newStatus });
+  const updatedBoardCells = {...boardCells, [cellKey]: {...cell, Status: newStatus}};
   dispatch(updateBoardAction(updatedBoardCells, discovered));
 };
 
 export const initializeBoardAction = (
   board: string[][],
-  boardCells: Map<string, Cell>,
+  boardCells: BoardCellsType,
   rows: number,
   columns: number
 ): InitializeBoardAction => ({
@@ -227,7 +227,7 @@ export const initializeBoardAction = (
 
 export const beginAction = (
   board: string[][],
-  boardCells: Map<string, Cell>,
+  boardCells: BoardCellsType,
   rows: number,
   columns: number,
   mines: number
@@ -240,12 +240,12 @@ export const beginAction = (
   mines
 });
 
-export const finishAction = (boardCells: Map<string, Cell>): FinishGameAction => ({
+export const finishAction = (boardCells: BoardCellsType): FinishGameAction => ({
   type: FINISH_GAME,
   boardCells
 });
 
-export const updateBoardAction = (boardCells: Map<string, Cell>, discoveredCells: number): UpdateBoardAction => ({
+export const updateBoardAction = (boardCells: BoardCellsType, discoveredCells: number): UpdateBoardAction => ({
   type: UPDATE_BOARD,
   boardCells,
   discoveredCells

@@ -45,5 +45,5 @@ export const getGameLevel = createSelector(
 
 export const createGetCellSelector = (cellKey: string) => createSelector(
   [getBoardCells], 
-  (boardCells) => boardCells.get(cellKey)!
+  (boardCells) => boardCells[cellKey]
 );
