@@ -10,7 +10,7 @@ export default (theme: Theme) =>
       flexGrow: 1,
     },
     noHeader: {
-      height: theme.spacing(11),
+      height: theme.spacing(8),
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
