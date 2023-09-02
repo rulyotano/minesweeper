@@ -1,6 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
+import { Auth0Provider, Auth0ProviderOptions } from "@auth0/auth0-react";
 import { ConnectedRouter } from "connected-react-router";
 import { createBrowserHistory } from "history";
 import createTheme from "@material-ui/core/styles/createTheme";
@@ -10,7 +11,7 @@ import configureStore from "./store/configureStore";
 import Root from "./components/Root";
 import registerServiceWorker from "./registerServiceWorker";
 import "./styles/global";
-import {dark} from "./theme";
+import { dark } from "./theme";
 
 // Create browser history to use in the Redux store
 const baseUrl = document.getElementsByTagName("base")[0].getAttribute("href") as string;
@@ -21,13 +22,31 @@ const store = configureStore(history);
 
 const baseTheme = createTheme(dark);
 
+const onRedirectCallback = () => {
+  history.push(window.location.pathname);
+};
+
+const providerConfig: Auth0ProviderOptions = {
+  useRefreshTokens: true,
+  cacheLocation: "localstorage", 
+  domain: "https://dev-gepp5siucqur7rdz.us.auth0.com",
+  clientId: "coj3scaVzTQLsokZgDcldYDg0STeENGO",
+  onRedirectCallback,
+  authorizationParams: {
+    redirect_uri: window.location.origin,
+    // audience: "https://api.minesweeper.rulyotano.com",
+  },
+};
+
 ReactDOM.render(
   <Provider store={store}>
     <ThemeProvider theme={baseTheme}>
-      <CssBaseline />
-      <ConnectedRouter history={history}>
-        <Root />
-      </ConnectedRouter>
+      <Auth0Provider {...providerConfig}>
+        <CssBaseline />
+        <ConnectedRouter history={history}>
+          <Root />
+        </ConnectedRouter>
+      </Auth0Provider>
     </ThemeProvider>
   </Provider>,
   document.getElementById("root")

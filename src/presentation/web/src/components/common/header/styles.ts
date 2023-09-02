@@ -14,5 +14,10 @@ export default (theme: Theme) =>
       display: "flex",
       justifyContent: "center",
       alignItems: "center",
+    },
+    emptySpace: {
+      flexGrow: 1
+    },
+    loginButton: {
     }
   });
