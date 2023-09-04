@@ -19,17 +19,11 @@ const Board: React.FunctionComponent<BoardProps> = (props: BoardProps) => {
       <table className={classes.table}>
         <tbody>
           {board.map(row => (
-            <tr key={row[0].Key}>
-              {row.map(cell => (
-                <TableCell
-                  key={cell.Key}
-                  cell={cell}
-                  discoverCell={discoverCell}
-                  toggleCellMark={toggleCellMark}
-                  discoverSurrounding={discoverSurrounding}
-                />
-              ))}
-            </tr>
+            <Row key={row[0].Key}
+              row={row}
+              discoverCell={discoverCell}
+              toggleCellMark={toggleCellMark}
+              discoverSurrounding={discoverSurrounding} />
           ))}
         </tbody>
       </table>
@@ -37,8 +31,31 @@ const Board: React.FunctionComponent<BoardProps> = (props: BoardProps) => {
   );
 };
 
+const RowComponent = (props: RowProps) => {
+  const { row, discoverCell, toggleCellMark, discoverSurrounding } = props;
+  return (<tr key={row[0].Key}>
+    {row.map(cell => (
+      <TableCell
+        key={cell.Key}
+        cell={cell}
+        discoverCell={discoverCell}
+        toggleCellMark={toggleCellMark}
+        discoverSurrounding={discoverSurrounding}
+      />
+    ))}
+  </tr>);
+}
+const Row = React.memo(RowComponent);
+
 export interface BoardProps {
-  board: Cell[][];
+  board: Array<Cell[]>;
+  discoverCell: (cell: Cell) => void;
+  toggleCellMark: (cell: Cell) => void;
+  discoverSurrounding: (cell: Cell) => void;
+}
+
+export interface RowProps {
+  row: Cell[];
   discoverCell: (cell: Cell) => void;
   toggleCellMark: (cell: Cell) => void;
   discoverSurrounding: (cell: Cell) => void;

@@ -1,5 +1,5 @@
 import React from "react";
-import { shallow } from "enzyme";
+import { mount, shallow } from "enzyme";
 import Board, { BoardProps } from "../Board";
 import { Cell } from "../../../helpers/cellHelper";
 import { boardFromString } from "../../../helpers/boardHelper";
@@ -13,7 +13,7 @@ describe("components > app > minesweeper > components > board > Board", () => {
   };
 
   const shallowWrapper = (props = getPropsWithBoard()) => {
-    return shallow(componentCreation(props));
+    return mount(componentCreation(props));
   };
 
   beforeEach(() => {});
