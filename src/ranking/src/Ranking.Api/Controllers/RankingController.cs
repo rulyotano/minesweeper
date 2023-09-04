@@ -21,7 +21,6 @@ public class RankingController : ControllerBase
   }
 
   [HttpGet]
-  [Authorize]
   [ProducesResponseType(typeof(IEnumerable<RankingItemDto>), (int)HttpStatusCode.OK)]
   public async Task<ActionResult> Get([FromQuery] int limit = 15, [FromQuery] string gameSize = null)
   {
@@ -32,6 +31,7 @@ public class RankingController : ControllerBase
   }
 
   [HttpPut]
+  [Authorize]
   [ProducesResponseType(typeof(IEnumerable<RankingItemDto>), (int)HttpStatusCode.OK)]
   public async Task<ActionResult> AddNewGameResult([FromBody] GameResultDto gameResult)
   {

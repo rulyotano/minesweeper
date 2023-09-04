@@ -1,34 +1,38 @@
 import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
-import { NavLink } from "react-router-dom";
 import AppBar from "@material-ui/core/AppBar";
 import Toolbar from "@material-ui/core/Toolbar";
-import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import IconButton from "@material-ui/core/IconButton";
-import Link from "@material-ui/core/Link";
-import MenuIcon from "@material-ui/icons/Menu";
 import styles from "./styles";
 import AccountCircle from "@material-ui/icons/AccountCircle";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
 import Avatar from "@material-ui/core/Avatar";
+import ViewRanking from "../../app/minesweeper/components/ranking/ViewRanking";
+import RankingIcon from "../icons/RankingIcon";
+import SizeSelector from "../../app/minesweeper/components/SizeSelector";
 
 const useStyles = makeStyles(styles);
 
 export default () => {
   const classes = useStyles();
+  const [isViewRankingOpen, setIsViewRankingOpen] = React.useState(false);
 
   return (
-    <AppBar position="static" color="transparent">
-      <Toolbar variant="dense">
-        <div className={classes.emptySpace}></div>
-        <Login />
-
-
-      </Toolbar>
-    </AppBar>
+    <>
+      <AppBar position="static" color="transparent">
+        <Toolbar variant="dense">
+          <Button onClick={() => setIsViewRankingOpen(true)}><RankingIcon />&nbsp;Ranking</Button>
+          <div className={classes.emptySpace}></div>
+          <SizeSelector />
+          <Login />
+        </Toolbar>
+      </AppBar>
+      
+      <ViewRanking isOpen={isViewRankingOpen} onClose={() => setIsViewRankingOpen(false)}/>
+    </>
   );
 };
 
@@ -37,13 +41,11 @@ const Login = () => {
     user,
     isAuthenticated,
     loginWithRedirect,
-    logout,
-    getAccessTokenSilently
+    logout
   } = useAuth0();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
-  getAccessTokenSilently().then((token) => console.log(token))
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
