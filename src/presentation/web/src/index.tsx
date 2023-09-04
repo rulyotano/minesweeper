@@ -34,7 +34,7 @@ const providerConfig: Auth0ProviderOptions = {
   onRedirectCallback,
   authorizationParams: {
     redirect_uri: window.location.origin,
-    // audience: "https://api.minesweeper.rulyotano.com",
+    audience: "https://api.minesweeper.rulyotano.com",
   },
 };
 

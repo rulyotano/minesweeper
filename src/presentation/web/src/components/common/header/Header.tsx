@@ -38,10 +38,12 @@ const Login = () => {
     isAuthenticated,
     loginWithRedirect,
     logout,
+    getAccessTokenSilently
   } = useAuth0();
   const classes = useStyles();
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
+  getAccessTokenSilently().then((token) => console.log(token))
 
   const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);

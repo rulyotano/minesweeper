@@ -1,4 +1,5 @@
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ranking.Api.Domain;
 using Ranking.Api.Dtos;
@@ -20,6 +21,7 @@ public class RankingController : ControllerBase
   }
 
   [HttpGet]
+  [Authorize]
   [ProducesResponseType(typeof(IEnumerable<RankingItemDto>), (int)HttpStatusCode.OK)]
   public async Task<ActionResult> Get([FromQuery] int limit = 15, [FromQuery] string gameSize = null)
   {

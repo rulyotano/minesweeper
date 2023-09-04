@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Ranking.Api.Services.Ranking;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 const string FromAllowedDomains = "_fromAllowedDomains";
 
@@ -21,6 +22,15 @@ builder.Services.AddCors(options =>
                                             }));
 
 builder.Services.AddControllers();
+builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            options.Authority = "https://dev-gepp5siucqur7rdz.us.auth0.com/";
+            options.Audience = "https://api.minesweeper.rulyotano.com";
+        });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -41,6 +51,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors(FromAllowedDomains);
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
