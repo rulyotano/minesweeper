@@ -71,7 +71,7 @@ const Login = () => {
 
   return (
     <div>
-      {user?.name}
+      {user?.nickname}
       <IconButton
         aria-label="account of current user"
         aria-controls="menu-appbar"

@@ -32,6 +32,7 @@ const providerConfig: Auth0ProviderOptions = {
   domain: "https://dev-gepp5siucqur7rdz.us.auth0.com",
   clientId: "coj3scaVzTQLsokZgDcldYDg0STeENGO",
   onRedirectCallback,
+  useRefreshTokensFallback: true,
   authorizationParams: {
     redirect_uri: window.location.origin,
     audience: "https://api.minesweeper.rulyotano.com",

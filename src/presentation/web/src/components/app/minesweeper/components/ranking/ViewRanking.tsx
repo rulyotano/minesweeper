@@ -3,7 +3,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
-import { apiClient } from "../../../../../common";
+import useClient from "../../../../../common/clients/useClient";
 import { useSelector } from "react-redux";
 import { getGameLevel } from "../../_duck/selectors";
 import Table from "@material-ui/core/Table";
@@ -14,8 +14,6 @@ import TableBody from "@material-ui/core/TableBody";
 import Skeleton from "@material-ui/lab/Skeleton";
 import moment from "moment";
 import DialogTitle from "./DialogTitle";
-import { useAuth0 } from "@auth0/auth0-react";
-import { AxiosHeaders } from "axios";
 
 interface RankingResult {
   timeInMs: number,
@@ -31,26 +29,16 @@ export default function (props: ViewRankingProps) {
   const { isOpen, onClose } = props;
   const [ranking, setRanking] = React.useState<Array<RankingResult>>([]);
   const [loading, setLoading] = React.useState(true);
-  const {getAccessTokenSilently} = useAuth0();
+  const apiClient = useClient();
 
   const gameLevel = useSelector(getGameLevel);
   React.useEffect(() => {
     if (!isOpen) return;
     setLoading(true);
-    getAccessTokenSilently().then(accessToken => {
-      const headers = new AxiosHeaders();
-      headers.set("Authorization", `Bearer ${accessToken}`)
-      apiClient.get(`ranking?gameSize=${gameLevel.name}&limit=20`, {
-        headers: headers
-      }).then(result => {
-        setRanking(result.data as Array<RankingResult>);
-        setLoading(false);
-      }, () => {
-        setLoading(false);
-      });
-    })
-    
-  }, [gameLevel, isOpen])
+    apiClient.get(`ranking?gameSize=${gameLevel.name}&limit=20`).then(result => {
+      setRanking(result.data as Array<RankingResult>);
+    }).finally(() => setLoading(false));
+  }, [gameLevel, isOpen, apiClient]);
 
   React.useEffect(() => {
     setTimeout(() => document.body.style.overflow = isOpen ? "hidden" : "unset", 1);
