@@ -24,7 +24,7 @@ import { Cell } from "./helpers/cellHelper";
 import { IBoardConfiguration, gameConfigurationsCollection } from "./helpers/gameHelper";
 import { USERNAME_STORAGE_KEY } from "./_duck/types";
 
-const MinesweeperContainer: React.FunctionComponent = () => {
+const MinesweeperContainer = () => {
   const board = useSelector(getBoard);
   const gameEnded = useSelector(getIsFinished);
   const isStarted = useSelector(getIsGameStarted);

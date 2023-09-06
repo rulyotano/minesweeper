@@ -16,7 +16,6 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
     board,
     startTime,
     endTime,
-    // gameEnded,
     isStarted,
     isWin,
     isLost,

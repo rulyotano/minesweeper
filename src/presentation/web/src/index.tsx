@@ -1,7 +1,7 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 import { Provider } from "react-redux";
-import { Auth0Provider, Auth0ProviderOptions } from "@auth0/auth0-react";
+import { AppState, Auth0Provider, Auth0ProviderOptions } from "@auth0/auth0-react";
 import { ConnectedRouter } from "connected-react-router";
 import { createBrowserHistory } from "history";
 import createTheme from "@material-ui/core/styles/createTheme";
@@ -22,8 +22,8 @@ const store = configureStore(history);
 
 const baseTheme = createTheme(dark);
 
-const onRedirectCallback = () => {
-  history.push(window.location.pathname);
+const onRedirectCallback = (appState: AppState | undefined) => {
+  history.push(appState?.returnTo ?? window.location.pathname);
 };
 
 const providerConfig: Auth0ProviderOptions = {
