@@ -1,0 +1,25 @@
+name: Deploy Base
+
+on: 
+  workflow_call:
+    inputs:
+      fileAddress:
+        type: string
+        required: true
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ssh connect and deploy
+        uses: appleboy/ssh-action@v1.0.0
+        with:
+          host: ${{ secrets.REMOTE_HOST }}
+          username: ${{ secrets.REMOTE_USER }}
+          key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
+          script: |
+            wget ${{ inputs.fileAddress }} -O docker-compose.yml
+            docker stack deploy -c docker-compose.yml minesweeper
+            rm docker-compose.*
+  

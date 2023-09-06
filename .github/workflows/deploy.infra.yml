@@ -1,0 +1,12 @@
+name: Deploy Minesweeper (infra)
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    uses: ./.github/workflows/base.deploy.yml
+    secrets: inherit
+    with:
+      fileAddress: https://raw.githubusercontent.com/rulyotano/minesweeper/master/src/docker-compose.infra.yml
+    

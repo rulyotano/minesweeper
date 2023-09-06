@@ -1,34 +1,5 @@
 version: "3.9"
 services:
-  reverse-proxy:
-    image: traefik:v2.10
-    environment:
-      - TRAEFIK_API=true
-      - TRAEFIK_API_DASHBOARD=true
-      - TRAEFIK_PROVIDERS_DOCKER=true
-      - TRAEFIK_PROVIDERS_DOCKER_SWARMMODE=true
-      - TRAEFIK_ENTRYPOINTS_WEB_ADDRESS=:80
-      - TRAEFIK_ENTRYPOINTS_WEBSECURE_ADDRESS=:443
-      - TRAEFIK_CERTIFICATESRESOLVERS_MYCERTRESOLVER_ACME_HTTPCHALLENGE_ENTRYPOINT=web
-      - TRAEFIK_CERTIFICATESRESOLVERS_MYCERTRESOLVER_ACME_EMAIL=contact@rulyotano.com
-      - TRAEFIK_CERTIFICATESRESOLVERS_MYCERTRESOLVER_ACME_STORAGE=acme.json
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
-    deploy:
-      replicas: 1
-      placement:
-        constraints:
-          - node.role==manager
-      labels:
-        - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
-        - "traefik.http.routers.dashboard.rule=Host(`traefik.minesweeper.rulyotano.com`)"
-        - "traefik.http.routers.dashboard.service=api@internal"
-        - "traefik.http.routers.dashboard.middlewares=auth"
-        - "traefik.http.middlewares.auth.basicauth.users=rulyotano:$$2y$$05$$X8IeCe9aTKfQUFR6EMujqeASB22nQg1Ho.naDVh31yuz9xY2z4ux2"
-
   minesweeper-client:
     image: rulyotano/minesweeper-presentation-web:0.0.14
     deploy:
@@ -44,6 +15,8 @@ services:
         - "traefik.http.routers.minesweeperhttp.middlewares=redirecthttps"
         - "traefik.http.middlewares.redirecthttps.redirectscheme.scheme=https"
         - "traefik.http.middlewares.redirecthttps.redirectscheme.permanent=true"
+    networks:
+      - traefik
 
   minesweeper-ranking-api:
     image: rulyotano/minesweeper-ranking-api:0.0.2
@@ -64,13 +37,12 @@ services:
     environment:
       - CONNECTIONSTRINGS__REDIS=redis
       - ALLOWEDHOSTS=*
+    networks:
+      - traefik
+      - backend
 
-  redis:
-    image: redis:alpine3.18
-    command: --save 60 1 --loglevel warning
-    volumes:
-      - redis_storage:/data
-
-volumes:
-  redis_storage:
+networks:
+  traefik:
+    external: true
+  backend:
     external: true

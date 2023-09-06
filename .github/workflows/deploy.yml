@@ -3,22 +3,10 @@ name: Deploy Minesweeper
 on: 
   workflow_dispatch:
 
-env:
-  SWARM_FILE_ADDRESS: https://raw.githubusercontent.com/rulyotano/minesweeper/master/src/docker-compose.production.yml
-
 jobs:
   deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    steps:
-      - name: Ssh connect and deploy
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.REMOTE_HOST }}
-          username: ${{ secrets.REMOTE_USER }}
-          key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
-          script: |
-            wget ${{ env.SWARM_FILE_ADDRESS }} -O docker-compose.yml
-            docker stack deploy -c docker-compose.yml minesweeper
-            rm docker-compose.*
-  
+    uses: ./.github/workflows/base.deploy.yml
+    secrets: inherit
+    with:
+      fileAddress: https://raw.githubusercontent.com/rulyotano/minesweeper/master/src/docker-compose.production.yml
+    

@@ -1,0 +1,55 @@
+version: "3.9"
+services:
+  reverse-proxy:
+    image: traefik:v2.10
+    command:
+      - "--api"
+      - "--api.dashboard"
+      - "--providers.docker"
+      - "--providers.docker.swarmmode"
+      - "--providers.docker.network=traefik"
+      - "--entrypoints.web.address=:80"
+      - "--entrypoints.websecure.address=:443"
+      - "--certificatesresolvers.mycertresolver.acme.httpchallenge.entrypoint=web"
+      - "--certificatesresolvers.mycertresolver.acme.email=contact@rulyotano.com"
+      - "--certificatesresolvers.mycertresolver.acme.storage=acme.json"
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    deploy:
+      replicas: 1
+      placement:
+        constraints:
+          - node.role==manager
+      labels:
+        - "traefik.http.services.dashboard.loadbalancer.server.port=8080"
+        - "traefik.http.routers.dashboard.rule=Host(`traefik.minesweeper.rulyotano.com`)"
+        - "traefik.http.routers.dashboard.service=api@internal"
+        - "traefik.http.routers.dashboard.middlewares=auth"
+        - "traefik.http.middlewares.auth.basicauth.users=rulyotano:$$2y$$05$$X8IeCe9aTKfQUFR6EMujqeASB22nQg1Ho.naDVh31yuz9xY2z4ux2"
+    networks:
+      - traefik
+
+  redis:
+    image: redis:alpine3.18
+    command: --save 60 1 --loglevel warning
+    deploy:
+      replicas: 1
+      labels:
+        - "traefik.enable=false"
+    networks:
+      - backend
+    volumes:
+      - redis_storage:/data
+
+networks:
+  traefik:
+    external: true
+  backend:
+    external: true
+
+volumes:
+  redis_storage:
+    external: true
