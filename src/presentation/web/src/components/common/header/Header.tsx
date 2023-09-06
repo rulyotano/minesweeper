@@ -23,7 +23,7 @@ export default () => {
   return (
     <>
       <AppBar position="static" color="transparent">
-        <Toolbar variant="dense">
+        <Toolbar className={classes.bar}>
           <Button onClick={() => setIsViewRankingOpen(true)}><RankingIcon />&nbsp;Ranking</Button>
           <div className={classes.emptySpace}></div>
           <SizeSelector />

@@ -3,6 +3,9 @@ import { Theme } from "@material-ui/core/styles/createTheme";
 
 export default (theme: Theme) =>
   createStyles({
+    bar: {
+      minHeight: theme.spacing(8)
+    },
     menuButton: {
       marginRight: theme.spacing(2),
     },

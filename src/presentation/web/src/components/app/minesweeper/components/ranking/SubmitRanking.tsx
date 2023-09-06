@@ -3,7 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import Dialog from "@material-ui/core/Dialog"
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import DialogTitle from "./DialogTitle"
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory, useParams } from "react-router-dom";
 import { getFinishTime, getGameLevel, getIsGameWon, getStartTime } from "../../_duck/selectors";
 import DialogContent from "@material-ui/core/DialogContent";
@@ -15,6 +15,7 @@ import { setTimeout } from "timers";
 import styles from "./styles";
 import { ParamsType } from "./types";
 import { SubmitKeyHelper } from "./keys";
+import { initialize } from "../../_duck/actions";
 
 const useStyles = makeStyles(styles);
 
@@ -34,11 +35,13 @@ export default () => {
     finishedMs: finishTimeMs,
     level: gameLevel
   }, [isOpen, winKey, startTimeMs, finishTimeMs, gameLevel]);
+  const dispatch = useDispatch();
 
   const onClose = React.useCallback(() => {
     SubmitKeyHelper.removeKey(winKey);
+    dispatch(initialize(gameLevel));
     history.push("/");
-  }, [history, winKey]);
+  }, [history, winKey, gameLevel, dispatch]);
   const onOpen = React.useCallback(() => {
     const newKey = SubmitKeyHelper.getKeyFromGameState(gameState);
     history.push(`/game-won/${newKey}`);
@@ -50,8 +53,8 @@ export default () => {
   const device = React.useMemo(() => getDeviceType(), []);
 
   React.useEffect(() => {
-    if (isGameWon && startTimeMs !== finishTimeMs) onOpen();
-  }, [isGameWon, startTimeMs, finishTimeMs, onOpen])
+    if (isGameWon && startTimeMs !== finishTimeMs && !winKey) onOpen();
+  }, [isGameWon, startTimeMs, finishTimeMs, onOpen, winKey])
 
   const username = user?.nickname;
   const onSubmit = React.useCallback(() => {
@@ -82,9 +85,9 @@ export default () => {
     setTimeout(() => document.body.style.overflow = (isOpen ? "hidden" : "unset"), 1);
   }, [isOpen]);
 
-  // React.useEffect(() => {
-  //   if (durationMs === 0) onClose();
-  // }, [durationMs, onClose])
+  React.useEffect(() => {
+    if (durationMs === 0) onClose();
+  }, [durationMs, onClose])
 
   return (<Dialog fullWidth={true} maxWidth="sm" onClose={onClose} aria-labelledby="Ranking Submit" open={isOpen}>
     <DialogTitle id="submit-ranking-dialog-title" onClose={onClose}>
