@@ -8,5 +8,6 @@ jobs:
     uses: ./.github/workflows/base.deploy.yml
     secrets: inherit
     with:
+      name: minesweeper
       fileAddress: https://raw.githubusercontent.com/rulyotano/minesweeper/master/src/docker-compose.production.yml
     

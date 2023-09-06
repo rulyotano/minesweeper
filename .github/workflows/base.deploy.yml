@@ -3,6 +3,9 @@ name: Deploy Base
 on: 
   workflow_call:
     inputs:
+      name:
+        type: string
+        required: true
       fileAddress:
         type: string
         required: true
@@ -20,6 +23,6 @@ jobs:
           key: ${{ secrets.DOCKER_SSH_PRIVATE_KEY }}
           script: |
             wget ${{ inputs.fileAddress }} -O docker-compose.yml
-            docker stack deploy -c docker-compose.yml minesweeper
+            docker stack deploy -c docker-compose.yml ${{ inputs.name }}
             rm docker-compose.*
   
