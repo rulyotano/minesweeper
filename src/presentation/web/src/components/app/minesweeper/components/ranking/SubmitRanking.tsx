@@ -87,8 +87,10 @@ export default (props: SubmitRankingProps) => {
   }, [isOpen]);
 
   React.useEffect(() => {
-    if (durationMs === 0 || !gameState) onClose();
-  }, [durationMs, gameState, onClose])
+    if (isOpen && (durationMs === 0 || !gameState)) {
+      onClose();
+    }
+  }, [isOpen, durationMs, gameState, onClose])
 
   return (<Dialog fullWidth={true} maxWidth="sm" onClose={onClose} aria-labelledby="Ranking Submit" open={isOpen}>
     <DialogTitle id="submit-ranking-dialog-title" onClose={onClose}>

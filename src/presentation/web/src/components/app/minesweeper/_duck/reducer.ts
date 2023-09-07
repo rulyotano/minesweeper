@@ -24,6 +24,7 @@ export interface ReducerState {
   discoveredCells: number;
   board: Cell[][];
   username: string | null
+  isBoardSubmitted: boolean
 }
 
 export const initialState: ReducerState = {
@@ -34,7 +35,8 @@ export const initialState: ReducerState = {
   mines: 0,
   discoveredCells: 0,
   board: [],
-  username: null
+  username: null,
+  isBoardSubmitted: false
 };
 
 const reducer: Reducer<ReducerState> = (
@@ -53,7 +55,8 @@ const reducer: Reducer<ReducerState> = (
         discoveredCells: 0,
         gameFinishTime: null,
         gameIsStarted: true,
-        gameStartTime: new Date()
+        gameStartTime: new Date(),
+        isBoardSubmitted: false
       };
     }
     case FINISH_GAME: {
