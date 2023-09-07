@@ -8,6 +8,7 @@ export interface GameState {
     startedMs: number;
     finishedMs: number;
     level: IBoardConfiguration;
+    creationTime: number;
 }
 
 export const defaultGameState = {

@@ -6,8 +6,8 @@ import Minesweeper from "./app/minesweeper";
 export default () => (
   <Layout>
     <Switch>
-      <Route exact path="/" component={Minesweeper} />
-      <Route exact path="/game-won/:winKey" component={Minesweeper} />
+      <Route exact path="/" component={() => <Minesweeper key="minesweeper" />} />
+      <Route exact path="/game-won" component={() => <Minesweeper key="minesweeper" gameWon />} />
       <Route>
         <Redirect to="/"/>
       </Route>

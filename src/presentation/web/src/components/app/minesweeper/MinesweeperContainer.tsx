@@ -24,7 +24,12 @@ import { Cell } from "./helpers/cellHelper";
 import { IBoardConfiguration, gameConfigurationsCollection } from "./helpers/gameHelper";
 import { USERNAME_STORAGE_KEY } from "./_duck/types";
 
-const MinesweeperContainer = () => {
+interface MinesweeperContainerProps {
+  gameWon?: boolean
+}
+
+const MinesweeperContainer = (props: MinesweeperContainerProps) => {
+  const { gameWon = false } = props;
   const board = useSelector(getBoard);
   const gameEnded = useSelector(getIsFinished);
   const isStarted = useSelector(getIsGameStarted);
@@ -83,6 +88,7 @@ const MinesweeperContainer = () => {
       isWin={isWin}
       isLost={isLost}
       configuration={currentConfig}
+      gameWon={gameWon}
     />
   );
 };

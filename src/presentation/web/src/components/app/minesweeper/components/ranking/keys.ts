@@ -1,59 +1,46 @@
 import { baseDateMilliseconds } from "../../../../../settings";
-import { GameState, defaultGameState } from "./types";
+import { GameState } from "./types";
 
 const MAX_KEY_DURATION_MS = 10*60*1000;
+const PENDING_RANKING_STORAGE_KEY = "pending-ranking";
 
-const createKey = (keyTimeMs: number) => `${keyTimeMs}-${Math.floor(Math.random()*10000)}`
-const createKeyEncoded = (keyTimeMs: number) => btoa(createKey(keyTimeMs))
-const decodeKey = (encodedKey: string) => atob(encodedKey)
-const getTimeFromEncodedKey = 
-  (encodedKey: string) => getMaxDurationFromKey(decodeKey(encodedKey));
-const getMaxDurationFromKey = (key: string) =>
-{
-  if (!key) return 0;
-  const splitted = key.split("-");
-  if (splitted.length === 0) return 0;
-  return Number(splitted[0]);
+const getDateSecond = (date: Date | null, defaultValue: number | null = null) => {
+  if (!date && defaultValue) return defaultValue;
+  const useDate = date || new Date();
+  return useDate.valueOf() - baseDateMilliseconds
 }
-const getGameStateFromStorage = (key: string) => {
-  const storageValue = localStorage.getItem(key);
-  console.log(storageValue);
-  if (!storageValue) return null;
-  const gameState = JSON.parse(storageValue);
-  console.log("parsed value:");
-  console.log(JSON.stringify(gameState, null, 2))
-  if (!(gameState as GameState)) return null;
-  return gameState as GameState;
+
+const isGameStateStillValid = (gameState: GameState): boolean => {
+  return getDateSecond(new Date()) - gameState.creationTime < MAX_KEY_DURATION_MS;
+}
+
+const getGameStateFromStorage = () => {
+  const storageKeyValue = localStorage.getItem(PENDING_RANKING_STORAGE_KEY);
+  if (!storageKeyValue) return null;
+  const decodedStorageValue = atob(storageKeyValue);
+  const parsedStorageValue = JSON.parse(decodedStorageValue);
+  const gameSate = parsedStorageValue as GameState;
+  if (gameSate && isGameStateStillValid(gameSate)) return gameSate;
+  return null;
+}
+const saveGameStateToStorage = (gameState: GameState) => {
+  gameState.creationTime = getDateSecond(new Date());
+  localStorage.setItem(PENDING_RANKING_STORAGE_KEY, btoa(JSON.stringify(gameState)));
 }
 
 export class SubmitKeyHelper
 {
   static getDateSecond(date: Date | null, defaultValue: number | null = null) {
-    if (!date && defaultValue) return defaultValue;
-    const useDate = date || new Date();
-    return useDate.valueOf() - baseDateMilliseconds
+    return getDateSecond(date, defaultValue);
   }
-  static getGameStateFromKey(key: string): GameState {
-    const gameState = getGameStateFromStorage(key);
-    console.log("game state as:")
-    console.log(gameState)
-    const keyTime = getTimeFromEncodedKey(key);
-    const currentTime = SubmitKeyHelper.getDateSecond(new Date());
-    console.log(`key time: ${keyTime}, current time: ${currentTime}. diff = ${currentTime - keyTime}, and max diff = ${MAX_KEY_DURATION_MS}`)
-    if (!gameState || currentTime - keyTime > MAX_KEY_DURATION_MS) return defaultGameState;
-    return gameState;
-    
+  static getSavedGameState(): GameState | null {
+    return getGameStateFromStorage();    
   }
-  static getKeyFromGameState(gameState: GameState): string {
-    const currentTime = SubmitKeyHelper.getDateSecond(new Date());
-    const key = createKeyEncoded(currentTime);
-
-    localStorage.setItem(key, JSON.stringify(gameState));
-
-    return key;
+  static saveGameState(gameState: GameState) {
+    saveGameStateToStorage(gameState);
   }
-  static removeKey(key: string) {
-    localStorage.removeItem(key);
+  static clearSavedGameState() {
+    localStorage.removeItem(PENDING_RANKING_STORAGE_KEY);
   }
 }
 

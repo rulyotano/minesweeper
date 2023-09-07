@@ -23,7 +23,9 @@ const store = configureStore(history);
 const baseTheme = createTheme(dark);
 
 const onRedirectCallback = (appState: AppState | undefined) => {
-  history.push(appState?.returnTo ?? window.location.pathname);
+  const redirectAfterLoginUrl = appState?.returnTo ?? window.location.pathname; 
+  console.log(`Redirect after login url: ${redirectAfterLoginUrl}`)
+  history.push(redirectAfterLoginUrl);
 };
 
 const providerConfig: Auth0ProviderOptions = {

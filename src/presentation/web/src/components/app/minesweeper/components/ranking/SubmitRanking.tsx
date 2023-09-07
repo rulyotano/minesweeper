@@ -3,23 +3,25 @@ import { useAuth0 } from "@auth0/auth0-react";
 import Dialog from "@material-ui/core/Dialog"
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import DialogTitle from "./DialogTitle"
-import { useDispatch, useSelector } from "react-redux";
-import { useHistory, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { useHistory } from "react-router-dom";
 import { getFinishTime, getGameLevel, getIsGameWon, getStartTime } from "../../_duck/selectors";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
-import moment from "moment";
 import { apiClient, getDeviceType } from "../../../../../common";
 import { setTimeout } from "timers";
 import styles from "./styles";
-import { ParamsType } from "./types";
 import { SubmitKeyHelper } from "./keys";
-import { initialize } from "../../_duck/actions";
 
 const useStyles = makeStyles(styles);
 
-export default () => {
+interface SubmitRankingProps {
+  isOpen: boolean
+}
+
+export default (props: SubmitRankingProps) => {
+  const {isOpen} = props;
   const [isSubmitting, setIsSubmitting] = React.useState(false);
   const classes = useStyles();
   const gameLevel = useSelector(getGameLevel);
@@ -28,34 +30,33 @@ export default () => {
   const isGameWon = useSelector(getIsGameWon);
   const history = useHistory();
   const { isAuthenticated, user, loginWithRedirect } = useAuth0();
-  const { winKey } = useParams<ParamsType>();
-  const isOpen = Boolean(winKey);
-  const gameState = React.useMemo(() => isOpen ? SubmitKeyHelper.getGameStateFromKey(winKey) : {
+  const gameState = React.useMemo(() => isOpen ? SubmitKeyHelper.getSavedGameState() : {
     startedMs: startTimeMs,
     finishedMs: finishTimeMs,
-    level: gameLevel
-  }, [isOpen, winKey, startTimeMs, finishTimeMs, gameLevel]);
-  const dispatch = useDispatch();
+    level: gameLevel,
+    creationTime: 0
+  }, [isOpen, startTimeMs, finishTimeMs, gameLevel]);
 
   const onClose = React.useCallback(() => {
-    SubmitKeyHelper.removeKey(winKey);
-    dispatch(initialize(gameLevel));
+    SubmitKeyHelper.clearSavedGameState();
     history.push("/");
-  }, [history, winKey, gameLevel, dispatch]);
+  }, [history]);
+
   const onOpen = React.useCallback(() => {
-    const newKey = SubmitKeyHelper.getKeyFromGameState(gameState);
-    history.push(`/game-won/${newKey}`);
+    if (!gameState) return;
+    SubmitKeyHelper.saveGameState(gameState);
+    history.push("/game-won");
   }, [gameState, history]);
-  const duration = React.useMemo(() => moment.duration(gameState.finishedMs - gameState.startedMs), [
-    gameState.startedMs, gameState.finishedMs
-  ]);
-  const durationMs = duration.asMilliseconds();
+
+  const durationMs = gameState!.finishedMs - gameState!.startedMs;
+  const durationS = durationMs / 1000.0;
   const device = React.useMemo(() => getDeviceType(), []);
 
   React.useEffect(() => {
-    if (isGameWon && startTimeMs !== finishTimeMs && !winKey) onOpen();
-  }, [isGameWon, startTimeMs, finishTimeMs, onOpen, winKey])
+    if (isGameWon && startTimeMs !== finishTimeMs) onOpen();
+  }, [isGameWon, startTimeMs, finishTimeMs, onOpen]);
 
+  const gameSize = gameState?.level?.name || "beginner";
   const username = user?.nickname;
   const onSubmit = React.useCallback(() => {
     if (!isAuthenticated) return;
@@ -63,40 +64,40 @@ export default () => {
     apiClient.put("ranking", {
       timeInMs: durationMs,
       username: username,
-      gameSize: gameState.level.name,
+      gameSize: gameSize,
       device: device
     })
       .then(() => {
         onClose();
       })
       .finally(() => setIsSubmitting(false));
-  }, [isAuthenticated, durationMs, username, gameState.level.name, device, onClose])
+  }, [isAuthenticated, durationMs, username, gameSize, device, onClose])
 
   const onLogin = React.useCallback(() => {
     loginWithRedirect(
       {
         appState: {
-          returnTo: `/game-won/${winKey}`
+          returnTo: "/game-won"
         }
       });
-  }, [winKey, loginWithRedirect]);
+  }, [loginWithRedirect]);
 
   React.useEffect(() => {
     setTimeout(() => document.body.style.overflow = (isOpen ? "hidden" : "unset"), 1);
   }, [isOpen]);
 
   React.useEffect(() => {
-    if (durationMs === 0) onClose();
-  }, [durationMs, onClose])
+    if (durationMs === 0 || !gameState) onClose();
+  }, [durationMs, gameState, onClose])
 
   return (<Dialog fullWidth={true} maxWidth="sm" onClose={onClose} aria-labelledby="Ranking Submit" open={isOpen}>
     <DialogTitle id="submit-ranking-dialog-title" onClose={onClose}>
-      You beat Minesweeper at level "{gameState.level.name}" on a "{device}" device
+      You beat Minesweeper at level "{gameSize}" on a "{device}" device
     </DialogTitle>
 
     <DialogContent dividers>
       Congrats!!! <span role="img" aria-label="win">😎</span>
-      You won the Minesweeper Game with an epic score of {duration.asSeconds()} seconds on a {device} device!
+      You won the Minesweeper Game with an epic score of {durationS} seconds on a {device} device!
 
       {isAuthenticated ? <div>Save your score as "{username}"!</div> : <div className={classes.centeredContainer}><Button onClick={onLogin}>Login to submit score</Button></div>}
     </DialogContent>

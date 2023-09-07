@@ -24,7 +24,8 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
     click,
     switchCell,
     surrounding,
-    configuration
+    configuration,
+    gameWon
   } = props;
   const classes = useStyles(props);
 
@@ -53,7 +54,7 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
           discoverSurrounding={cell => surrounding(cell.Row, cell.Column)}
         />
       </div>
-      <SubmitRanking />
+      <SubmitRanking isOpen={gameWon}/>
     </div>
   );
 };
@@ -67,6 +68,7 @@ export interface MinesweeperProps {
   isWin: boolean;
   isLost: boolean;
   configuration: IBoardConfiguration;
+  gameWon: boolean;
 
   initialize: (configuration: IBoardConfiguration) => void;
   begin: (configuration: IBoardConfiguration, clickedCell: Cell) => void;
