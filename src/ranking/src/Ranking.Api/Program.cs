@@ -28,8 +28,10 @@ builder.Services.AddAuthentication(options =>
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
         }).AddJwtBearer(options =>
         {
-            options.Authority = "https://dev-gepp5siucqur7rdz.us.auth0.com/";
-            options.Audience = "https://api.minesweeper.rulyotano.com";
+            var authConfig = new AuthConfig();
+            builder.Configuration.GetSection(AuthConfig.AuthConfigName).Bind(authConfig);
+            options.Authority = authConfig.Authority;
+            options.Audience = authConfig.Audience;
         });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -39,6 +41,7 @@ builder.Services.AddSingleton<IRedisProvider, RedisProvider>();
 builder.Services.AddHealthChecks()
   .AddCheck("self", () => HealthCheckResult.Healthy(), tags: new[] { "internal" }, TimeSpan.FromSeconds(5))
   .AddCheck<RedisHealthCheck>("redis", tags: new [] { "external" });
+builder.Services.Configure<AuthConfig>(builder.Configuration.GetSection(AuthConfig.AuthConfigName));
 
 var app = builder.Build();
 

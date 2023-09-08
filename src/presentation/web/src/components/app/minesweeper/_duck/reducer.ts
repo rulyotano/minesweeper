@@ -11,7 +11,8 @@ import {
   INITIALIZE_BOARD,
   InitializeBoardAction,
   SET_USERNAME,
-  SetUsername
+  SetUsername,
+  BOARD_SUBMITTED
 } from "./types";
 import { Cell } from "../helpers/cellHelper";
 
@@ -65,7 +66,8 @@ const reducer: Reducer<ReducerState> = (
         ...state,
         board: customAction.board,
         gameFinishTime: new Date(),
-        gameIsStarted: false
+        gameIsStarted: false,
+        isBoardSubmitted: false
       };
     }
 
@@ -84,7 +86,8 @@ const reducer: Reducer<ReducerState> = (
         username: state.username,
         board: customAction.board,
         rows: customAction.rows,
-        columns: customAction.columns
+        columns: customAction.columns,
+        isBoardSubmitted: false
       };
     }
     case RESET:
@@ -97,6 +100,12 @@ const reducer: Reducer<ReducerState> = (
       return {
         ...state,
         username: customAction.username
+      }
+    }
+    case BOARD_SUBMITTED: {
+      return {
+        ...state,
+        isBoardSubmitted: true
       }
     }
     default:

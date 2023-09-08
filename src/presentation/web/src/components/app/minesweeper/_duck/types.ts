@@ -6,6 +6,7 @@ export const FINISH_GAME = "MINESWEEPER_FINISH_GAME";
 export const UPDATE_BOARD = "MINESWEEPER_UPDATE_BOARD";
 export const INITIALIZE_BOARD = "MINESWEEPER_INITIALIZE";
 export const SET_USERNAME = "MINESWEEPER_SET_USERNAME";
+export const BOARD_SUBMITTED = "MINESWEEPER_BOARD_SUBMITTED";
 export const USERNAME_STORAGE_KEY = "username";
 
 export interface ResetAction {
@@ -51,6 +52,10 @@ export interface SetUsername {
   username: string | null;
 }
 
+export interface SetBoardSubmitted {
+  type: "MINESWEEPER_BOARD_SUBMITTED";
+}
+
 // Declare a 'discriminated union' type. This guarantees that all references to 'type' properties contain one of the
 // declared type strings (and not any other arbitrary string).
 export type MinesweeperAction =
@@ -59,4 +64,5 @@ export type MinesweeperAction =
   | FinishGameAction
   | UpdateBoardAction
   | InitializeBoardAction
-  | SetUsername;
+  | SetUsername
+  | SetBoardSubmitted;

@@ -3,9 +3,9 @@ import { useAuth0 } from "@auth0/auth0-react";
 import Dialog from "@material-ui/core/Dialog"
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import DialogTitle from "./DialogTitle"
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useHistory } from "react-router-dom";
-import { getFinishTime, getGameLevel, getIsGameWon, getStartTime } from "../../_duck/selectors";
+import { getFinishTime, getGameLevel, getIsBoardSubmitted, getIsGameWon, getStartTime } from "../../_duck/selectors";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
@@ -13,6 +13,7 @@ import { apiClient, getDeviceType } from "../../../../../common";
 import { setTimeout } from "timers";
 import styles from "./styles";
 import { SubmitKeyHelper } from "./keys";
+import { markBoardSubmittedAction } from "../../_duck/actions";
 
 const useStyles = makeStyles(styles);
 
@@ -28,6 +29,8 @@ export default (props: SubmitRankingProps) => {
   const startTimeMs = SubmitKeyHelper.getDateSecond(useSelector(getStartTime));
   const finishTimeMs = SubmitKeyHelper.getDateSecond(useSelector(getFinishTime), startTimeMs);
   const isGameWon = useSelector(getIsGameWon);
+  const isBoardAlreadySubmitted = useSelector(getIsBoardSubmitted);
+  const dispatch = useDispatch();
   const history = useHistory();
   const { isAuthenticated, user, loginWithRedirect } = useAuth0();
   const gameState = React.useMemo(() => isOpen ? SubmitKeyHelper.getSavedGameState() : {
@@ -39,8 +42,9 @@ export default (props: SubmitRankingProps) => {
 
   const onClose = React.useCallback(() => {
     SubmitKeyHelper.clearSavedGameState();
+    dispatch(markBoardSubmittedAction());
     history.push("/");
-  }, [history]);
+  }, [history, dispatch]);
 
   const onOpen = React.useCallback(() => {
     if (!gameState) return;
@@ -53,8 +57,8 @@ export default (props: SubmitRankingProps) => {
   const device = React.useMemo(() => getDeviceType(), []);
 
   React.useEffect(() => {
-    if (isGameWon && startTimeMs !== finishTimeMs) onOpen();
-  }, [isGameWon, startTimeMs, finishTimeMs, onOpen]);
+    if (!isBoardAlreadySubmitted && isGameWon && startTimeMs !== finishTimeMs) onOpen();
+  }, [isBoardAlreadySubmitted, isGameWon, startTimeMs, finishTimeMs, onOpen]);
 
   const gameSize = gameState?.level?.name || "beginner";
   const username = user?.nickname;

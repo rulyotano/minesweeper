@@ -16,7 +16,7 @@ on:
       - .github/workflows/presentation.web.yml
 
 env:
-  VERSION: 0.0.14
+  VERSION: 0.0.15
 
 jobs:
   build-test-image:    

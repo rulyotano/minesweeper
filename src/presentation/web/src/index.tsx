@@ -12,6 +12,7 @@ import Root from "./components/Root";
 import registerServiceWorker from "./registerServiceWorker";
 import "./styles/global";
 import { dark } from "./theme";
+import { authConfig } from "./settings";
 
 // Create browser history to use in the Redux store
 const baseUrl = document.getElementsByTagName("base")[0].getAttribute("href") as string;
@@ -29,13 +30,13 @@ const onRedirectCallback = (appState: AppState | undefined) => {
 const providerConfig: Auth0ProviderOptions = {
   useRefreshTokens: true,
   cacheLocation: "localstorage", 
-  domain: "https://dev-gepp5siucqur7rdz.us.auth0.com",
-  clientId: "coj3scaVzTQLsokZgDcldYDg0STeENGO",
+  domain: authConfig.domain,
+  clientId: authConfig.clientId,
   onRedirectCallback,
   useRefreshTokensFallback: true,
   authorizationParams: {
     redirect_uri: window.location.origin,
-    audience: "https://api.minesweeper.rulyotano.com",
+    audience: authConfig.audience,
   },
 };
 

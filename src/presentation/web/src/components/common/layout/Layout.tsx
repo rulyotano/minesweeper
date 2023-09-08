@@ -3,7 +3,7 @@ import makeStyles from "@material-ui/core/styles/makeStyles";
 import Container from "@material-ui/core/Container";
 import styles from "./styles";
 // import NoHeader from "../header/NoHeader";
-import Header from "../header/Header";
+import Header from "../header";
 import Footer from "../footer";
 
 const useStyles = makeStyles(styles);
