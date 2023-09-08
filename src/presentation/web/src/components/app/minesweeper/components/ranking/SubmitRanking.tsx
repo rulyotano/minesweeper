@@ -52,7 +52,7 @@ export default (props: SubmitRankingProps) => {
     history.push("/game-won");
   }, [gameState, history]);
 
-  const durationMs = gameState!.finishedMs - gameState!.startedMs;
+  const durationMs = !gameState ? 0 : gameState.finishedMs - gameState.startedMs;
   const durationS = durationMs / 1000.0;
   const device = React.useMemo(() => getDeviceType(), []);
 

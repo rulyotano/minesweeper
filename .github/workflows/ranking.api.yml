@@ -29,9 +29,6 @@ jobs:
       - name: Docker Metadata for Image Build
         id: docker_meta
         uses: docker/metadata-action@v4
-        env:
-          Auth__Authority: ${{ secrets.AUTH_DOMAIN }}
-          Auth__Audience: ${{ secrets.AUTH_AUDIENCE }}
         with:
           images: rulyotano/minesweeper-ranking-api
           flavor: |
