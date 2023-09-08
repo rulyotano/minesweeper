@@ -9,6 +9,8 @@ on:
 
 env:
   VERSION: 0.0.3
+  Auth__Authority: ${{ secrets.AUTH_DOMAIN }}
+  Auth__Audience: ${{ secrets.AUTH_AUDIENCE }}
 
 jobs:
   build-push-image:

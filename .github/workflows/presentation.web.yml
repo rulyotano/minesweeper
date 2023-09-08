@@ -17,6 +17,9 @@ on:
 
 env:
   VERSION: 0.0.15
+  REACT_APP_AUTH_DOMAIN: ${{ secrets.AUTH_DOMAIN }}
+  REACT_APP_AUTH_CLIENT_ID: ${{ secrets.AUTH_WEB_CLIENT_ID }}
+  REACT_APP_AUTH_AUDIENCE: ${{ secrets.AUTH_AUDIENCE }}
 
 jobs:
   build-test-image:    
