@@ -25,6 +25,7 @@ const Footer: React.FunctionComponent<FooterProps> = (props: FooterProps) => {
       <img src="https://img.shields.io/badge/-Traefix%20Proxy-24A1C1?style=for-the-badge&logo=traefikproxy&logoColor=white" alt="Traefik Proxy" />
       <img src="https://img.shields.io/badge/-Apache-D22128?style=for-the-badge&logo=apache&logoColor=white" alt="Apache" />
       <img src="https://img.shields.io/badge/-Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white" alt="Redis" />
+      <img src="https://img.shields.io/badge/-Auth0-EB5424?style=for-the-badge&logo=auth0&logoColor=white" alt="Auth0" />
     </div>
   </div>;
 };

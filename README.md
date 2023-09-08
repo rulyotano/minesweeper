@@ -10,14 +10,18 @@ Visit and play [minesweeper.rulyotano.com](https://minesweeper.rulyotano.com/min
 ![Minesweeper image](/images/mineminesweeper-redux.gif?raw=true "My Minesweeper Redux")
 
 # Architectural decision
-![Architecture](/images/minesweeper-architecture-01.png?raw=true "Architecture")
+![Architecture](/images/minesweeper-architecture.png?raw=true "Architecture")
 
 COMING SOON: More description...
 
 # Deployment Flow
 ![Deployment Flow](/images/minesweeper-deployment-flow-01.png?raw=true "Deployment Flow")
 
-[Deployment FLow](https://www.figma.com/file/V7yEaOJgky1BMXSKgTkUkp/Welcome-to-FigJam?type=whiteboard&node-id=0%3A1&t=bBxxsbG32YUhfXEe-1)
+# Authorization Flow
+![Authorization Flow](/images/minesweeper-auth-flow.png?raw=true "Authorization Flow")
+
+# Diagrams
+[Check the diagrams](https://www.figma.com/file/V7yEaOJgky1BMXSKgTkUkp/Welcome-to-FigJam?type=whiteboard&node-id=0%3A1&t=bBxxsbG32YUhfXEe-1)
 
 # Instruction to run in local with docker compose
 - Install docker, it can be dockerd and docker cli (docker deamon) or with docker desktop.
