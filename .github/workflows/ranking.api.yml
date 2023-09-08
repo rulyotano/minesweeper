@@ -8,9 +8,7 @@ on:
       - .github/workflows/ranking.api.yml
 
 env:
-  VERSION: 0.0.3
-  Auth__Authority: ${{ secrets.AUTH_DOMAIN }}
-  Auth__Audience: ${{ secrets.AUTH_AUDIENCE }}
+  VERSION: 0.0.4
 
 jobs:
   build-push-image:
@@ -31,6 +29,9 @@ jobs:
       - name: Docker Metadata for Image Build
         id: docker_meta
         uses: docker/metadata-action@v4
+        env:
+          Auth__Authority: ${{ secrets.AUTH_DOMAIN }}
+          Auth__Audience: ${{ secrets.AUTH_AUDIENCE }}
         with:
           images: rulyotano/minesweeper-ranking-api
           flavor: |

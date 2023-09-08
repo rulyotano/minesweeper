@@ -16,7 +16,7 @@ on:
       - .github/workflows/presentation.web.yml
 
 env:
-  VERSION: 0.0.16
+  VERSION: 0.0.17
 
 jobs:
   build-test-image:    
@@ -99,6 +99,10 @@ jobs:
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       - name: Compile
         uses: docker/build-push-action@v4
+        env:
+          REACT_APP_AUTH_DOMAIN: ${{ secrets.AUTH_DOMAIN }}
+          REACT_APP_AUTH_CLIENT_ID: ${{ secrets.AUTH_WEB_CLIENT_ID }}
+          REACT_APP_AUTH_AUDIENCE: ${{ secrets.AUTH_AUDIENCE }}
         with:
           push: false
           load: true
@@ -108,10 +112,6 @@ jobs:
           cache-to: type=gha,mode=max
           platforms: linux/amd64
           context: src/presentation/web/
-          secrets: |
-            REACT_APP_AUTH_DOMAIN=${{ secrets.AUTH_DOMAIN }}
-            REACT_APP_AUTH_CLIENT_ID=${{ secrets.AUTH_WEB_CLIENT_ID }}
-            REACT_APP_AUTH_AUDIENCE=${{ secrets.AUTH_AUDIENCE }}
       - name: Copy build directory
         run: |
           docker run -d --name mineswipper-build ${{ github.run_id }} ping localhost
