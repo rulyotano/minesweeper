@@ -3,7 +3,7 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
-import { apiClient } from "../../../../../common";
+import useClient from "../../../../../common/clients/useClient";
 import { useSelector } from "react-redux";
 import { getGameLevel } from "../../_duck/selectors";
 import Table from "@material-ui/core/Table";
@@ -29,6 +29,7 @@ export default function (props: ViewRankingProps) {
   const { isOpen, onClose } = props;
   const [ranking, setRanking] = React.useState<Array<RankingResult>>([]);
   const [loading, setLoading] = React.useState(true);
+  const apiClient = useClient();
 
   const gameLevel = useSelector(getGameLevel);
   React.useEffect(() => {
@@ -36,11 +37,8 @@ export default function (props: ViewRankingProps) {
     setLoading(true);
     apiClient.get(`ranking?gameSize=${gameLevel.name}&limit=20`).then(result => {
       setRanking(result.data as Array<RankingResult>);
-      setLoading(false);
-    }, () => {
-      setLoading(false);
-    });
-  }, [gameLevel, isOpen])
+    }).finally(() => setLoading(false));
+  }, [gameLevel, isOpen, apiClient]);
 
   React.useEffect(() => {
     setTimeout(() => document.body.style.overflow = isOpen ? "hidden" : "unset", 1);

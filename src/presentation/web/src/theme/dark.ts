@@ -4,7 +4,7 @@ const darkTheme: CustomTheme = {
   palette: {
     type: "dark",
     primary: {
-      main: "#a6c8ff"
+      main: "#a6c8ff",
     }
   },
   drawerWidth: 300

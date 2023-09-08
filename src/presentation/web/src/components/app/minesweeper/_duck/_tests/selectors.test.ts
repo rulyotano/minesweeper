@@ -14,7 +14,8 @@ import {
   getIsGameWon,
   getIsGameLost,
   getGameLevel,
-  getUsername
+  getUsername,
+  getIsBoardSubmitted
 } from "../selectors";
 import { ReducerState } from "../reducer";
 import { buildBoard } from "../../helpers/boardHelper";
@@ -269,5 +270,15 @@ describe("components > app > minesweeper > selectors", () => {
         ...fakeState
       }))
       .toReturn(fakeState.username);
+  })
+
+  test("getIsBoardSubmitted() should return isBoardSubmitted", () => 
+  { 
+    Selector(getIsBoardSubmitted)
+      .expect(getStateWith({
+        ...fakeState,
+        isBoardSubmitted: true
+      }))
+      .toReturn(true);
   })
 });

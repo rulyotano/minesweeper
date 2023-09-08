@@ -1,86 +1,115 @@
 import React from "react";
+import { useAuth0 } from "@auth0/auth0-react";
 import Dialog from "@material-ui/core/Dialog"
+import makeStyles from "@material-ui/core/styles/makeStyles";
 import DialogTitle from "./DialogTitle"
 import { useDispatch, useSelector } from "react-redux";
-import { getFinishTime, getGameLevel, getIsGameWon, getStartTime, getUsername } from "../../_duck/selectors";
+import { useHistory } from "react-router-dom";
+import { getFinishTime, getGameLevel, getIsBoardSubmitted, getIsGameWon, getStartTime } from "../../_duck/selectors";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogActions from "@material-ui/core/DialogActions";
 import Button from "@material-ui/core/Button";
-import moment from "moment";
-import TextField from "@material-ui/core/TextField";
-import { setUsername } from "../../_duck/actions";
 import { apiClient, getDeviceType } from "../../../../../common";
 import { setTimeout } from "timers";
+import styles from "./styles";
+import { SubmitKeyHelper } from "./keys";
+import { markBoardSubmittedAction } from "../../_duck/actions";
 
-export default () => {
-  const [isOpen, setIsOpen] = React.useState(false);
+const useStyles = makeStyles(styles);
+
+interface SubmitRankingProps {
+  isOpen: boolean
+}
+
+export default (props: SubmitRankingProps) => {
+  const {isOpen} = props;
   const [isSubmitting, setIsSubmitting] = React.useState(false);
-  const [localUsername, setLocalUsername] = React.useState<string>("");
+  const classes = useStyles();
   const gameLevel = useSelector(getGameLevel);
-  const startTime = useSelector(getStartTime) || new Date();
-  const finishTime = useSelector(getFinishTime) || new Date();
+  const startTimeMs = SubmitKeyHelper.getDateSecond(useSelector(getStartTime));
+  const finishTimeMs = SubmitKeyHelper.getDateSecond(useSelector(getFinishTime), startTimeMs);
   const isGameWon = useSelector(getIsGameWon);
-  const username = useSelector(getUsername);
+  const isBoardAlreadySubmitted = useSelector(getIsBoardSubmitted);
   const dispatch = useDispatch();
+  const history = useHistory();
+  const { isAuthenticated, user, loginWithRedirect } = useAuth0();
+  const gameState = React.useMemo(() => isOpen ? SubmitKeyHelper.getSavedGameState() : {
+    startedMs: startTimeMs,
+    finishedMs: finishTimeMs,
+    level: gameLevel,
+    creationTime: 0
+  }, [isOpen, startTimeMs, finishTimeMs, gameLevel]);
 
-  const onClose = () => setIsOpen(false);
-  const duration = React.useMemo(() => moment.duration(finishTime!.valueOf() - startTime!.valueOf()), [
-    startTime, finishTime
-  ]);
+  const onClose = React.useCallback(() => {
+    SubmitKeyHelper.clearSavedGameState();
+    dispatch(markBoardSubmittedAction());
+    history.push("/");
+  }, [history, dispatch]);
+
+  const onOpen = React.useCallback(() => {
+    if (!gameState) return;
+    SubmitKeyHelper.saveGameState(gameState);
+    history.push("/game-won");
+  }, [gameState, history]);
+
+  const durationMs = gameState!.finishedMs - gameState!.startedMs;
+  const durationS = durationMs / 1000.0;
   const device = React.useMemo(() => getDeviceType(), []);
 
   React.useEffect(() => {
-    setIsOpen(isGameWon);
-    setLocalUsername(username || "");
-  }, [isGameWon, username])
+    if (!isBoardAlreadySubmitted && isGameWon && startTimeMs !== finishTimeMs) onOpen();
+  }, [isBoardAlreadySubmitted, isGameWon, startTimeMs, finishTimeMs, onOpen]);
 
-  const onTextChange = React.useCallback((newUsername: string) => {
-    setLocalUsername(newUsername);
-  }, [])
-
+  const gameSize = gameState?.level?.name || "beginner";
+  const username = user?.nickname;
   const onSubmit = React.useCallback(() => {
-    dispatch(setUsername(localUsername));
+    if (!isAuthenticated) return;
     setIsSubmitting(true);
-    apiClient.put("ranking", { 
-      timeInMs: duration.asMilliseconds(),
-      username: localUsername,
-      gameSize: gameLevel.name,
+    apiClient.put("ranking", {
+      timeInMs: durationMs,
+      username: username,
+      gameSize: gameSize,
       device: device
     })
       .then(() => {
-        setIsOpen(false);
+        onClose();
       })
       .finally(() => setIsSubmitting(false));
-  }, [duration, localUsername, gameLevel.name, device, dispatch])
+  }, [isAuthenticated, durationMs, username, gameSize, device, onClose])
+
+  const onLogin = React.useCallback(() => {
+    loginWithRedirect(
+      {
+        appState: {
+          returnTo: "/game-won"
+        }
+      });
+  }, [loginWithRedirect]);
 
   React.useEffect(() => {
-    setTimeout(() => document.body.style.overflow = isOpen ? "hidden" : "unset", 1);
+    setTimeout(() => document.body.style.overflow = (isOpen ? "hidden" : "unset"), 1);
   }, [isOpen]);
+
+  React.useEffect(() => {
+    if (isOpen && (durationMs === 0 || !gameState)) {
+      onClose();
+    }
+  }, [isOpen, durationMs, gameState, onClose])
 
   return (<Dialog fullWidth={true} maxWidth="sm" onClose={onClose} aria-labelledby="Ranking Submit" open={isOpen}>
     <DialogTitle id="submit-ranking-dialog-title" onClose={onClose}>
-      You beat Minesweeper at level "{gameLevel.name}" on a "{device}" device
+      You beat Minesweeper at level "{gameSize}" on a "{device}" device
     </DialogTitle>
-    
+
     <DialogContent dividers>
       Congrats!!! <span role="img" aria-label="win">😎</span>
-      You won the Minesweeper Game with an epic record of {duration.asSeconds()} seconds on a {device} device!
-      Submit to the global ranking?
+      You won the Minesweeper Game with an epic score of {durationS} seconds on a {device} device!
 
-      <TextField
-        autoFocus
-        margin="dense"
-        label="Your username"
-        type="text"
-        fullWidth
-        value={localUsername}
-        onChange={e => onTextChange(e.target.value)}
-        autoComplete="off"
-      />
+      {isAuthenticated ? <div>Save your score as "{username}"!</div> : <div className={classes.centeredContainer}><Button onClick={onLogin}>Login to submit score</Button></div>}
     </DialogContent>
 
     <DialogActions>
-      <Button disabled={!localUsername || isSubmitting} color="primary" onClick={onSubmit}>
+      <Button disabled={!isAuthenticated || !Boolean(username) || isSubmitting} color="primary" onClick={onSubmit}>
         Submit
       </Button>
       <Button autoFocus onClick={onClose}>

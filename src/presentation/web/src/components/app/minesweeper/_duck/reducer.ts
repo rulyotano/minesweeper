@@ -11,7 +11,8 @@ import {
   INITIALIZE_BOARD,
   InitializeBoardAction,
   SET_USERNAME,
-  SetUsername
+  SetUsername,
+  BOARD_SUBMITTED
 } from "./types";
 import { Cell } from "../helpers/cellHelper";
 
@@ -24,6 +25,7 @@ export interface ReducerState {
   discoveredCells: number;
   board: Cell[][];
   username: string | null
+  isBoardSubmitted: boolean
 }
 
 export const initialState: ReducerState = {
@@ -34,7 +36,8 @@ export const initialState: ReducerState = {
   mines: 0,
   discoveredCells: 0,
   board: [],
-  username: null
+  username: null,
+  isBoardSubmitted: false
 };
 
 const reducer: Reducer<ReducerState> = (
@@ -53,7 +56,8 @@ const reducer: Reducer<ReducerState> = (
         discoveredCells: 0,
         gameFinishTime: null,
         gameIsStarted: true,
-        gameStartTime: new Date()
+        gameStartTime: new Date(),
+        isBoardSubmitted: false
       };
     }
     case FINISH_GAME: {
@@ -62,7 +66,8 @@ const reducer: Reducer<ReducerState> = (
         ...state,
         board: customAction.board,
         gameFinishTime: new Date(),
-        gameIsStarted: false
+        gameIsStarted: false,
+        isBoardSubmitted: false
       };
     }
 
@@ -81,7 +86,8 @@ const reducer: Reducer<ReducerState> = (
         username: state.username,
         board: customAction.board,
         rows: customAction.rows,
-        columns: customAction.columns
+        columns: customAction.columns,
+        isBoardSubmitted: false
       };
     }
     case RESET:
@@ -94,6 +100,12 @@ const reducer: Reducer<ReducerState> = (
       return {
         ...state,
         username: customAction.username
+      }
+    }
+    case BOARD_SUBMITTED: {
+      return {
+        ...state,
+        isBoardSubmitted: true
       }
     }
     default:

@@ -13,7 +13,9 @@ import {
   InitializeBoardAction,
   SetUsername,
   SET_USERNAME,
-  USERNAME_STORAGE_KEY
+  USERNAME_STORAGE_KEY,
+  SetBoardSubmitted,
+  BOARD_SUBMITTED
 } from "./types";
 import { AppThunkAction } from "../../../../../src/store";
 import { Cell, CellStatus } from "../helpers/cellHelper";
@@ -244,3 +246,5 @@ export const setUsername =
     if (username) localStorage.setItem(USERNAME_STORAGE_KEY, username);
     return { type: SET_USERNAME, username: username };
   }
+
+export const markBoardSubmittedAction = (): SetBoardSubmitted => ({ type: BOARD_SUBMITTED });

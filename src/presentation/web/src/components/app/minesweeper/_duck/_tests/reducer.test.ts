@@ -11,7 +11,9 @@ import {
   INITIALIZE_BOARD,
   InitializeBoardAction,
   SetUsername,
-  SET_USERNAME
+  SET_USERNAME,
+  BOARD_SUBMITTED,
+  SetBoardSubmitted
 } from "../types";
 import { buildBoard } from "../../helpers/boardHelper";
 
@@ -79,7 +81,8 @@ describe("components > app > minesweeper > reducer", () => {
       mines: MINES,
       discoveredCells: 0,
       board: action.board,
-      gameStartTime: new Date(FAKE_NOW_DATE)
+      gameStartTime: new Date(FAKE_NOW_DATE),
+      isBoardSubmitted: false
     });
   });
 
@@ -103,7 +106,8 @@ describe("components > app > minesweeper > reducer", () => {
     Reducer(reducer).withState(previousState).expect(action).toChangeInState({
       gameIsStarted: false,
       gameFinishTime: FAKE_NOW_DATE,
-      board: action.board
+      board: action.board,
+      isBoardSubmitted: false
     });
   });
 
@@ -161,7 +165,8 @@ describe("components > app > minesweeper > reducer", () => {
       columns: COLS,
       gameStartTime: null,
       gameFinishTime: null,
-      mines: 0
+      mines: 0,
+      isBoardSubmitted: false
     });
   });
 
@@ -176,6 +181,19 @@ describe("components > app > minesweeper > reducer", () => {
     };
     Reducer(reducer).withState(previousState).expect(action).toChangeInState({
       username: action.username
+    });
+  });
+
+  test("when BOARD_SUBMITTED should: change isBoardSubmitted to true", () => {
+    const previousState = {
+      isBoardSubmitted: false
+    };
+
+    const action: SetBoardSubmitted = {
+      type: BOARD_SUBMITTED
+    };
+    Reducer(reducer).withState(previousState).expect(action).toChangeInState({
+      isBoardSubmitted: true
     });
   });
 });

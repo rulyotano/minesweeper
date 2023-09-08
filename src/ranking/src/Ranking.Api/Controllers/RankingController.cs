@@ -1,4 +1,5 @@
 using System.Net;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Ranking.Api.Domain;
 using Ranking.Api.Dtos;
@@ -30,6 +31,7 @@ public class RankingController : ControllerBase
   }
 
   [HttpPut]
+  [Authorize]
   [ProducesResponseType(typeof(IEnumerable<RankingItemDto>), (int)HttpStatusCode.OK)]
   public async Task<ActionResult> AddNewGameResult([FromBody] GameResultDto gameResult)
   {

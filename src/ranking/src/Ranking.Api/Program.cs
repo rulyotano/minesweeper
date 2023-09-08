@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Ranking.Api.Services.Ranking;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 const string FromAllowedDomains = "_fromAllowedDomains";
 
@@ -21,6 +22,17 @@ builder.Services.AddCors(options =>
                                             }));
 
 builder.Services.AddControllers();
+builder.Services.AddAuthentication(options =>
+        {
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+        }).AddJwtBearer(options =>
+        {
+            var authConfig = new AuthConfig();
+            builder.Configuration.GetSection(AuthConfig.AuthConfigName).Bind(authConfig);
+            options.Authority = authConfig.Authority;
+            options.Audience = authConfig.Audience;
+        });
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -29,6 +41,7 @@ builder.Services.AddSingleton<IRedisProvider, RedisProvider>();
 builder.Services.AddHealthChecks()
   .AddCheck("self", () => HealthCheckResult.Healthy(), tags: new[] { "internal" }, TimeSpan.FromSeconds(5))
   .AddCheck<RedisHealthCheck>("redis", tags: new [] { "external" });
+builder.Services.Configure<AuthConfig>(builder.Configuration.GetSection(AuthConfig.AuthConfigName));
 
 var app = builder.Build();
 
@@ -41,6 +54,7 @@ if (app.Environment.IsDevelopment())
 
 app.UseCors(FromAllowedDomains);
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

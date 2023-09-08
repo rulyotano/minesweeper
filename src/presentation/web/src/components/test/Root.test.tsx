@@ -5,6 +5,7 @@ import { MemoryRouter } from "react-router-dom";
 import App from "../Root";
 
 jest.mock("../app/minesweeper", () => () => null);
+jest.mock("../common/header", () => () => null);
 
 it("renders without crashing", () => {
   const storeFake = (state: any) => ({

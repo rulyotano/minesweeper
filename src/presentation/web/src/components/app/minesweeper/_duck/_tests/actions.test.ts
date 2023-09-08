@@ -8,7 +8,8 @@ import {
   FinishGameAction,
   UpdateBoardAction,
   BeginGameAction,
-  InitializeBoardAction
+  InitializeBoardAction,
+  BOARD_SUBMITTED
 } from "../types";
 import * as actions from "../actions";
 import * as boardHelper from "../../helpers/boardHelper";
@@ -449,6 +450,12 @@ describe("components > app > minesweeper > actions", () => {
     expect(action.board).toBe(fakeBoard);
     expect(action.rows).toBe(ROWS);
     expect(action.columns).toBe(COLUMNS);
+  });
+
+  test("markBoardSubmittedAction() should return action with type INITIALIZE_BOARD", () => {
+    const action = actions.markBoardSubmittedAction();
+
+    expect(action.type).toBe(BOARD_SUBMITTED);
   });
 
   const getStateWithBoard = (board: Cell[][]): ApplicationState =>

@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useLocation } from "react-router-dom";
 import Minesweeper from "./Minesweeper";
 import {
   getBoard,
@@ -24,7 +25,9 @@ import { Cell } from "./helpers/cellHelper";
 import { IBoardConfiguration, gameConfigurationsCollection } from "./helpers/gameHelper";
 import { USERNAME_STORAGE_KEY } from "./_duck/types";
 
-const MinesweeperContainer: React.FunctionComponent = () => {
+const MinesweeperContainer = () => {
+  const location = useLocation();  
+  const gameWon = location.pathname === "/game-won"
   const board = useSelector(getBoard);
   const gameEnded = useSelector(getIsFinished);
   const isStarted = useSelector(getIsGameStarted);
@@ -83,6 +86,7 @@ const MinesweeperContainer: React.FunctionComponent = () => {
       isWin={isWin}
       isLost={isLost}
       configuration={currentConfig}
+      gameWon={gameWon}
     />
   );
 };

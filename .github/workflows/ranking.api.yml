@@ -8,7 +8,9 @@ on:
       - .github/workflows/ranking.api.yml
 
 env:
-  VERSION: 0.0.2
+  VERSION: 0.0.3
+  Auth__Authority: ${{ secrets.AUTH_DOMAIN }}
+  Auth__Audience: ${{ secrets.AUTH_AUDIENCE }}
 
 jobs:
   build-push-image:
