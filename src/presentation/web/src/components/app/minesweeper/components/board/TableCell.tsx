@@ -82,6 +82,11 @@ const TableCell: React.FunctionComponent<TableCellProps> = props => {
     currentTouchKey.current += 1;
   };
 
+  const onDrag = () => {
+    currentTouchKey.current =  (currentTouchKey.current + 1) % 10000;
+    console.log("drag"+currentTouchKey.current)
+  }
+
   const isLeftButton = (eventButton: number) => eventButton === 0 || eventButton === 1;
   const isRightButton = (eventButton: number) => eventButton === 2;
 
@@ -94,6 +99,7 @@ const TableCell: React.FunctionComponent<TableCellProps> = props => {
       onContextMenu={onContextMenu}
       onTouchStart={onTouchStart}
       onTouchEnd={onTouchEnd}
+      onTouchMove={onDrag}
     >
       <div className={classes.cellContent}>
         {status === CellStatus.DiscoveredAndNumber ? (

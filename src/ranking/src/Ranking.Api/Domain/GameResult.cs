@@ -6,4 +6,5 @@ public class GameResult
   public GameSize GameSize { get; set; }
   public DateTime DateTime { get; set; }
   public Device Device { get; set; }
+  public string GetRankingKey() => $"{UserName}{(Device == Device.Mobile ? " (mobile)" : string.Empty)}"; 
 }

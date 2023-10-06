@@ -19,7 +19,7 @@ public class RankingRedis : IRanking
       GetKey(gameResult.GameSize),
       new[]
       {
-        new SortedSetEntry(new RedisValue(gameResult.UserName), gameResult.TimeInMs)
+        new SortedSetEntry(new RedisValue(gameResult.GetRankingKey()), gameResult.TimeInMs)
       }, SortedSetWhen.LessThan);
   }
 
