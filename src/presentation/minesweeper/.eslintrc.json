@@ -1,0 +1,26 @@
+{
+    "parser": "@typescript-eslint/parser",
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module"
+    },
+    "rules": {
+        "indent": ["error", 2, { "SwitchCase": 1, "ignoredNodes": ["TemplateLiteral"] }],
+        "camelcase": "warn",
+        "quotes": ["error", "double", { "avoidEscape": true }],
+        "max-len": [
+          "warn",
+          {
+            "code": 100,
+            "tabWidth": 2,
+            "comments": 80,
+            "ignoreComments": true, // let's disable warnings on the comments
+            "ignoreTrailingComments": true,
+            "ignoreUrls": true,
+            "ignoreStrings": true,
+            "ignoreTemplateLiterals": true,
+            "ignoreRegExpLiterals": true
+          }
+        ]
+      }
+}
