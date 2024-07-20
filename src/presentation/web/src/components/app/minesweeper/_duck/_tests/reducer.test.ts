@@ -166,7 +166,8 @@ describe("components > app > minesweeper > reducer", () => {
       gameStartTime: null,
       gameFinishTime: null,
       mines: 0,
-      isBoardSubmitted: false
+      isBoardSubmitted: false,
+      markedMines: 0
     });
   });
 

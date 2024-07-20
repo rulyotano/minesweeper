@@ -25,7 +25,8 @@ export interface ReducerState {
   discoveredCells: number;
   board: Cell[][];
   username: string | null
-  isBoardSubmitted: boolean
+  isBoardSubmitted: boolean,
+  markedMines: number
 }
 
 export const initialState: ReducerState = {
@@ -37,7 +38,8 @@ export const initialState: ReducerState = {
   discoveredCells: 0,
   board: [],
   username: null,
-  isBoardSubmitted: false
+  isBoardSubmitted: false,
+  markedMines: 0
 };
 
 const reducer: Reducer<ReducerState> = (

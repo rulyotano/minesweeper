@@ -8,6 +8,7 @@ import {
   getStartTime,
   getFinishTime,
   getMines,
+  getMarkedMines,
   getDiscovered,
   getIsFinished,
   getIsGameInitialized,
@@ -32,7 +33,9 @@ describe("components > app > minesweeper > selectors", () => {
     gameFinishTime: new Date(),
     gameStartTime: new Date(),
     mines: 2,
-    username: "user-name"
+    username: "user-name",
+    isBoardSubmitted: false,
+    markedMines: 0
   };
 
   const getStateWith = (stateData: ReducerState): ApplicationState => ({
@@ -280,5 +283,15 @@ describe("components > app > minesweeper > selectors", () => {
         isBoardSubmitted: true
       }))
       .toReturn(true);
+  })
+
+  test("getMarkedMines() should return markedMines", () => {
+    const expectedMarkedMines = 5;
+    Selector(getMarkedMines)
+      .expect(getStateWith({
+        ...fakeState,
+        markedMines: expectedMarkedMines
+      }))
+      .toReturn(expectedMarkedMines);
   })
 });
