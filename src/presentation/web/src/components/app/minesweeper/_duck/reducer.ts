@@ -78,7 +78,8 @@ const reducer: Reducer<ReducerState> = (
       return {
         ...state,
         board: customAction.board,
-        discoveredCells: customAction.discoveredCells
+        discoveredCells: customAction.discoveredCells,
+        markedMines: customAction.markedMines
       };
     }
     case INITIALIZE_BOARD: {

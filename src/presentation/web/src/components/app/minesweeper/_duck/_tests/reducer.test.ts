@@ -111,7 +111,7 @@ describe("components > app > minesweeper > reducer", () => {
     });
   });
 
-  test("when UPDATE_BOARD should: change board and set discoveredCells", () => {
+  test("when UPDATE_BOARD should: change board and set discoveredCells and marked mines", () => {
     const previousState = {
       board: [],
       discoveredCells: 9
@@ -126,11 +126,13 @@ describe("components > app > minesweeper > reducer", () => {
     const action: UpdateBoardAction = {
       board: buildBoard(ROWS, COLS, CLICKED_R, CLICKED_C, MINES),
       discoveredCells: 10,
+      markedMines: 5,
       type: UPDATE_BOARD
     };
     Reducer(reducer).withState(previousState).expect(action).toChangeInState({
       discoveredCells: action.discoveredCells,
-      board: action.board
+      board: action.board,
+      markedMines: action.markedMines
     });
   });
 

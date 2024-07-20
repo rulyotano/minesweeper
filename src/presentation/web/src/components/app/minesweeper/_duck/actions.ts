@@ -32,7 +32,8 @@ import {
   getFinishTime,
   getIsGameInitialized,
   getIsGameWon,
-  getIsFinished
+  getIsFinished,
+  getMarkedMines
 } from "./selectors";
 import { IBoardConfiguration } from "../helpers/gameHelper";
 
@@ -94,7 +95,7 @@ export const cellClick = (row: number, column: number): AppThunkAction<Minesweep
     dispatch(clickOnMine(board, cell));
   } else {
     const cellsAlreadyDiscovered = getDiscovered(state);
-    dispatch(clickOnNoMineSpace(board, cell, cellsAlreadyDiscovered));
+    dispatch(clickOnNoMineSpace(board, cell, cellsAlreadyDiscovered, getMarkedMines(state)));
     const newState = getState();
     const isWon = getIsGameWon(newState);
     if (isWon) {
@@ -117,13 +118,13 @@ const clickOnMine = (board: Cell[][], cell: Cell) => {
   return finishAction(newBoard);
 };
 
-const clickOnNoMineSpace = (board: Cell[][], cell: Cell, cellsAlreadyDiscovered: number) => {
+const clickOnNoMineSpace = (board: Cell[][], cell: Cell, cellsAlreadyDiscovered: number, markedMines: number) => {
   const cellsToReveal = getCellsToReveal(board, cell.Row, cell.Column).map(it => ({
     ...it,
     Status: it.MinesAround > 0 ? CellStatus.DiscoveredAndNumber : CellStatus.DiscoveredAndEmpty
   }));
   const newBoard = modifyBoard(board, cellsToReveal);
-  return updateBoardAction(newBoard, cellsAlreadyDiscovered + cellsToReveal.length);
+  return updateBoardAction(newBoard, cellsAlreadyDiscovered + cellsToReveal.length, markedMines);
 };
 
 const getPendingMinesAndBadMarked = (board: Cell[][], cell: Cell) => {
@@ -191,6 +192,7 @@ export const switchMarkAsMine = (
   if (isGameOver) return;
   const board = getBoard(state);
   const discovered = getDiscovered(state);
+  const previousMarkedMines = getMarkedMines(state);
 
   const cell = board[row][column];
 
@@ -198,9 +200,11 @@ export const switchMarkAsMine = (
 
   const newStatus =
     cell.Status === CellStatus.MarkedAsMine ? CellStatus.UnDiscovered : CellStatus.MarkedAsMine;
+  const newMarkedMines =
+    cell.Status === CellStatus.MarkedAsMine ? previousMarkedMines - 1 : previousMarkedMines + 1;
 
-  const newBoard = modifyBoard(board, [ { ...cell, Status: newStatus } ]);
-  dispatch(updateBoardAction(newBoard, discovered));
+  const newBoard = modifyBoard(board, [{ ...cell, Status: newStatus }]);
+  dispatch(updateBoardAction(newBoard, discovered, newMarkedMines));
 };
 
 export const initializeBoardAction = (
@@ -232,17 +236,17 @@ export const finishAction = (board: Cell[][]): FinishGameAction => ({
   board
 });
 
-export const updateBoardAction = (board: Cell[][], discoveredCells: number): UpdateBoardAction => ({
+export const updateBoardAction = (board: Cell[][], discoveredCells: number, markedMines: number): UpdateBoardAction => ({
   type: UPDATE_BOARD,
   board,
-  discoveredCells
+  discoveredCells,
+  markedMines
 });
 
 export const resetAction = (): ResetAction => ({ type: RESET });
 
 export const setUsername =
-  (username: string|null): SetUsername =>
-  {
+  (username: string | null): SetUsername => {
     if (username) localStorage.setItem(USERNAME_STORAGE_KEY, username);
     return { type: SET_USERNAME, username: username };
   }
