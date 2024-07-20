@@ -43,3 +43,8 @@ export const getGameLevel = createSelector(
   [ getRows, getColumns ],
   (rows, columns) => gameConfigurationsCollection.getConfiguration(rows, columns)
 );
+
+export const getRemainingMines = createSelector(
+  [ getMines, getMarkedMines ],
+  (mines, markedMines) => mines - markedMines
+);
