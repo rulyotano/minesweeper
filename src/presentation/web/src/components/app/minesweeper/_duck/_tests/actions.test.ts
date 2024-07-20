@@ -122,12 +122,14 @@ describe("components > app > minesweeper > actions", () => {
     test("When is NO mine, should reveal all cells that should be revealed", async () => {
       const TEST_ROW = 3;
       const TEST_COLUMN = 3;
+      const expectedMarkedMines = 5;
       const customFakeBoard = getFakeBoard();
       customFakeBoard[TEST_ROW][TEST_COLUMN] = {
         ...customFakeBoard[TEST_ROW][TEST_COLUMN],
         IsMine: false
       };
       const fakeState = getStateWithBoard(customFakeBoard);
+      fakeState.minesweeper.markedMines = expectedMarkedMines;
 
       const getCellsToRevealMocked = jest
         .spyOn(boardHelper, "getCellsToReveal")
@@ -147,6 +149,7 @@ describe("components > app > minesweeper > actions", () => {
       expect(updateBoardAction.type).toBe(UPDATE_BOARD);
       expect(updateBoardAction.board[1][1].Status).toBe(CellStatus.DiscoveredAndEmpty);
       expect(updateBoardAction.board[2][2].Status).toBe(CellStatus.DiscoveredAndNumber);
+      expect(updateBoardAction.markedMines).toBe(expectedMarkedMines);
       getCellsToRevealMocked.mockReset();
     });
 
@@ -351,34 +354,39 @@ describe("components > app > minesweeper > actions", () => {
       expect(dispatches).toHaveLength(0);
     });
 
-    test("when cell is marked as mine should switch it to empty", async () => {
+    test("when cell is marked as mine should switch it to empty and decrease mines marked count", async () => {
       const { fakeBoard, testRow, testColumn } = getBoardConfiguration();
       fakeBoard[testRow][testColumn].Status = CellStatus.MarkedAsMine;
 
       const fakeState = getStateWithBoard(fakeBoard);
+      fakeState.minesweeper.markedMines = 10;
 
       const dispatches = await Thunk(actions.switchMarkAsMine)
         .withState(fakeState)
         .execute(testRow, testColumn);
 
       expect(dispatches).toHaveLength(1);
-      const newBoard = (dispatches[0].getAction() as UpdateBoardAction).board;
-      expect(newBoard[testRow][testColumn].Status).toBe(CellStatus.UnDiscovered);
+      const action = dispatches[0].getAction() as UpdateBoardAction;
+      expect(action.board[testRow][testColumn].Status).toBe(CellStatus.UnDiscovered);
+      expect(action.markedMines).toBe(fakeState.minesweeper.markedMines - 1);
     });
 
-    test("when cell is empty should switch it to marked as mine", async () => {
+    test("when cell is empty should switch it to marked as mine and increase mines marked count", async () => {
       const { fakeBoard, testRow, testColumn } = getBoardConfiguration();
       fakeBoard[testRow][testColumn].Status = CellStatus.UnDiscovered;
 
       const fakeState = getStateWithBoard(fakeBoard);
+      fakeState.minesweeper.markedMines = 9;
 
       const dispatches = await Thunk(actions.switchMarkAsMine)
         .withState(fakeState)
         .execute(testRow, testColumn);
 
       expect(dispatches).toHaveLength(1);
-      const newBoard = (dispatches[0].getAction() as UpdateBoardAction).board;
+      const action = dispatches[0].getAction() as UpdateBoardAction;
+      const newBoard = action.board;
       expect(newBoard[testRow][testColumn].Status).toBe(CellStatus.MarkedAsMine);
+      expect(action.markedMines).toBe(fakeState.minesweeper.markedMines + 1);
     });
 
     test("discovered cells should be the same than before", async () => {
