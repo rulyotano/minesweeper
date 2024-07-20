@@ -2,12 +2,13 @@ import React from "react";
 import makeStyles from "@material-ui/core/styles/makeStyles";
 import Button from "@material-ui/core/Button";
 import HourglassEmptyIcon from "@material-ui/icons/HourglassEmpty";
+import MinesIcon from "@material-ui/icons/Brightness5Outlined";
 import styles from "./styles";
 import ElapsedSeconds from "../../components/ElapsedSeconds";
 
 const useStyles = makeStyles(styles);
 const InfoBar: React.FunctionComponent<InfoBarProps> = (props: InfoBarProps) => {
-  const { time: { startTime, endTime }, onReset, gameState } = props;
+  const { time: { startTime, endTime }, onReset, gameState, minesLeft } = props;
 
   const classes = useStyles();
   const buttonIcon = getEmojiFromGameState(gameState);
@@ -24,6 +25,8 @@ const InfoBar: React.FunctionComponent<InfoBarProps> = (props: InfoBarProps) => 
         </Button>
       </div>
       <div className={classes.minesLeftContainer}>
+        <div className={classes.timeTextContainer}>{minesLeft}</div>
+        <MinesIcon /> 
       </div>
     </div>
   );
@@ -47,7 +50,7 @@ export interface TimeState {
 
 
 export interface InfoBarProps {
-  // minesLeft: number,
+  minesLeft: number,
   time: TimeState,
   gameState: GameState,
   onReset: () => void

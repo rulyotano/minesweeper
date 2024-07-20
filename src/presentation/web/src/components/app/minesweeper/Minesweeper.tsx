@@ -25,7 +25,8 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
     switchCell,
     surrounding,
     configuration,
-    gameWon
+    gameWon,
+    minesLeft
   } = props;
   const classes = useStyles(props);
 
@@ -44,7 +45,7 @@ const Minesweeper: React.FunctionComponent<MinesweeperProps> = (props: Minesweep
   return (
     <div className={classes.centeredContainer}>
       <div className={classes.container}>
-        <InfoBar time={{ startTime, endTime }} onReset={initializeWithConfiguration} gameState={{ isWin, isLost }} />
+        <InfoBar time={{ startTime, endTime }} onReset={initializeWithConfiguration} gameState={{ isWin, isLost }} minesLeft={minesLeft}/>
         
         <Board
           board={board}
@@ -69,6 +70,7 @@ export interface MinesweeperProps {
   isLost: boolean;
   configuration: IBoardConfiguration;
   gameWon: boolean;
+  minesLeft: number;
 
   initialize: (configuration: IBoardConfiguration) => void;
   begin: (configuration: IBoardConfiguration, clickedCell: Cell) => void;

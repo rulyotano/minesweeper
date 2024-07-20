@@ -215,7 +215,8 @@ export const initializeBoardAction = (
   type: INITIALIZE_BOARD,
   board,
   rows,
-  columns
+  columns,
+  mines: 0
 });
 
 export const beginAction = (

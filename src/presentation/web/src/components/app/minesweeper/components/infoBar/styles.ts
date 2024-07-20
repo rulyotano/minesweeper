@@ -21,6 +21,9 @@ export default (theme: Theme) =>
       textAlign: "right"
     },
     minesLeftContainer: {
+      display: "flex",
+      alignItems: "center",
       width: theme.spacing(16),
-    }
+      flexDirection: "row-reverse"
+    },
   });

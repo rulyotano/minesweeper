@@ -90,7 +90,8 @@ const reducer: Reducer<ReducerState> = (
         board: customAction.board,
         rows: customAction.rows,
         columns: customAction.columns,
-        isBoardSubmitted: false
+        isBoardSubmitted: false,
+        mines: customAction.mines
       };
     }
     case RESET:
