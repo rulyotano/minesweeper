@@ -39,6 +39,7 @@ describe("components > app > minesweeper > actions", () => {
       expect(buildBoardAction.board).not.toBeNull();
       expect(buildBoardAction.rows).toBe(configuration.rows);
       expect(buildBoardAction.columns).toBe(configuration.columns);
+      expect(buildBoardAction.mines).toBe(configuration.mines);
     });
   });
 

@@ -44,7 +44,8 @@ export const initialize = (
     initializeBoardAction(
       buildEmptyBoard(configuration.rows, configuration.columns),
       configuration.rows,
-      configuration.columns
+      configuration.columns,
+      configuration.mines
     )
   );
 };
@@ -210,13 +211,14 @@ export const switchMarkAsMine = (
 export const initializeBoardAction = (
   board: Cell[][],
   rows: number,
-  columns: number
+  columns: number,
+  mines: number
 ): InitializeBoardAction => ({
   type: INITIALIZE_BOARD,
   board,
   rows,
   columns,
-  mines: 0
+  mines
 });
 
 export const beginAction = (
