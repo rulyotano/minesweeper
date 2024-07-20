@@ -38,6 +38,7 @@ export interface UpdateBoardAction {
   type: "MINESWEEPER_UPDATE_BOARD";
   board: Cell[][];
   discoveredCells: number;
+  markedMines: number;
 }
 
 export interface InitializeBoardAction {
@@ -45,6 +46,7 @@ export interface InitializeBoardAction {
   board: Cell[][];
   rows: number;
   columns: number;
+  mines: number;
 }
 
 export interface SetUsername {

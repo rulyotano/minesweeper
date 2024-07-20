@@ -11,7 +11,8 @@ import {
   getIsGameWon,
   getIsGameLost,
   getRows,
-  getColumns
+  getColumns,
+  getRemainingMines
 } from "./_duck/selectors";
 import {
   initialize,
@@ -37,6 +38,7 @@ const MinesweeperContainer = () => {
   const isLost = useSelector(getIsGameLost);
   const rows = useSelector(getRows);
   const columns = useSelector(getColumns);
+  const minesLeft = useSelector(getRemainingMines);
   const currentConfig = gameConfigurationsCollection.getConfiguration(rows, columns);
 
   const dispatch = useDispatch();
@@ -87,6 +89,7 @@ const MinesweeperContainer = () => {
       isLost={isLost}
       configuration={currentConfig}
       gameWon={gameWon}
+      minesLeft={minesLeft}
     />
   );
 };

@@ -13,6 +13,7 @@ export const getDiscovered = (state: ApplicationState) => getState(state).discov
 export const getBoard = (state: ApplicationState) => getState(state).board;
 export const getUsername = (state: ApplicationState) => getState(state).username;
 export const getIsBoardSubmitted = (state: ApplicationState) => getState(state).isBoardSubmitted;
+export const getMarkedMines = (state: ApplicationState) => getState(state).markedMines;
 
 export const getIsGameStarted = createSelector(
   [ getStartTime, getFinishTime ],
@@ -41,4 +42,9 @@ export const getIsGameLost = createSelector(
 export const getGameLevel = createSelector(
   [ getRows, getColumns ],
   (rows, columns) => gameConfigurationsCollection.getConfiguration(rows, columns)
+);
+
+export const getRemainingMines = createSelector(
+  [ getMines, getMarkedMines ],
+  (mines, markedMines) => mines - markedMines
 );

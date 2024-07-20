@@ -25,7 +25,8 @@ export interface ReducerState {
   discoveredCells: number;
   board: Cell[][];
   username: string | null
-  isBoardSubmitted: boolean
+  isBoardSubmitted: boolean,
+  markedMines: number
 }
 
 export const initialState: ReducerState = {
@@ -37,7 +38,8 @@ export const initialState: ReducerState = {
   discoveredCells: 0,
   board: [],
   username: null,
-  isBoardSubmitted: false
+  isBoardSubmitted: false,
+  markedMines: 0
 };
 
 const reducer: Reducer<ReducerState> = (
@@ -76,7 +78,8 @@ const reducer: Reducer<ReducerState> = (
       return {
         ...state,
         board: customAction.board,
-        discoveredCells: customAction.discoveredCells
+        discoveredCells: customAction.discoveredCells,
+        markedMines: customAction.markedMines
       };
     }
     case INITIALIZE_BOARD: {
@@ -87,7 +90,8 @@ const reducer: Reducer<ReducerState> = (
         board: customAction.board,
         rows: customAction.rows,
         columns: customAction.columns,
-        isBoardSubmitted: false
+        isBoardSubmitted: false,
+        mines: customAction.mines
       };
     }
     case RESET:

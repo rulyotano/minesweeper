@@ -8,6 +8,8 @@ import {
   getStartTime,
   getFinishTime,
   getMines,
+  getMarkedMines,
+  getRemainingMines,
   getDiscovered,
   getIsFinished,
   getIsGameInitialized,
@@ -32,7 +34,9 @@ describe("components > app > minesweeper > selectors", () => {
     gameFinishTime: new Date(),
     gameStartTime: new Date(),
     mines: 2,
-    username: "user-name"
+    username: "user-name",
+    isBoardSubmitted: false,
+    markedMines: 0
   };
 
   const getStateWith = (stateData: ReducerState): ApplicationState => ({
@@ -223,8 +227,8 @@ describe("components > app > minesweeper > selectors", () => {
       .toReturn(false);
   });
 
-  describe("getGameLevel()", () => { 
-    test("when no matching rows & columns should return beginner", () => { 
+  describe("getGameLevel()", () => {
+    test("when no matching rows & columns should return beginner", () => {
       Selector(getGameLevel)
         .expect(getStateWith({
           ...fakeState
@@ -232,7 +236,7 @@ describe("components > app > minesweeper > selectors", () => {
         .toReturn(gameConfigurations.beginner)
     });
 
-    test("when rows match beginner should return it", () => { 
+    test("when rows match beginner should return it", () => {
       Selector(getGameLevel)
         .expect(getStateWith({
           ...fakeState,
@@ -242,7 +246,7 @@ describe("components > app > minesweeper > selectors", () => {
         .toReturn(gameConfigurations.beginner)
     });
 
-    test("when rows match intermediate should return it", () => { 
+    test("when rows match intermediate should return it", () => {
       Selector(getGameLevel)
         .expect(getStateWith({
           ...fakeState,
@@ -252,7 +256,7 @@ describe("components > app > minesweeper > selectors", () => {
         .toReturn(gameConfigurations.intermediate)
     });
 
-    test("when rows match expert should return it", () => { 
+    test("when rows match expert should return it", () => {
       Selector(getGameLevel)
         .expect(getStateWith({
           ...fakeState,
@@ -263,8 +267,7 @@ describe("components > app > minesweeper > selectors", () => {
     });
   });
 
-  test("getUsername() should return username", () => 
-  { 
+  test("getUsername() should return username", () => {
     Selector(getUsername)
       .expect(getStateWith({
         ...fakeState
@@ -272,13 +275,41 @@ describe("components > app > minesweeper > selectors", () => {
       .toReturn(fakeState.username);
   })
 
-  test("getIsBoardSubmitted() should return isBoardSubmitted", () => 
-  { 
+  test("getIsBoardSubmitted() should return isBoardSubmitted", () => {
     Selector(getIsBoardSubmitted)
       .expect(getStateWith({
         ...fakeState,
         isBoardSubmitted: true
       }))
       .toReturn(true);
+  })
+
+  test("getMarkedMines() should return markedMines", () => {
+    const expectedMarkedMines = 5;
+    Selector(getMarkedMines)
+      .expect(getStateWith({
+        ...fakeState,
+        markedMines: expectedMarkedMines
+      }))
+      .toReturn(expectedMarkedMines);
+  })
+
+  describe("getRemainingMines()", () => {
+    test("By default remaining mines should be = total mines", () => {
+      Selector(getRemainingMines)
+        .expect(getStateWith(fakeState))
+        .toReturn(fakeState.mines);
+    });
+    test("When there is marked mines should return the difference", () => {
+      const mines = 5;
+      const markedMines = 3;
+      Selector(getRemainingMines)
+        .expect(getStateWith({
+          ...fakeState,
+          markedMines: markedMines,
+          mines: mines
+        }))
+        .toReturn(mines - markedMines);
+    });
   })
 });
