@@ -39,13 +39,19 @@ services:
       - ALLOWEDHOSTS=api.minesweeper.localhost;localhost
 
   redis:
-    image: redis:alpine3.18
+    image: redis:alpine3.22
     command: --save 60 1 --loglevel warning
     ports:
       - 6379:6379
     volumes:
       - redis_storage:/data
+    networks:
+      - local
 
 volumes:
   redis_storage:
+    external: true
+
+networks:
+  local:
     external: true
