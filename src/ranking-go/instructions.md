@@ -20,7 +20,7 @@ To run with Docker:
 docker build -t minesweeper-ranking-go .
 
 # Run the container
-docker run -p 8080:8080 minesweeper-ranking-go
+docker run -p 8080:80 minesweeper-ranking-go
 ```
 ```
 
